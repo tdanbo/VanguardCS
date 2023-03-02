@@ -10,7 +10,9 @@ import functions as func
 import os
 
 from character_sheet import CharacterSheet
-from pyside import Section, Widget
+
+from template.section import Section
+from template.widget import Widget
 
 class NewCharacter(QWidget):
     def __init__(self,csheet):

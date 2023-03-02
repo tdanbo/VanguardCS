@@ -2,8 +2,8 @@ from PySide2.QtWidgets import *
 from PySide2.QtGui import *
 from PySide2.QtCore import *
 
-from pyside import Section
-from pyside import Widget
+from template.section import Section
+from template.widget import Widget
 
 import functions as func
 import constants as cons
@@ -13,6 +13,7 @@ from character_sheet import CharacterSheet
 
 import functools
 import stylesheet as style
+
 from gui_feats import FeatsGUI
 from gui_add_sub import AddSubGUI
 from gui_new_char import NewCharacter
@@ -58,29 +59,17 @@ class CharacterSheetGUI(QWidget):
 
         self.stat_layout = Section(
             outer_layout = QHBoxLayout(),
-            inner_layout = ("VBox", 7),
-            parent_layout = self.character_basic.inner_layout(1),
+            inner_layout = ("VBox", 9),
+            parent_layout = self.master_layout,
             group = True,
-            title = "STATS",
-            icon = ("character.png",cons.WSIZE/2,cons.ICON_COLOR),
             spacing = 3,
             class_group = self.section_group
-
-        )
-
-        self.combat_layout = Section(
-            outer_layout = QHBoxLayout(),
-            inner_layout = ("HBox", 1),
-            parent_layout = self.master_layout,
-            spacing=10, 
-            class_group = self.section_group,
-            height=100
         )
 
         self.hp_layout = Section(
             outer_layout = QVBoxLayout(),
             inner_layout = ("HBox", 2),
-            parent_layout = self.combat_layout.inner_layout(1),
+            parent_layout = self.character_basic.inner_layout(1),
             group = True,
             title = "HP",
             icon = ("hp.png",cons.WSIZE/2,cons.ICON_COLOR), 
@@ -88,94 +77,28 @@ class CharacterSheetGUI(QWidget):
             class_group=self.section_group
         )
 
-
-
-        self.morale_layout = Section(
-            outer_layout = QVBoxLayout(),
-            inner_layout = ("HBox", 2),
-            parent_layout = self.combat_layout.inner_layout(1),
-            group = True,
-            title = "MORALE",
-            icon = ("feats.png",cons.WSIZE/2,cons.ICON_COLOR),
-            spacing = 3,
-            class_group=self.section_group
-        )
-
         self.defense_layout = Section(
             outer_layout = QVBoxLayout(),
             inner_layout = ("VBox", 1),
-            parent_layout = self.combat_layout.inner_layout(1),
+            parent_layout = self.character_basic.inner_layout(1),
             group = True,
             title = "AC",
             icon = ("armorclass.png",cons.WSIZE/2,cons.ICON_COLOR),
             class_group=self.section_group	 
         )
 
-        self.initiative_layout = Section(
-            outer_layout = QVBoxLayout(),
-            inner_layout = ("VBox", 1),
-            parent_layout = self.combat_layout.inner_layout(1),
-            group = True,
-            title = "Mobility",
-            icon = ("initiative.png",cons.WSIZE/2,cons.ICON_COLOR),
-            spacing = 3,
-            class_group=self.section_group
-        )
-
         self.inventory_layout = Section(
             outer_layout = QVBoxLayout(),
             inner_layout = ("VBox", 1),
             parent_layout = self.master_layout,
-            title = "INVENTORY",
+            title = "ABILITIES & POWERS",
             group = True,
-            icon = ("backpack.png",cons.WSIZE/2,cons.ICON_COLOR),
             scroll=(True,"top"),
             spacing=5,
             class_group=self.section_group
         )
 
-        self.character_lower_basic = Section(
-            outer_layout = QVBoxLayout(),
-            inner_layout = ("HBox", 1),
-            parent_layout = self.master_layout,
-            spacing=10,
-            class_group = self.section_group,
-            height=70
-        )
-
-        self.feats_layout = Section(
-            outer_layout = QVBoxLayout(),
-            inner_layout = ("HBox", 1),
-            parent_layout = self.character_lower_basic.inner_layout(1),
-            title = "FEATS",
-            spacing = 3,
-            group = True,
-            icon = ("feats.png",cons.WSIZE/2,cons.ICON_COLOR),
-            class_group=self.section_group
-        )
-
-        self.focus_layout = Section(
-            outer_layout = QVBoxLayout(),
-            inner_layout = ("HBox", 1),
-            parent_layout = self.character_lower_basic.inner_layout(1),
-            title = "FOCUS",
-            spacing = 3,
-            group = True,
-            icon = ("focus.png",cons.WSIZE/2,cons.ICON_COLOR),
-            class_group=self.section_group
-
-        )
-
-        self.spell_slot_layout = Section(
-            outer_layout = QVBoxLayout(),
-            inner_layout = ("HBox", 1),
-            parent_layout = self.character_lower_basic.inner_layout(1),
-            group = True,
-            spacing = 3,
-            title = "SPELL SLOTS",
-            icon = ("spell.png",cons.WSIZE/2,cons.ICON_COLOR),
-            class_group=self.section_group
-        )
+        self.inventory_layout.get_title()[1].setAlignment(Qt.AlignCenter)
 
         #Below is all the widgets used in the character sheet
 
@@ -210,47 +133,8 @@ class CharacterSheetGUI(QWidget):
             class_group=self.widget_group
         )
 
-        for number in range(1,4):
-            self.feats = Widget(
-                widget_type=QToolButton(),
-                stylesheet=style.BUTTONS,
-                parent_layout = self.feats_layout.inner_layout(1),
-                size_policy = (QSizePolicy.Expanding , QSizePolicy.Expanding),
-                signal=self.open_features,
-                #height=cons.WSIZE*1.25,
-                width=cons.WSIZE*1.25,
-                objectname=f"feat{number}",
-                enabled=False,
-                class_group=self.widget_group
-            )
-
-        for number in range(1,11):
-            self.focus_dice = Widget(
-                widget_type=QToolButton(),
-                stylesheet=style.BUTTONS,
-                checkable=True,
-                parent_layout = self.focus_layout.inner_layout(1),
-                size_policy = (QSizePolicy.Expanding , QSizePolicy.Expanding),
-                #height=cons.WSIZE/1.25,
-                signal=lambda: CharacterSheet(self).update_sheet(),
-                objectname=f"focusdice{number}",
-                enabled=False,
-                class_group=self.widget_group
-            )
-
-        for number,stat in enumerate(["STR", "DEX", "INT", "CON", "WIS", "CHA"]):
+        for number,stat in enumerate(["ACCURATE", "CUNNING", "DISCREET", "PERSUASIVE", "QUICK", "RESOLUTE", "STRONG", "VIGILANT"]):
             number = number + 2
-            self.stat_label = Widget(
-                widget_type=QPushButton(),
-                stylesheet=style.QSTATS,
-                text=stat,
-                parent_layout = self.stat_layout.inner_layout(number),
-                size_policy = (QSizePolicy.Expanding , QSizePolicy.Expanding),
-                height=cons.WSIZE,
-                objectname="label",
-                signal = functools.partial(roll.check_prepare_roll, self, stat),
-                class_group=self.widget_group
-            )
             self.stat_button = Widget(
                 widget_type=QPushButton(),
                 stylesheet=style.BIG_BUTTONS,
@@ -263,30 +147,20 @@ class CharacterSheetGUI(QWidget):
                     adjust="add"
                 ),
                 objectname=stat,
-                size_policy = (QSizePolicy.Expanding , QSizePolicy.Expanding),
+                class_group=self.widget_group,
+                height=cons.WSIZE*1.5,
+            )
+            self.stat_label = Widget(
+                widget_type=QPushButton(),
+                stylesheet=style.QSTATS,
+                text=stat,
+                parent_layout = self.stat_layout.inner_layout(number),
+                height=cons.WSIZE,
+                objectname="label",
+                signal = functools.partial(roll.check_prepare_roll, self, stat),
                 class_group=self.widget_group
             )
 
-        #INITIATIVE AND AC AND HP FEATS
-        self.initiative_stat_label = Widget(
-            widget_type=QPushButton(),
-            parent_layout = self.initiative_layout.inner_layout(1),
-            signal=lambda: CharacterSheet(self).update_sheet(),
-            objectname="initiative",
-            size_policy = (QSizePolicy.Expanding , QSizePolicy.Expanding),
-            stylesheet=style.BUTTONS,
-            class_group=self.widget_group
-        )
-
-        self.speed_stat_label = Widget(
-            widget_type=QPushButton(),
-            parent_layout = self.initiative_layout.inner_layout(1),
-            signal=lambda: CharacterSheet(self).update_sheet(),
-            objectname="movement",
-            size_policy = (QSizePolicy.Expanding , QSizePolicy.Expanding),
-            stylesheet=style.BUTTONS,
-            class_group=self.widget_group
-        )
 
         self.character_ac = Widget(
             widget_type=QPushButton(),
@@ -298,41 +172,22 @@ class CharacterSheetGUI(QWidget):
             class_group=self.widget_group
         )
 
-        self.character_max_morale = Widget(
-            widget_type=QPushButton(),
-            stylesheet=style.BIG_BUTTONS,
-            parent_layout=self.morale_layout.inner_layout(1),
-            objectname = "max_morale",
-            size_policy = (QSizePolicy.Expanding , QSizePolicy.Expanding),
-            class_group=self.widget_group
-        )
-
-        self.character_current_morale = Widget(
-            widget_type=QPushButton(),
-            stylesheet=style.BIG_BUTTONS,
-            parent_layout=self.morale_layout.inner_layout(1),
-            signal=lambda: character_morale.adjust_morale(self, adjust="add"),
-            objectname = "current_morale",
-            size_policy = (QSizePolicy.Expanding , QSizePolicy.Expanding),
-            class_group=self.widget_group
-        )
-
-        self.character_hp_max = Widget(
+        self.toughness_max = Widget(
             widget_type=QPushButton(),
             stylesheet=style.BIG_BUTTONS,
             parent_layout=self.hp_layout.inner_layout(1),
-            objectname = "max_hp",
+            objectname = "toughness_max",
             size_policy = (QSizePolicy.Expanding , QSizePolicy.Expanding),
             #height=cons.WSIZE*1.5,
             class_group=self.widget_group
         )
 
-        self.character_hp_current= Widget(
+        self.toughness_current= Widget(
             widget_type=QPushButton(),
             stylesheet=style.BIG_BUTTONS,
             parent_layout=self.hp_layout.inner_layout(1),
             signal=self.open_addsub,
-            objectname = "current_hp",
+            objectname = "toughness_current",
             size_policy = (QSizePolicy.Expanding , QSizePolicy.Expanding),
             #height=cons.WSIZE*1.5,
             class_group=self.widget_group
@@ -473,35 +328,8 @@ class CharacterSheetGUI(QWidget):
                 class_group=self.widget_group
             )
 
-        for count in range(1,11):
-            self.spell_slot_icon = Widget(
-                widget_type=QToolButton(),
-                stylesheet=style.BUTTONS,
-                parent_layout=self.spell_slot_layout.inner_layout(1),
-                size_policy = (QSizePolicy.Expanding , QSizePolicy.Expanding),
-                #height=cons.WSIZE/1.25,
-                checkable=True,
-                checked=False,	
-                signal=lambda: CharacterSheet(self).update_sheet(),
-                objectname=f"spellslot{count}",
-                enabled=False,	
-                class_group=self.widget_group
-            )
-
         hp_title = self.hp_layout.get_title()[0]
         hp_title.clicked.connect(lambda: character_reset.reset_hp(self))
-
-        morale_title = self.morale_layout.get_title()[0]
-        morale_title.clicked.connect(lambda: character_reset.reset_morale(self))
-
-        morale_title = self.morale_layout.get_title()[0]
-        morale_title.clicked.connect(lambda: character_reset.reset_morale(self))
-
-        spell_title = self.spell_slot_layout.get_title()[0]
-        spell_title.clicked.connect(lambda: character_reset.reset_spell_slots(self))
-
-        focus_title = self.focus_layout.get_title()[0]
-        focus_title.clicked.connect(lambda: character_reset.reset_focus(self))
 
         for widget in self.widget_group:
             widget.connect_to_parent()

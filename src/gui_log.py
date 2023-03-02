@@ -2,8 +2,8 @@ from PySide2.QtWidgets import *
 from PySide2.QtGui import *
 from PySide2.QtCore import *
 
-from pyside import Section
-from pyside import Widget
+from template.section import Section
+from template.widget import Widget
 
 import constants as cons
 import functions as func

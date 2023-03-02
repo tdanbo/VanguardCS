@@ -37,8 +37,8 @@ class CharacterSheet():
         self.current_morale = csheet.findChild(QPushButton, "current_morale")
 
         #hp
-        self.max_hp = csheet.findChild(QPushButton, "max_hp")
-        self.current_hp = csheet.findChild(QPushButton, "current_hp")
+        self.toughness_max = csheet.findChild(QPushButton, "toughness_max")
+        self.toughness_current = csheet.findChild(QPushButton, "toughness_current")
         self.hp_adjuster = csheet.findChild(QLineEdit, "hp_adjuster")
 
         #feats
@@ -47,13 +47,15 @@ class CharacterSheet():
         self.feat3 = csheet.findChild(QToolButton, "feat3")
 
         #stats
-        self.STR = csheet.findChild(QPushButton, "STR")
-        self.DEX = csheet.findChild(QPushButton, "DEX")
-        self.CON = csheet.findChild(QPushButton, "CON")
-        self.INT = csheet.findChild(QPushButton, "INT")
-        self.WIS = csheet.findChild(QPushButton, "WIS")
-        self.CHA = csheet.findChild(QPushButton, "CHA")
-        
+        self.ACC = csheet.findChild(QPushButton, "ACCURATE")
+        self.CUN = csheet.findChild(QPushButton, "CUNNING")
+        self.DIS = csheet.findChild(QPushButton, "DISCREET")
+        self.PER = csheet.findChild(QPushButton, "PERSUASIVE")
+        self.QUI = csheet.findChild(QPushButton, "QUICK")
+        self.RES = csheet.findChild(QPushButton, "RESOLUTE")
+        self.STR = csheet.findChild(QPushButton, "STRONG")
+        self.VIG = csheet.findChild(QPushButton, "VIGILANT")
+
         #all inventory slots
         self.inventory1 = csheet.findChild(QLineEdit, "inventory1")
         self.inventory2 = csheet.findChild(QLineEdit, "inventory2")
@@ -118,8 +120,8 @@ class CharacterSheet():
             "ac": self.ac.text(),
             "init": str(10+int(self.CHA.text())),
             "speed": self.speed.text(),
-            "max hp": self.max_hp.text(),
-            "current hp": self.current_hp.text(),
+            "max hp": self.toughness_max.text(),
+            "current hp": self.toughness_current.text(),
             "current morale": self.current_morale.text(),
             "stats": {
                 "STR": int(self.STR.text()),
@@ -147,35 +149,6 @@ class CharacterSheet():
                 "inventory15": self.inventory15.text(),
                 "inventory16": self.inventory16.text(),
             },            
-            "spell slots": { 
-                "spell1": self.spellslot1.isChecked(),
-                "spell2": self.spellslot2.isChecked(),
-                "spell3": self.spellslot3.isChecked(),
-                "spell4": self.spellslot4.isChecked(),
-                "spell5": self.spellslot5.isChecked(),
-                "spell6": self.spellslot6.isChecked(),
-                "spell7": self.spellslot7.isChecked(),
-                "spell8": self.spellslot8.isChecked(),
-                "spell9": self.spellslot9.isChecked(),
-                "spell10": self.spellslot10.isChecked(),
-            },
-            "focus": {
-                "focus1": self.focusdice1.isChecked(),
-                "focus2": self.focusdice2.isChecked(),
-                "focus3": self.focusdice3.isChecked(),
-                "focus4": self.focusdice4.isChecked(),
-                "focus5": self.focusdice5.isChecked(),
-                "focus6": self.focusdice6.isChecked(),
-                "focus7": self.focusdice7.isChecked(),
-                "focus8": self.focusdice8.isChecked(),
-                "focus9": self.focusdice9.isChecked(),
-                "focus10": self.focusdice10.isChecked(),
-            },
-            "feats": {
-                "feat1": self.feat1.property("feat"),
-                "feat2": self.feat2.property("feat"),
-                "feat3": self.feat3.property("feat"),
-            }
         }        
         return character_sheet_dictionary
     
@@ -269,7 +242,6 @@ class CharacterSheet():
             slot += 1
 
         self.set_ac()
-        self.set_morale()
         self.set_hp()
         self.set_feats()
 
@@ -405,11 +377,6 @@ class CharacterSheet():
         PORTRAIT = f"QLabel {{background-image: url(.icons/{character_name}.png); background-position: center; background-repeat: no-repeat; background-color: {style.DARK_COLOR}; border: 1px solid {style.BORDER_COLOR_LIGHT}; border-radius: {style.RADIUS}}}"	
         self.character_icon.setStyleSheet(PORTRAIT)
 
-    def set_morale(self):
-        self.max_morale.setText(f"{cons.BASE_MORALE+int(self.CHA.text())}")
-        if self.level == 0:
-            self.current_morale.setText(f"{cons.BASE_MORALE+int(self.CHA.text())}")
-
     def set_ac(self):
         ac = int(self.ac.text())
         ac += len(self.armor_items)
@@ -419,39 +386,39 @@ class CharacterSheet():
         level = math.floor(float(self.level.text()))
         if level == 0:
             hp_formula = cons.HIT_DICE
-            self.current_hp.setText(str(hp_formula))
+            self.toughness_current.setText(str(hp_formula))
         else:
             hp_formula = (cons.HIT_DICE*level) + int(self.CON.text())
-        self.max_hp.setText(str(hp_formula))
+        self.toughness_max.setText(str(hp_formula))
         
 
     def adjust_hp(self, state, value):
-        current_hp = int(self.current_hp.text())
+        toughness_current = int(self.toughness_current.text())
         self.max_slots = int(self.CON.text())+cons.START_SLOTS
 
-        self.current_hp.setStyleSheet(style.BUTTONS)
+        self.toughness_current.setStyleSheet(style.BUTTONS)
         for point in range(1,int(value)+1):
             if state == "minus":
-                current_hp -= 1
-                if current_hp < 0:
+                toughness_current -= 1
+                if toughness_current < 0:
                     self.add_injury()
             else:  
-                if current_hp < 0:
+                if toughness_current < 0:
                     self.remove_injury()
-                current_hp += 1
+                toughness_current += 1
 
 
-        if current_hp > int(self.max_hp.text()):
-            self.current_hp.setText(self.max_hp.text())
-        elif current_hp < -abs(self.max_slots):
-            self.current_hp.setText(str(-abs(self.max_slots)))
+        if toughness_current > int(self.toughness_max.text()):
+            self.toughness_current.setText(self.toughness_max.text())
+        elif toughness_current < -abs(self.max_slots):
+            self.toughness_current.setText(str(-abs(self.max_slots)))
         else:
-            self.current_hp.setText(str(current_hp))   
+            self.toughness_current.setText(str(toughness_current))   
 
-        if current_hp >= 0:
-            self.current_hp.setStyleSheet(style.BIG_BUTTONS)
+        if toughness_current >= 0:
+            self.toughness_current.setStyleSheet(style.BIG_BUTTONS)
         else:
-            self.current_hp.setStyleSheet(style.BUTTONS_INJURY)
+            self.toughness_current.setStyleSheet(style.BUTTONS_INJURY)
 
         self.update_sheet()
 
@@ -505,22 +472,10 @@ class CharacterSheet():
                     widget.setEnabled(False)
 
     def intelligence(self):
-        for count in range(1,11):
-            for w in [(QToolButton,"focusdice")]:
-                widget =  self.csheet.findChild(w[0], w[1]+str(count))
-                if count <= int(self.INT.text()):
-                    widget.setEnabled(True)
-                else:
-                    widget.setEnabled(False)
+        pass
 
     def wisdom(self):
-        for count in range(1,11):
-            for w in [(QToolButton,"spellslot")]:
-                widget =  self.csheet.findChild(w[0], w[1]+str(count))
-                if count <= int(self.WIS.text()):
-                    widget.setEnabled(True)
-                else:
-                    widget.setEnabled(False)
+        pass
 
     def set_feats(self):
         current_level = math.floor(float(self.level.text()))
@@ -543,8 +498,7 @@ class CharacterSheet():
 
 
     def charisma(self):
-        self.initiative.setText(f"{int(self.CHA.text())+10} init.")
-        self.speed.setText(f"{20+(int(self.CHA.text())*5)} ft.")
+        pass
 
     def load_character(self):
         print(f"Loading {self.character.currentText()}")
@@ -559,15 +513,16 @@ class CharacterSheet():
         if document != None:
             print(document)
             self.level.setText(str(document["level"]))
-            self.current_hp.setText(str(document["current hp"]))
-            self.current_morale.setText(str(document["current morale"]))
+            self.toughness_current.setText(str(document["current hp"]))
 
-            self.STR.setText(str(document["stats"]["STR"]))
-            self.DEX.setText(str(document["stats"]["DEX"]))
-            self.CON.setText(str(document["stats"]["CON"]))
-            self.INT.setText(str(document["stats"]["INT"]))
-            self.WIS.setText(str(document["stats"]["WIS"]))
-            self.CHA.setText(str(document["stats"]["CHA"]))
+            self.ACC.setText(str(document["stats"]["accurate"]))
+            self.CUN.setText(str(document["stats"]["cunning"]))
+            self.DIS.setText(str(document["stats"]["discreet"]))
+            self.PER.setText(str(document["stats"]["persuasive"]))
+            self.QUI.setText(str(document["stats"]["quick"]))
+            self.RES.setText(str(document["stats"]["resolute"]))
+            self.STR.setText(str(document["stats"]["strong"]))
+            self.VIG.setText(str(document["stats"]["vigilant"]))
 
             self.inventory1.setText(str(document["inventory"]["inventory1"]))
             self.inventory2.setText(str(document["inventory"]["inventory2"]))
@@ -586,41 +541,10 @@ class CharacterSheet():
             self.inventory15.setText(str(document["inventory"]["inventory15"]))
             self.inventory16.setText(str(document["inventory"]["inventory16"]))
 
-            self.spellslot1.setChecked(document["spell slots"]["spell1"])
-            self.spellslot2.setChecked(document["spell slots"]["spell2"])
-            self.spellslot3.setChecked(document["spell slots"]["spell3"])
-            self.spellslot4.setChecked(document["spell slots"]["spell4"])
-            self.spellslot5.setChecked(document["spell slots"]["spell5"])
-            self.spellslot6.setChecked(document["spell slots"]["spell6"])
-            self.spellslot7.setChecked(document["spell slots"]["spell7"])
-            self.spellslot8.setChecked(document["spell slots"]["spell8"])
-            self.spellslot9.setChecked(document["spell slots"]["spell9"])
-            self.spellslot10.setChecked(document["spell slots"]["spell10"])
-
-            self.focusdice1.setChecked(document["focus"]["focus1"])
-            self.focusdice2.setChecked(document["focus"]["focus2"])
-            self.focusdice3.setChecked(document["focus"]["focus3"])
-            self.focusdice4.setChecked(document["focus"]["focus4"])
-            self.focusdice5.setChecked(document["focus"]["focus5"])
-            self.focusdice6.setChecked(document["focus"]["focus6"])
-            self.focusdice7.setChecked(document["focus"]["focus7"])
-            self.focusdice8.setChecked(document["focus"]["focus8"])
-            self.focusdice9.setChecked(document["focus"]["focus9"])
-            self.focusdice10.setChecked(document["focus"]["focus10"])
-
-            self.update_feat(document["feats"]["feat1"], self.feat1)
-            self.update_feat(document["feats"]["feat2"], self.feat2)
-            self.update_feat(document["feats"]["feat3"], self.feat3)
-
             if int(document["current hp"]) >= 0:
-                self.current_hp.setStyleSheet(style.BIG_BUTTONS)
+                self.toughness_current.setStyleSheet(style.BIG_BUTTONS)
             else:
-                self.current_hp.setStyleSheet(style.BUTTONS_INJURY)
-
-            if int(document["current morale"]) >= 0:
-                self.current_morale.setStyleSheet(style.BIG_BUTTONS)
-            else:
-                self.current_morale.setStyleSheet(style.BUTTONS_INJURY)
+                self.toughness_current.setStyleSheet(style.BUTTONS_INJURY)
 
             self.update_sheet()
 

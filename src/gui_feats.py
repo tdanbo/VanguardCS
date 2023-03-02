@@ -9,7 +9,9 @@ import json
 import functions as func
 import os
 
-from pyside import Section, Widget
+from template.section import Section
+from template.widget import Widget
+
 from character_sheet import CharacterSheet
 
 class FeatsGUI(QWidget):
