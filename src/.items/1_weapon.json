@@ -1,0 +1,277 @@
+{
+	"Sling": {
+		"Hit": "Hit",
+		"Hit Mod": [
+			"STR",
+			"WIS"
+		],
+		"Roll": "Damage",
+		"Roll Mod": [
+			"1",
+			"d4",
+			"STR"
+		],
+		"Reach": true,
+		"Slots": 1,
+		"Hands": 1,
+		"Range": "60/240",
+		"Cost": 5
+	},
+	"Knuckles": {
+		"Hit": "Hit",
+		"Hit Mod": [
+			"STR",
+			"WIS"
+		],
+		"Roll": "Damage",
+		"Roll Mod": [
+			"1",
+			"d4",
+			"STR"
+		],
+		"Reach": false,
+		"Slots": 1,
+		"Hands": 1,
+		"Cost": 5
+	},
+	"Cudgel": {
+		"Hit": "Hit",
+		"Hit Mod": [
+			"STR",
+			"WIS"
+		],
+		"Roll": "Damage",
+		"Roll Mod": [
+			"1",
+			"d4",
+			"STR"
+		],
+		"Reach": false,
+		"Slots": 1,
+		"Hands": 1,
+		"Cost": 5
+	},
+	"Staff": {
+		"Hit": "Hit",
+		"Hit Mod": [
+			"STR",
+			"WIS"
+		],
+		"Roll": "Damage",
+		"Roll Mod": [
+			"1",
+			"d4",
+			"STR"
+		],
+		"Reach": true,
+		"Slots": 2,
+		"Hands": 2,
+		"Cost": 5
+	},
+	"Bow": {
+		"Hit": "Hit",
+		"Hit Mod": [
+			"STR",
+			"WIS"
+		],
+		"Roll": "Damage",
+		"Roll Mod": [
+			"1",
+			"d6",
+			"STR"
+		],
+		"Reach": true,
+		"Slots": 2,
+		"Hands": 2,
+		"Range": "150/600",
+		"Cost": 50
+	},
+	"Dagger": {
+		"Hit": "Hit",
+		"Hit Mod": [
+			"STR",
+			"WIS"
+		],
+		"Roll": "Damage",
+		"Roll Mod": [
+			"1",
+			"d6",
+			"STR"
+		],
+		"Reach": false,
+		"Slots": 1,
+		"Hands": 1,
+		"Cost": 50
+	},
+	"Flail": {
+		"Hit": "Hit",
+		"Hit Mod": [
+			"STR",
+			"WIS"
+		],
+		"Roll": "Damage",
+		"Roll Mod": [
+			"1",
+			"d6",
+			"STR"
+		],
+		"Reach": false,
+		"Slots": 1,
+		"Hands": 1,
+		"Cost": 50
+	},
+	"Hand Axe": {
+		"Hit": "Hit",
+		"Hit Mod": [
+			"STR",
+			"WIS"
+		],
+		"Roll": "Damage",
+		"Roll Mod": [
+			"1",
+			"d6",
+			"STR"
+		],
+		"Reach": false,
+		"Slots": 1,
+		"Hands": 1,
+		"Cost": 50
+	},
+	"Mace": {
+		"Hit": "Hit",
+		"Hit Mod": [
+			"STR",
+			"WIS"
+		],
+		"Roll": "Damage",
+		"Roll Mod": [
+			"1",
+			"d6",
+			"STR"
+		],
+		"Reach": false,
+		"Slots": 1,
+		"Hands": 1,
+		"Cost": 50
+	},
+	"Short Sword": {
+		"Hit": "Hit",
+		"Hit Mod": [
+			"STR",
+			"WIS"
+		],
+		"Roll": "Damage",
+		"Roll Mod": [
+			"1",
+			"d6",
+			"STR"
+		],
+		"Reach": false,
+		"Slots": 1,
+		"Hands": 1,
+		"Cost": 50
+	},
+	"Spear": {
+		"Hit": "Hit",
+		"Hit Mod": [
+			"STR",
+			"WIS"
+		],
+		"Roll": "Damage",
+		"Roll Mod": [
+			"1",
+			"d6",
+			"STR"
+		],
+		"Reach": true,
+		"Slots": 2,
+		"Hands": 2,
+		"Cost": 50
+	},
+	"Crossbow": {
+		"Hit": "Hit",
+		"Hit Mod": [
+			"STR",
+			"WIS"
+		],
+		"Roll": "Damage",
+		"Roll Mod": [
+			"1",
+			"d8",
+			"STR"
+		],
+		"Reach": true,
+		"Slots": 2,
+		"Hands": 2,
+		"Range": "300/1200",
+		"Cost": 500
+	},
+	"Battle Axe": {
+		"Hit": "Hit",
+		"Hit Mod": [
+			"STR",
+			"WIS"
+		],
+		"Roll": "Damage",
+		"Roll Mod": [
+			"1",
+			"d8",
+			"STR"
+		],
+		"Reach": false,
+		"Slots": 2,
+		"Hands": 2,
+		"Cost": 100
+	},
+	"Warhammer": {
+		"Hit": "Hit",
+		"Hit Mod": [
+			"STR",
+			"WIS"
+		],
+		"Roll": "Damage",
+		"Roll Mod": [
+			"1",
+			"d8",
+			"STR"
+		],
+		"Reach": false,
+		"Slots": 2,
+		"Hands": 2,
+		"Cost": 100
+	},
+	"Longsword": {
+		"Hit": "Hit",
+		"Hit Mod": [
+			"STR",
+			"WIS"
+		],
+		"Roll": "Damage",
+		"Roll Mod": [
+			"1",
+			"d8",
+			"STR"
+		],
+		"Reach": false,
+		"Slots": 2,
+		"Hands": 2,
+		"Cost": 100
+	},
+	"Halberd": {
+		"Hit": "Hit",
+		"Hit Mod": [
+			"STR",
+			"WIS"
+		],
+		"Roll": "Damage",
+		"Roll Mod": [
+			"1",
+			"d8",
+			"STR"
+		],
+		"Reach": false,
+		"Slots": 3,
+		"Hands": 2,
+		"Cost": 100
+	}
+}

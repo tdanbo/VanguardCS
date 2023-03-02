@@ -1,0 +1,100 @@
+{
+	"Shield": {
+		"Hit": "",
+		"Hit Mod": [
+			""
+		],
+		"Roll": "",
+		"Roll Mod": [
+			"",
+			"",
+			""
+		],
+		"Slots": 1,
+		"Cost": 100
+	},
+	"Helmet": {
+		"Hit": "",
+		"Hit Mod": [
+			""
+		],
+		"Roll": "",
+		"Roll Mod": [
+			"",
+			"",
+			""
+		],
+		"Slots": 1,
+		"Cost": 100
+	},
+	"Gambeson": {
+		"Hit": "",
+		"Hit Mod": [
+			""
+		],
+		"Roll": "",
+		"Roll Mod": [
+			"",
+			"",
+			""
+		],
+		"Slots": 1,
+		"Cost": 300
+	},
+	"Chain Shirt": {
+		"Hit": "",
+		"Hit Mod": [
+			"AC"
+		],
+		"Roll": "",
+		"Roll Mod": [
+			"",
+			"",
+			""
+		],
+		"Slots": 1,
+		"Cost": 900
+	},
+	"Breastplate": {
+		"Hit": "",
+		"Hit Mod": [
+			""
+		],
+		"Roll": "",
+		"Roll Mod": [
+			"",
+			"",
+			""
+		],
+		"Slots": 2,
+		"Cost": 1800
+	},
+	"Arm Plate": {
+		"Hit": "",
+		"Hit Mod": [
+			""
+		],
+		"Roll": "",
+		"Roll Mod": [
+			"",
+			"",
+			""
+		],
+		"Slots": 1,
+		"Cost": 900
+	},
+	"Leg Plate": {
+		"Hit": "",
+		"Hit Mod": [
+			""
+		],
+		"Roll": "",
+		"Roll Mod": [
+			"",
+			"",
+			""
+		],
+		"Slots": 1,
+		"Cost": 900
+	}
+}
