@@ -17,28 +17,22 @@ import json
 import copy
 
 class CharacterSheet():
-    def __init__(self, csheet):
+    def __init__(self, csheet, invsheet):
         print("---------------------------") 
         print("Character Sheet Created")
 
         self.csheet = csheet
         self.stat_button = None
 
-        self.character_icon = csheet.findChild(QLabel, "portrait")
-        self.character = csheet.findChild(QComboBox, "name")
-        self.level = csheet.findChild(QPushButton, "level")
+        print(invsheet)
 
-        self.ac = csheet.findChild(QPushButton, "ac")
-        self.initiative = csheet.findChild(QPushButton, "initiative")
-        self.speed = csheet.findChild(QPushButton, "movement")
-
-        #morale
-        self.max_morale = csheet.findChild(QPushButton, "max_morale")
-        self.current_morale = csheet.findChild(QPushButton, "current_morale")
+        self.character_icon = invsheet.findChild(QLabel, "portrait")
+        self.character = invsheet.character_name.get_widget()
+        self.level = invsheet.findChild(QPushButton, "level")
 
         #hp
-        self.toughness_max = csheet.findChild(QPushButton, "toughness_max")
-        self.toughness_current = csheet.findChild(QPushButton, "toughness_current")
+        self.toughness_max = csheet.toughness_max.get_widget()
+        self.toughness_current = csheet.toughness_current.get_widget()
         self.hp_adjuster = csheet.findChild(QLineEdit, "hp_adjuster")
 
         #feats
@@ -171,7 +165,6 @@ class CharacterSheet():
     def update_sheet(self):
         self.set_icon()
 
-        self.check_stats()
         #INVENTORY RULES
         self.strenght()
         self.dexterity()
@@ -187,38 +180,19 @@ class CharacterSheet():
         self.update_database(updated_character_sheet)
 
     # ITERATE OVER ITEM JSON TO FIND ITEM
-    def check_stats(self):
-        #Sum the total stats the character have.
-        current_level = self.level.text()
-        available_stats = int(current_level) * cons.STATS_PER_LEVEL
-        total_stats = int(self.STR.text()) + int(self.DEX.text()) + int(self.CON.text()) + int(self.INT.text()) + int(self.WIS.text()) + int(self.CHA.text())
-
-        stats = available_stats - total_stats
-
-        label = self.csheet.stat_layout.get_title()[1]    
-
-        if stats == 0:
-            stat_message = ""
-            label.setText(stat_message)
-        elif stats < 0:
-            stat_message = f"Remove {stats} stat points."
-            label.setText(stat_message)
-        elif stats > 0:
-            stat_message = f"{stats} remaining stat points."
-            label.setText(stat_message)
 
     def update_inventory(self):
         all_items = []
 
         self.empty_slot_dict = {"Hit":"","Evoke":"","Evoke Mod":["","",""],"Hit Mod":["","",""],"Roll":"","Roll Mod":["","",""]}
-        for slot in range(1,cons.MAX_SLOTS+1):
+        for slot in range(1,5):
             self.inventory_slot = self.csheet.findChild(QLineEdit, f"inventory{slot}")
             if self.inventory_slot.text() != "":
                 all_items.append(self.inventory_slot.text())
             else:
                 pass
 
-        for slot in range(1,cons.MAX_SLOTS+1):
+        for slot in range(1,5):
             self.update_item(slot, "", "", self.empty_slot_dict)
 
         misc_items = copy.deepcopy(all_items)
@@ -269,21 +243,21 @@ class CharacterSheet():
         self.inventory_roll.setText("")
         self.inventory_roll_label.setText("")   
 
-        if "Evoke" in inventory_item:
-            if inventory_item["Evoke"] != "":
-                self.inventory_evoke.setText(self.get_action_modifier(inventory_item["Evoke"],inventory_item["Evoke Mod"]))
-                self.inventory_evoke_label.setText(inventory_item["Evoke"])
+        # if "Evoke" in inventory_item:
+        #     if inventory_item["Evoke"] != "":
+        #         self.inventory_evoke.setText(self.get_action_modifier(inventory_item["Evoke"],inventory_item["Evoke Mod"]))
+        #         self.inventory_evoke_label.setText(inventory_item["Evoke"])
 
 
-        if "Hit" in inventory_item:
-            if inventory_item["Hit"] != "":
-                self.inventory_hit.setText(self.get_action_modifier(inventory_item["Hit"],inventory_item["Hit Mod"]))
-                self.inventory_hit_label.setText(inventory_item["Hit"])
+        # if "Hit" in inventory_item:
+        #     if inventory_item["Hit"] != "":
+        #         self.inventory_hit.setText(self.get_action_modifier(inventory_item["Hit"],inventory_item["Hit Mod"]))
+        #         self.inventory_hit_label.setText(inventory_item["Hit"])
 
-        if "Roll" in inventory_item:
-            if inventory_item["Roll"] != "":
-                self.inventory_roll.setText(self.get_roll(inventory_item["Roll Mod"],inventory_type))
-                self.inventory_roll_label.setText(inventory_item["Roll"])
+        # if "Roll" in inventory_item:
+        #     if inventory_item["Roll"] != "":
+        #         self.inventory_roll.setText(self.get_roll(inventory_item["Roll Mod"],inventory_type))
+        #         self.inventory_roll_label.setText(inventory_item["Roll"])
                 
         self.inventory_slot.setText(item)
 
@@ -313,64 +287,6 @@ class CharacterSheet():
             [widget.setStyleSheet(style.INVENTORY) for widget in inventory_labels]
 
         self.inventory_slot.clearFocus()        
-
-
-    def get_roll(self, roll, type):
-        #stats dictionary
-        self.stats_dict = {"":"","AC":1,"STR": int(self.STR.text()), "DEX": int(self.DEX.text()), "CON": int(self.CON.text()), "INT": int(self.INT.text()), "WIS": int(self.WIS.text()), "CHA": int(self.CHA.text())}
-        if roll != ["","",""]:
-            make_roll = []
-            if roll[0] in self.stats_dict:
-                make_roll.append(str(self.stats_dict[roll[0]]))
-            else:
-                make_roll.append(str(roll[0]))
-            
-            make_roll.append(str(roll[1]))
-
-            if roll[2] != "":
-                if roll[2] in self.stats_dict:
-                    if type == "weapon":
-                        roll_mod = math.floor(self.stats_dict[roll[2]]) #full damage
-                        #roll_mod = math.floor(self.stats_dict[roll[2]]/2)
-                    else:
-                        roll_mod = math.floor(self.stats_dict[roll[2]])
-                else:
-                    roll_mod = roll[2]
-                
-                if int(roll_mod) > 0:
-                    make_roll.append(f"+{roll_mod}")
-                else:
-                    pass
-
-            final_roll = "".join(make_roll)
-            return final_roll
-        else:
-            return ""
-
-
-    def get_action_modifier(self, hit_type, hit_mod):
-        #stats dictionary
-        self.stats_dict = {"":"","AC":1,"STR": int(self.STR.text()), "DEX": int(self.DEX.text()), "CON": int(self.CON.text()), "INT": int(self.INT.text()), "WIS": int(self.WIS.text()), "CHA": int(self.CHA.text())}
-        if hit_mod != []:
-            if hit_type == "Hit":
-                mod_list = []
-                for mod in hit_mod:
-                    mod_list.append(self.stats_dict[mod])
-                return f"+{sum(mod_list)}"
-            elif "Evoke" in hit_type:
-                mod_list = []
-                for mod in hit_mod:
-                    mod_list.append(self.stats_dict[mod])
-                return f"+{sum(mod_list)}"
-            elif "Save" in hit_type:
-                mod_list = []
-                for mod in hit_mod:
-                    mod_list.append(self.stats_dict[mod])
-                return(str(cons.BASE_SAVE+sum(mod_list)))
-            else:
-                return ""
-        else:
-            return ""
 
     def set_icon(self):
         character_name = self.character.currentText().lower()
@@ -452,24 +368,13 @@ class CharacterSheet():
 
 
     def strenght(self):
-        print("strenght")
-        print(int(self.STR.text()))
         pass 
+
     def dexterity(self):
-        #ac_calculation = str(cons.BASE_AC+math.floor(int(self.DEX)/2))
-        ac_calculation = str(cons.BASE_AC+math.floor(int(self.DEX.text())))
-        self.ac.setText(ac_calculation)
+        pass
 
     def constitution(self):
-        for count in range(1,cons.MAX_SLOTS+1):
-            for w in [(QToolButton,"icon"),(QPushButton,"evoke"),(QPushButton,"hit_dc"),(QPushButton,"roll"),(QLineEdit,"inventory"),(QLabel,"icon_label"),(QLabel,"inventory_label"),(QLabel,"evoke_label"),(QLabel,"hit_dc_label"),(QLabel,"roll_label")]:
-                widget =  self.csheet.findChild(w[0], w[1]+str(count))
-                if count <= int(self.CON.text())+cons.START_SLOTS:
-                    widget.setEnabled(True)
-                else:
-                    if w[1] != "icon_label":
-                        widget.setText("")
-                    widget.setEnabled(False)
+        pass
 
     def intelligence(self):
         pass

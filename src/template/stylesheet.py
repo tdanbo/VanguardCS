@@ -38,8 +38,9 @@ QGROUPBOX = (
 
 QTITLE = (
     f"QToolButton {{background-color: {GROUP_HEADER}}}"
-    f"QWidget {{color: {FONT_COLOR}; background-color: {GROUP_HEADER}; border-top-right-radius: {RADIUS}}}"
+    f"QWidget {{font-size: 10px; color: {FONT_COLOR}; background-color: {GROUP_HEADER}; border-top-right-radius: {RADIUS}}}"
     f"QCheckBox {{background-color: {GROUP_HEADER}; border: 0px; border-top-right-radius: {RADIUS}; padding-left: 10px;}}"
+    f"QWidget::disabled {{font-size: 10px; color: {DISABLED_COLOR}; background-color: {GROUP_HEADER}; border-top-right-radius: {RADIUS}}}"
 )
 
 MAIN_WINDOW = f"QWidget {{background-color: {GUI_BACKGROUND}; border-style: outset;}}"

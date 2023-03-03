@@ -37,17 +37,6 @@ class CombatLogGUI(QWidget):
             class_group = self.section_group	
         )
 
-        self.log_latest = Section(
-            outer_layout = QVBoxLayout(),
-            inner_layout = ("VBox", 1),
-            parent_layout = self.master_layout, 
-            title="LAST ROLL",  
-            group = True, 
-            icon = ("combatlog.png",cons.WSIZE/2,cons.ICON_COLOR),
-            class_group = self.section_group,
-            height=125
-        )
-
         self.log_dice = Section(
             outer_layout = QHBoxLayout(),
             inner_layout = ("HBox", 2),   
@@ -57,7 +46,6 @@ class CombatLogGUI(QWidget):
             icon = ("dice.png",cons.WSIZE/2,cons.ICON_COLOR),
             spacing = 3,	
             class_group = self.section_group,
-            height=70
         )
 
         self.roll_button = Widget(
@@ -67,7 +55,6 @@ class CombatLogGUI(QWidget):
             stylesheet=style.QTITLE,
             height=cons.WSIZE,
             objectname="roll",
-            size_policy = (QSizePolicy.Expanding , QSizePolicy.Expanding),
             signal= lambda: roll.custom_prepare_roll(self,self.get_charater(),"Custom"),
             class_group = self.widget_group
 
@@ -92,7 +79,6 @@ class CombatLogGUI(QWidget):
                 widget_type=QPushButton(),
                 parent_layout=self.dice_layout.inner_layout(0),
                 text="",
-                size_policy = (QSizePolicy.Expanding , QSizePolicy.Expanding),
                 stylesheet=style.DICE_TRAY2,
                 objectname=f"{die_type[0]}_count",
                 signal=functools.partial(
@@ -107,7 +93,6 @@ class CombatLogGUI(QWidget):
                 widget_type=QPushButton(),
                 parent_layout=self.dice_layout.inner_layout(0),
                 text=die_type[0],
-                size_policy = (QSizePolicy.Expanding , QSizePolicy.Expanding),
                 stylesheet=style.DICE_TRAY,
                 objectname=die_type[0],
                 signal=functools.partial(
@@ -137,10 +122,7 @@ class CombatLogGUI(QWidget):
         self.setLayout(self.master_layout)        
 
     def create_log_entry(self, slot):
-        if slot == 0:
-            layout = self.log_latest.inner_layout(0)
-        else:
-            layout = self.log_scroll.inner_layout(0)
+        layout = self.log_scroll.inner_layout(0)
 
         # MAIN LOG LAYOUT
         self.single_log_layout = Section (

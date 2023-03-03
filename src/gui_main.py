@@ -6,6 +6,7 @@ from template.section import Section
 from template.widget import Widget
 
 from gui_sheet import CharacterSheetGUI
+from gui_inventory import InventoryGUI
 from gui_log import CombatLogGUI
 
 import os
@@ -28,6 +29,7 @@ class MainWindow(QWidget):
         self.main_layout = QHBoxLayout()
 
         character_sheet_gui = CharacterSheetGUI()
+        character_inventory_gui = InventoryGUI()
 
         combat_log_gui = CombatLogGUI(character_sheet_gui)
         
@@ -41,15 +43,17 @@ class MainWindow(QWidget):
         # for section in Section.all_sections:
         #     section.connect_to_parent()
 
-        character_sheet_gui.setFixedWidth(500)
-
-        self.main_layout.addWidget(combat_log_gui)
+        self.main_layout.addWidget(character_inventory_gui)
         self.main_layout.addWidget(character_sheet_gui)
+        self.main_layout.addWidget(combat_log_gui)
+
+        combat_log_gui.setFixedWidth(300)
+        character_inventory_gui.setFixedWidth(300)
 
         self.setLayout(self.main_layout)
         self.setStyleSheet(style.BASE_STYLE)
 
-        CharacterSheet(character_sheet_gui).update_character_dropdown()
+        CharacterSheet(character_sheet_gui, character_inventory_gui).update_character_dropdown()
 
         self.combat_log.update_combat_log()
         self.combat_log.start_watching() 

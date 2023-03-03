@@ -13,7 +13,7 @@ from character_sheet import CharacterSheet
 
 import functools
 import stylesheet as style
-
+import template.stylesheet as tstyle
 from gui_feats import FeatsGUI
 from gui_add_sub import AddSubGUI
 from gui_new_char import NewCharacter
@@ -33,105 +33,136 @@ class CharacterSheetGUI(QWidget):
         self.section_group = []
         self.widget_group = []
 
+        self.stat_layout = Section(
+            outer_layout = QHBoxLayout(),
+            inner_layout = ("VBox", 9),
+            parent_layout = self.master_layout,
+            group = True,
+            title="STATS",
+            spacing = 3,
+            class_group = self.section_group
+        )
+
+        self.inventory_layout = Section(
+            outer_layout = QHBoxLayout(),
+            inner_layout = ("VBox", 2),
+            parent_layout = self.master_layout,
+            title = "ABILITIES & POWERS",
+            group = True,
+            spacing=5,
+            class_group=self.section_group
+        )
+
         self.character_basic = Section(
             outer_layout = QVBoxLayout(),
             inner_layout = ("HBox", 1),
             parent_layout = self.master_layout,
             spacing=10,
             class_group = self.section_group,
-            height=100
-
         )
 
-        self.portrait_layout = Section(
-            outer_layout = QHBoxLayout(),
-            inner_layout = ("VBox", 2),
+        self.corruption_layout = Section(
+            outer_layout = QVBoxLayout(),
+            inner_layout = ("HBox", 1),
             parent_layout = self.character_basic.inner_layout(1),
             group = True,
-            title = "CHARACTER",
-            icon = ("plus.png",cons.WSIZE/2,cons.ICON_COLOR),
+            title = "CORRUPTION",
             spacing = 3,
-            class_group = self.section_group,
+            class_group=self.section_group
         )
 
-        portrait_title = self.portrait_layout.get_title()[0]
-        portrait_title.clicked.connect(self.open_new_character)
-
-        self.stat_layout = Section(
-            outer_layout = QHBoxLayout(),
-            inner_layout = ("VBox", 9),
-            parent_layout = self.master_layout,
-            group = True,
-            spacing = 3,
-            class_group = self.section_group
-        )
+        self.corruption_layout.get_title()[1].setAlignment(Qt.AlignCenter)
 
         self.hp_layout = Section(
             outer_layout = QVBoxLayout(),
-            inner_layout = ("HBox", 2),
+            inner_layout = ("HBox", 1),
             parent_layout = self.character_basic.inner_layout(1),
             group = True,
-            title = "HP",
-            icon = ("hp.png",cons.WSIZE/2,cons.ICON_COLOR), 
+            title = "TOUGHNESS",
             spacing = 3,
             class_group=self.section_group
         )
 
-        self.defense_layout = Section(
-            outer_layout = QVBoxLayout(),
-            inner_layout = ("VBox", 1),
-            parent_layout = self.character_basic.inner_layout(1),
-            group = True,
-            title = "AC",
-            icon = ("armorclass.png",cons.WSIZE/2,cons.ICON_COLOR),
-            class_group=self.section_group	 
-        )
+        self.hp_layout.get_title()[1].setAlignment(Qt.AlignCenter)
 
-        self.inventory_layout = Section(
-            outer_layout = QVBoxLayout(),
-            inner_layout = ("VBox", 1),
-            parent_layout = self.master_layout,
-            title = "ABILITIES & POWERS",
-            group = True,
-            scroll=(True,"top"),
-            spacing=5,
-            class_group=self.section_group
-        )
+        for power in range(1, 13):
+            if power % 2 == 0:
+                layout_number = 1
+            else:
+                layout_number = 2
+
+            print(layout_number)
+
+            title = "Acrobatics"
+            test_text = "The character may roll against Quick to avoid Free Attacks from enemies in melee combat, either when trying to slip past an enemy or when attempting to withdraw from melee. Should the test fail, the player must choose to either remain in its original place or to move anyway and suffer a Free Attack from the opponent."
+
+
+            self.power_section = Section(
+                outer_layout = QHBoxLayout(),
+                inner_layout = ("HBox", 1),
+                parent_layout = self.inventory_layout.inner_layout(layout_number),
+                title=title,
+                group = True,
+                spacing = 3,
+                class_group=self.section_group
+            )
+
+            title_layout = self.power_section.get_title()[2]
+            self.power_section.get_title()[1].setAlignment(Qt.AlignCenter)
+            
+            self.power_description = Widget(
+                widget_type=QTextEdit(),
+                stylesheet=style.QSTATS,
+                parent_layout = self.power_section.inner_layout(1),
+                text=test_text,
+                objectname="power_description",
+                class_group=self.widget_group
+            )
+
+            self.novice = Widget(
+                widget_type=QPushButton(),
+                stylesheet=tstyle.QTITLE,
+                text="N",
+                width=cons.WSIZE,
+                height=cons.WSIZE
+            )
+
+            self.adept = Widget(
+                widget_type=QPushButton(),
+                stylesheet=tstyle.QTITLE,
+                text="A",
+                width=cons.WSIZE,
+                height=cons.WSIZE,
+                enabled=False
+            )
+
+            self.master = Widget(
+                widget_type=QPushButton(),
+                stylesheet=tstyle.QTITLE,
+                text="M",
+                width=cons.WSIZE,
+                height=cons.WSIZE,
+                enabled=False
+            )
+
+            self.delete = Widget(
+                widget_type=QToolButton(),
+                stylesheet=tstyle.QTITLE,
+                parent_layout = title_layout,
+                class_group=self.widget_group,
+                width=cons.WSIZE,
+                height=cons.WSIZE,
+                icon = ("delete.png",cons.WSIZE,cons.ICON_COLOR),
+            )
+
+            title_layout.insertWidget(0, self.novice.widget)
+            title_layout.insertWidget(1, self.adept.widget)
+            title_layout.insertWidget(2, self.master.widget)
+
 
         self.inventory_layout.get_title()[1].setAlignment(Qt.AlignCenter)
 
         #Below is all the widgets used in the character sheet
-
-        self.portrait = Widget(
-            widget_type=QLabel(),
-            parent_layout=self.portrait_layout.inner_layout(1),
-            stylesheet=style.PORTRAIT,
-            objectname="portrait",
-            size_policy = (QSizePolicy.Expanding , QSizePolicy.Expanding),
-            class_group=self.widget_group
-        )
-
-        self.character_name = Widget(
-            widget_type=QComboBox(),
-            parent_layout=self.portrait_layout.inner_layout(2),
-            stylesheet=style.TEST_COMBO,
-            objectname="name",
-            text=[""],
-            size_policy = (QSizePolicy.Expanding , QSizePolicy.Expanding),
-            signal=lambda: CharacterSheet(self).load_character(),
-            class_group=self.widget_group
-
-        )
-
-        self.character_level= Widget(
-            widget_type=QPushButton(),
-            parent_layout=self.portrait_layout.inner_layout(2),
-            stylesheet=style.BIG_BUTTONS,
-            objectname="level",
-            signal = lambda: character_xp.adjust_xp(self,adjust="add"),
-            size_policy = (QSizePolicy.Expanding , QSizePolicy.Expanding),
-            class_group=self.widget_group
-        )
 
         for number,stat in enumerate(["ACCURATE", "CUNNING", "DISCREET", "PERSUASIVE", "QUICK", "RESOLUTE", "STRONG", "VIGILANT"]):
             number = number + 2
@@ -148,188 +179,69 @@ class CharacterSheetGUI(QWidget):
                 ),
                 objectname=stat,
                 class_group=self.widget_group,
-                height=cons.WSIZE*1.5,
             )
             self.stat_label = Widget(
                 widget_type=QPushButton(),
                 stylesheet=style.QSTATS,
                 text=stat,
                 parent_layout = self.stat_layout.inner_layout(number),
-                height=cons.WSIZE,
                 objectname="label",
                 signal = functools.partial(roll.check_prepare_roll, self, stat),
                 class_group=self.widget_group
             )
 
 
-        self.character_ac = Widget(
+        self.toughness_threshold = Widget(
             widget_type=QPushButton(),
-            stylesheet=style.BIG_BUTTONS,
-            parent_layout=self.defense_layout.inner_layout(1),
+            parent_layout=self.hp_layout.inner_layout(1),
             signal=lambda: CharacterSheet(self).update_sheet(),
-            objectname = "ac",
-            size_policy = (QSizePolicy.Expanding , QSizePolicy.Expanding),
-            class_group=self.widget_group
+            objectname = "toughness_threshold",
+            class_group=self.widget_group,
+            stylesheet = tstyle.WIDGETS
         )
 
         self.toughness_max = Widget(
             widget_type=QPushButton(),
-            stylesheet=style.BIG_BUTTONS,
             parent_layout=self.hp_layout.inner_layout(1),
             objectname = "toughness_max",
-            size_policy = (QSizePolicy.Expanding , QSizePolicy.Expanding),
-            #height=cons.WSIZE*1.5,
-            class_group=self.widget_group
+            class_group=self.widget_group,
+            stylesheet = tstyle.WIDGETS
         )
 
         self.toughness_current= Widget(
             widget_type=QPushButton(),
-            stylesheet=style.BIG_BUTTONS,
             parent_layout=self.hp_layout.inner_layout(1),
             signal=self.open_addsub,
             objectname = "toughness_current",
-            size_policy = (QSizePolicy.Expanding , QSizePolicy.Expanding),
-            #height=cons.WSIZE*1.5,
-            class_group=self.widget_group
+            class_group=self.widget_group,
+            stylesheet = tstyle.WIDGETS
         )
 
-        # below you will find the widges that make up the inventory
-        for count in range(1,cons.MAX_SLOTS+1):
-            self.slot_layot = Section(
-                outer_layout = QHBoxLayout(),
-                inner_layout = ("VBox", 5),
-                parent_layout=self.inventory_layout.inner_layout(1),
-                content_margin=(0,0,8,0),
-                class_group=self.section_group
+        self.corruption_threshold = Widget(
+            widget_type=QPushButton(),
+            parent_layout=self.corruption_layout.inner_layout(1),
+            signal=lambda: CharacterSheet(self).update_sheet(),
+            objectname = "toughness_threshold",
+            class_group=self.widget_group,
+            stylesheet = tstyle.WIDGETS
+        )
 
-            )
-            self.backpack= Widget(
-                widget_type=QToolButton(),
-                stylesheet=style.INVENTORY,
-                text="",
-                parent_layout=self.slot_layot.inner_layout(1),
-                width = cons.WSIZE*1.50,
-                height = cons.WSIZE,
-                enabled=False,
-                objectname=f"icon{count}",
-                signal=functools.partial(roll.inventory_prepare_double_roll, self,count),
-                class_group=self.widget_group
-            )
+        self.corruption_max = Widget(
+            widget_type=QPushButton(),
+            parent_layout=self.corruption_layout.inner_layout(1),
+            objectname = "toughness_permanenet",
+            class_group=self.widget_group,
+            stylesheet = tstyle.WIDGETS
+        )
 
-            self.backpack_label = Widget(
-                widget_type=QLabel(),
-                stylesheet=style.INVENTORY,
-                parent_layout=self.slot_layot.inner_layout(1),
-                height = cons.WSIZE/1.5,
-                objectname=f"icon_label{count}",
-                text=f"{count}.",
-                align="center",
-                enabled=False,
-                class_group=self.widget_group
-            )
-                
-            self.backpack_item = Widget(
-                widget_type=QLineEdit(),
-                stylesheet=style.INVENTORY,
-                parent_layout=self.slot_layot.inner_layout(2),
-                height = cons.WSIZE,
-                signal= self.select_item,
-                objectname=f"inventory{count}",
-                align="center",
-                enabled=False,
-                class_group=self.widget_group
-
-            )
-
-            self.backpack_item_label = Widget(
-                widget_type=QLabel(),
-                stylesheet=style.INVENTORY,
-                text="",
-                parent_layout=self.slot_layot.inner_layout(2),
-                enabled=False,
-                height = cons.WSIZE/1.5,
-                objectname=f"inventory_label{count}",
-                align="center",
-                class_group=self.widget_group
-            )
-
-            self.backpack_action= Widget(
-                widget_type=QPushButton(),
-                stylesheet=style.INVENTORY,
-                text="",
-                parent_layout=self.slot_layot.inner_layout(3),
-                width = cons.WSIZE*3,
-                height = cons.WSIZE,
-                enabled=False,
-                objectname=f"evoke{count}",
-                signal = functools.partial(roll.inventory_prepare_roll, self, "evoke", count),
-                class_group=self.widget_group
-            )
-
-            self.backpack_action_label = Widget(
-                widget_type=QLabel(),
-                stylesheet=style.INVENTORY,
-                text="",
-                parent_layout=self.slot_layot.inner_layout(3),
-                enabled=False,
-                height = cons.WSIZE/1.5,  
-                objectname=f"evoke_label{count}",
-                align="center",
-                class_group=self.widget_group
-            )
-
-            self.backpack= Widget(
-                widget_type=QPushButton(),
-                stylesheet=style.INVENTORY,
-                text="",
-                parent_layout=self.slot_layot.inner_layout(4),
-                width = cons.WSIZE*3,
-                height = cons.WSIZE,
-                enabled=False,
-                objectname=f"hit_dc{count}",
-                signal = functools.partial(roll.inventory_prepare_roll, self, "hit_dc", count),
-                class_group=self.widget_group
-            )
-
-            self.backpack_hit_label = Widget(
-                widget_type=QLabel(),
-                stylesheet=style.INVENTORY,
-                text="",
-                parent_layout=self.slot_layot.inner_layout(4),
-                enabled=False,
-                height = cons.WSIZE/1.5,
-                objectname=f"hit_dc_label{count}",
-                align="center",
-                class_group=self.widget_group
-            )
-
-            self.weapon_modifier = Widget(
-                widget_type=QPushButton(),
-                stylesheet=style.INVENTORY,
-                parent_layout=self.slot_layot.inner_layout(5),
-                width = cons.WSIZE*3,
-                height = cons.WSIZE,
-                objectname=f"roll{count}",
-                enabled=False,
-                signal = functools.partial(roll.inventory_prepare_roll, self, "roll", count),
-                class_group=self.widget_group
-
-            )
-
-            self.backpack_damage_label = Widget(
-                widget_type=QLabel(),
-                stylesheet=style.INVENTORY,
-                text="",
-                parent_layout=self.slot_layot.inner_layout(5),
-                enabled=False,
-                height = cons.WSIZE/1.5,
-                objectname=f"roll_label{count}",
-                align="center",
-                class_group=self.widget_group
-            )
-
-        hp_title = self.hp_layout.get_title()[0]
-        hp_title.clicked.connect(lambda: character_reset.reset_hp(self))
+        self.corruption_current= Widget(
+            widget_type=QPushButton(),
+            parent_layout=self.corruption_layout.inner_layout(1),
+            signal=self.open_addsub,
+            objectname = "corruption_current",
+            class_group=self.widget_group,
+            stylesheet = tstyle.WIDGETS
+        )
 
         for widget in self.widget_group:
             widget.connect_to_parent()
@@ -350,13 +262,6 @@ class CharacterSheetGUI(QWidget):
             elif widget.objectName() == "current_morale":
                 character_morale.adjust_morale(self, adjust="subtract")
 
-    def select_item(self):
-        sender = self.sender()
-        if sender.text().lower() in cons.SPELL_LISTS:
-            self.spells = SpellsGUI(self, sender)
-        else:
-            CharacterSheet(self).update_sheet()
-
     def open_features(self):
         sender = self.sender()
         self.features = FeatsGUI(self, sender)
@@ -366,7 +271,3 @@ class CharacterSheetGUI(QWidget):
         sender = self.sender()
         self.addsub = AddSubGUI(self, sender)
         self.addsub.show()
-
-    def open_new_character(self):
-        self.new_character = NewCharacter(self)
-        self.new_character.show()        
