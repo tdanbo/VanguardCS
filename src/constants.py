@@ -28,11 +28,8 @@ ICON_COLOR = "#CCCCCC"
 CHARACTER = "Beasttoe"
 START_SLOTS = 6
 MAX_SLOTS = 16
-BASE_AC = 9
-HIT_DICE = 6
-BASE_MORALE = 3
-BASE_SAVE = 11
-STATS_PER_LEVEL = 3
+
+STATS = ["ACCURATE", "CUNNING", "DISCREET", "PERSUASIVE", "QUICK", "RESOLUTE", "STRONG", "VIGILANT"]
 
 ELEMENTS = json.load(open(os.path.join(ROOT, ".creatures", "elements.json"), "r"))
 

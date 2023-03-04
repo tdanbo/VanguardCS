@@ -4,7 +4,7 @@ from PySide2.QtCore import *
 
 import stylesheet as style
 
-from character_sheet import CharacterSheet
+from class_sheet import CharacterSheet
 
 def adjust_morale(self, adjust = "add"):
     current_morale = self.findChild(QPushButton, "current_morale")

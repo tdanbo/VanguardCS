@@ -4,7 +4,7 @@ from PySide2.QtCore import *
 
 import constants as cons
 
-from character_sheet import CharacterSheet
+from class_sheet import CharacterSheet
 
 def adjust_xp(self, adjust="add", increment=1):
     level_w = self.character_level.get_widget()

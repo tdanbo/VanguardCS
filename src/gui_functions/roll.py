@@ -4,7 +4,7 @@ from PySide2.QtCore import *
 
 import random
 
-from combat_log import CombatLog
+from class_combat import CombatLog
 import re
 import constants as cons
 

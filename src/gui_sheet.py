@@ -8,26 +8,21 @@ from template.widget import Widget
 import functions as func
 import constants as cons
 
-from gui_spells import SpellsGUI
-from character_sheet import CharacterSheet
+from class_sheet import CharacterSheet
 
 import functools
 import stylesheet as style
 import template.stylesheet as tstyle
-from gui_feats import FeatsGUI
-from gui_add_sub import AddSubGUI
-from gui_new_char import NewCharacter
 
-from gui_functions import character_xp
 from gui_functions import character_stats
-from gui_functions import character_morale
 from gui_functions import custom_rolls
-from gui_functions import roll
-from gui_functions import character_reset
 
 class CharacterSheetGUI(QWidget):
-    def __init__(self):
+    def __init__(self, gui_inventory = None):
         super().__init__()
+
+
+        self.gui_inventory = gui_inventory
 
         self.master_layout = QVBoxLayout()
         self.section_group = []
@@ -38,7 +33,6 @@ class CharacterSheetGUI(QWidget):
             inner_layout = ("VBox", 9),
             parent_layout = self.master_layout,
             group = True,
-            title="STATS",
             spacing = 3,
             class_group = self.section_group
         )
@@ -62,8 +56,8 @@ class CharacterSheetGUI(QWidget):
         )
 
         self.corruption_layout = Section(
-            outer_layout = QVBoxLayout(),
-            inner_layout = ("HBox", 1),
+            outer_layout = QHBoxLayout(),
+            inner_layout = ("VBox", 3),
             parent_layout = self.character_basic.inner_layout(1),
             group = True,
             title = "CORRUPTION",
@@ -74,8 +68,8 @@ class CharacterSheetGUI(QWidget):
         self.corruption_layout.get_title()[1].setAlignment(Qt.AlignCenter)
 
         self.hp_layout = Section(
-            outer_layout = QVBoxLayout(),
-            inner_layout = ("HBox", 1),
+            outer_layout = QHBoxLayout(),
+            inner_layout = ("VBox", 3),
             parent_layout = self.character_basic.inner_layout(1),
             group = True,
             title = "TOUGHNESS",
@@ -90,9 +84,7 @@ class CharacterSheetGUI(QWidget):
                 layout_number = 1
             else:
                 layout_number = 2
-
-            print(layout_number)
-
+                
             title = "Acrobatics"
             test_text = "The character may roll against Quick to avoid Free Attacks from enemies in melee combat, either when trying to slip past an enemy or when attempting to withdraw from melee. Should the test fail, the player must choose to either remain in its original place or to move anyway and suffer a Free Attack from the opponent."
 
@@ -163,14 +155,14 @@ class CharacterSheetGUI(QWidget):
         self.inventory_layout.get_title()[1].setAlignment(Qt.AlignCenter)
 
         #Below is all the widgets used in the character sheet
-
-        for number,stat in enumerate(["ACCURATE", "CUNNING", "DISCREET", "PERSUASIVE", "QUICK", "RESOLUTE", "STRONG", "VIGILANT"]):
-            number = number + 2
+        for number,stat in enumerate(cons.STATS):
+            number = number + 1
+            print(stat)
             self.stat_button = Widget(
                 widget_type=QPushButton(),
                 stylesheet=style.BIG_BUTTONS,
                 parent_layout = self.stat_layout.inner_layout(number),
-                text=" ",
+                text="10",
                 signal=functools.partial(
                     character_stats.adjust_stat,
                     self,
@@ -179,22 +171,50 @@ class CharacterSheetGUI(QWidget):
                 ),
                 objectname=stat,
                 class_group=self.widget_group,
+                height=cons.WSIZE*2,
             )
-            self.stat_label = Widget(
-                widget_type=QPushButton(),
-                stylesheet=style.QSTATS,
-                text=stat,
+            self.stat_sub_layout = Section(
+                outer_layout = QHBoxLayout(),
+                inner_layout = ("HBox", 1),
                 parent_layout = self.stat_layout.inner_layout(number),
-                objectname="label",
-                signal = functools.partial(roll.check_prepare_roll, self, stat),
-                class_group=self.widget_group
+                spacing=0,
+                class_group = self.section_group
+                
             )
 
+            self.stat_button = Widget(
+                widget_type=QPushButton(),
+                parent_layout=self.stat_sub_layout.inner_layout(0),
+                text=stat,
+                stylesheet=style.QSTATS,
+                objectname=f"{stat}_label",
+                signal=functools.partial(
+                    custom_rolls.modify_stat,
+                    self,
+                    stat
+                ),
+                class_group=self.widget_group,
+                height=cons.WSIZE
+            )
+
+            self.stat_modifier = Widget(
+                widget_type=QPushButton(),
+                parent_layout=self.stat_sub_layout.inner_layout(0),
+                text="0",
+                stylesheet=style.QSTATS,
+                objectname=f"{stat}_mod",
+                signal=functools.partial(
+                    custom_rolls.modify_stat,
+                    self,
+                    stat
+                ),
+                class_group=self.widget_group,
+                height=cons.WSIZE
+            )   
 
         self.toughness_threshold = Widget(
             widget_type=QPushButton(),
             parent_layout=self.hp_layout.inner_layout(1),
-            signal=lambda: CharacterSheet(self).update_sheet(),
             objectname = "toughness_threshold",
             class_group=self.widget_group,
             stylesheet = tstyle.WIDGETS
@@ -202,7 +222,7 @@ class CharacterSheetGUI(QWidget):
 
         self.toughness_max = Widget(
             widget_type=QPushButton(),
-            parent_layout=self.hp_layout.inner_layout(1),
+            parent_layout=self.hp_layout.inner_layout(2),
             objectname = "toughness_max",
             class_group=self.widget_group,
             stylesheet = tstyle.WIDGETS
@@ -210,37 +230,94 @@ class CharacterSheetGUI(QWidget):
 
         self.toughness_current= Widget(
             widget_type=QPushButton(),
-            parent_layout=self.hp_layout.inner_layout(1),
+            parent_layout=self.hp_layout.inner_layout(3),
             signal=self.open_addsub,
             objectname = "toughness_current",
             class_group=self.widget_group,
             stylesheet = tstyle.WIDGETS
         )
 
+        self.toughness_threshold_label = Widget(
+            widget_type=QLabel(),
+            parent_layout=self.hp_layout.inner_layout(1),
+            text = "THRESHOLD",
+            class_group=self.widget_group,
+            stylesheet = tstyle.LABELS,
+            align=Qt.AlignCenter
+        )
+
+        self.toughness_max_label = Widget(
+            widget_type=QLabel(),
+            parent_layout=self.hp_layout.inner_layout(2),
+            objectname = "toughness_max",
+            class_group=self.widget_group,
+            text = "MAXIMUM",
+            stylesheet = tstyle.LABELS,
+            align=Qt.AlignCenter
+        )
+
+        self.toughness_current_label= Widget(
+            widget_type=QLabel(),
+            parent_layout=self.hp_layout.inner_layout(3),
+            signal=self.open_addsub,
+            objectname = "toughness_current",
+            text = "CURRENT",
+            class_group=self.widget_group,
+            stylesheet = tstyle.LABELS,
+            align=Qt.AlignCenter
+        )
+
         self.corruption_threshold = Widget(
             widget_type=QPushButton(),
             parent_layout=self.corruption_layout.inner_layout(1),
             signal=lambda: CharacterSheet(self).update_sheet(),
-            objectname = "toughness_threshold",
+            text = "99",
             class_group=self.widget_group,
             stylesheet = tstyle.WIDGETS
         )
 
-        self.corruption_max = Widget(
+        self.corruption_permanent = Widget(
             widget_type=QPushButton(),
-            parent_layout=self.corruption_layout.inner_layout(1),
+            parent_layout=self.corruption_layout.inner_layout(2),
             objectname = "toughness_permanenet",
             class_group=self.widget_group,
             stylesheet = tstyle.WIDGETS
         )
 
-        self.corruption_current= Widget(
+        self.corruption_temporary= Widget(
             widget_type=QPushButton(),
-            parent_layout=self.corruption_layout.inner_layout(1),
+            parent_layout=self.corruption_layout.inner_layout(3),
             signal=self.open_addsub,
             objectname = "corruption_current",
             class_group=self.widget_group,
             stylesheet = tstyle.WIDGETS
+        )
+
+        self.corruption_threshold_label = Widget(
+            widget_type=QLabel(),
+            parent_layout=self.corruption_layout.inner_layout(1),
+            text = "THRESHOLD",
+            class_group=self.widget_group,
+            stylesheet = tstyle.LABELS,
+            align=Qt.AlignCenter
+        )
+
+        self.corruption_permanent_label = Widget(
+            widget_type=QLabel(),
+            parent_layout=self.corruption_layout.inner_layout(2),
+            class_group=self.widget_group,
+            stylesheet = tstyle.LABELS,
+            text = "PERMANENT",
+            align=Qt.AlignCenter
+        )
+
+        self.corruption_temporary_label = Widget(
+            widget_type=QLabel(),
+            parent_layout=self.corruption_layout.inner_layout(3),
+            class_group=self.widget_group,
+            stylesheet = tstyle.LABELS,
+            text = "TEMPORARY",
+            align=Qt.AlignCenter
         )
 
         for widget in self.widget_group:
@@ -255,12 +332,8 @@ class CharacterSheetGUI(QWidget):
     def mousePressEvent(self, event): #this is a very specific event used to subtract values when right clicking on a widget
         if event.button() == Qt.RightButton:
             widget = self.childAt(event.pos())
-            if widget.objectName() in ["STR", "DEX", "CON", "INT", "WIS", "CHA"]:
-                character_stats.adjust_stat(self, widget.objectName(), adjust="subtract")
-            elif widget.objectName() == "level":
-                character_xp.adjust_xp(self,adjust="subtract")
-            elif widget.objectName() == "current_morale":
-                character_morale.adjust_morale(self, adjust="subtract")
+            if widget.objectName() in [stat+"_label" for stat in self.attribute_list]+[stat+"_mod" for stat in self.attribute_list]:
+                custom_rolls.modify_stat(self, widget.objectName().split("_")[0], adjust="subtract")
 
     def open_features(self):
         sender = self.sender()

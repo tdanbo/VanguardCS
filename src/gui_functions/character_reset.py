@@ -3,7 +3,7 @@ from PySide2.QtGui import *
 from PySide2.QtCore import *
 
 import stylesheet as style
-from character_sheet import CharacterSheet
+from class_sheet import CharacterSheet
 
 def reset_hp(self):
     max_hp = self.character_hp_max.get_widget().text()

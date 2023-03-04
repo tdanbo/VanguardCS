@@ -5,7 +5,7 @@ from PySide2.QtGui import *
 from PySide2.QtCore import *
 
 
-from combat_log import CombatLog
+from class_combat import CombatLog
 
 from bson.objectid import ObjectId
 

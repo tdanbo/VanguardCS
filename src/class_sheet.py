@@ -17,84 +17,76 @@ import json
 import copy
 
 class CharacterSheet():
-    def __init__(self, csheet, invsheet):
+    def __init__(self, character_gui, inventory_gui):
         print("---------------------------") 
         print("Character Sheet Created")
 
-        self.csheet = csheet
+        self.csheet = character_gui
+        self.invsheet = inventory_gui
+
         self.stat_button = None
 
-        print(invsheet)
-
-        self.character_icon = invsheet.findChild(QLabel, "portrait")
-        self.character = invsheet.character_name.get_widget()
-        self.level = invsheet.findChild(QPushButton, "level")
+        self.character_icon = self.invsheet.portrait.get_widget()
+        self.character = self.invsheet.character_name.get_widget()
+        self.experience = self.invsheet.findChild(QWidget,"experience")
+        self.experience_unspent = self.invsheet.findChild(QWidget,"unspent_experience")
 
         #hp
-        self.toughness_max = csheet.toughness_max.get_widget()
-        self.toughness_current = csheet.toughness_current.get_widget()
-        self.hp_adjuster = csheet.findChild(QLineEdit, "hp_adjuster")
+        self.toughness_current = self.csheet.toughness_current.get_widget()
+        self.toughness_max = self.csheet.toughness_max.get_widget()
+        self.toughness_threshold = self.csheet.toughness_threshold.get_widget()
+
+        #corruption
+        self.corruption_temporary = self.csheet.corruption_temporary.get_widget()
+        self.corruption_permanent = self.csheet.corruption_permanent.get_widget()
+        self.corruption_threshold = self.csheet.corruption_threshold.get_widget()
+
+        #defense
+        self.defense = self.invsheet.defense.get_widget()
+
+        self.hp_adjuster = self.csheet.findChild(QLineEdit, "hp_adjuster")
 
         #feats
-        self.feat1 = csheet.findChild(QToolButton, "feat1")
-        self.feat2 = csheet.findChild(QToolButton, "feat2")
-        self.feat3 = csheet.findChild(QToolButton, "feat3")
+        self.feat1 = self.csheet.findChild(QToolButton, "feat1")
+        self.feat2 = self.csheet.findChild(QToolButton, "feat2")
+        self.feat3 = self.csheet.findChild(QToolButton, "feat3")
 
         #stats
-        self.ACC = csheet.findChild(QPushButton, "ACCURATE")
-        self.CUN = csheet.findChild(QPushButton, "CUNNING")
-        self.DIS = csheet.findChild(QPushButton, "DISCREET")
-        self.PER = csheet.findChild(QPushButton, "PERSUASIVE")
-        self.QUI = csheet.findChild(QPushButton, "QUICK")
-        self.RES = csheet.findChild(QPushButton, "RESOLUTE")
-        self.STR = csheet.findChild(QPushButton, "STRONG")
-        self.VIG = csheet.findChild(QPushButton, "VIGILANT")
+        self.ACC = self.csheet.findChild(QWidget, "ACCURATE")
+        self.CUN = self.csheet.findChild(QWidget, "CUNNING")
+        self.DIS = self.csheet.findChild(QWidget, "DISCREET")
+        self.PER = self.csheet.findChild(QWidget, "PERSUASIVE")
+        self.QUI = self.csheet.findChild(QWidget, "QUICK")
+        self.RES = self.csheet.findChild(QWidget, "RESOLUTE")
+        self.STR = self.csheet.findChild(QWidget, "STRONG")
+        self.VIG = self.csheet.findChild(QWidget, "VIGILANT")
+
+        #stat modifiers
+        self.ACC_mod = self.csheet.findChild(QWidget, "ACCURATE_mod")
+        self.CUN_mod = self.csheet.findChild(QWidget, "CUNNING_mod")
+        self.DIS_mod = self.csheet.findChild(QWidget, "DISCREET_mod")
+        self.PER_mod = self.csheet.findChild(QWidget, "PERSUASIVE_mod")
+        self.QUI_mod = self.csheet.findChild(QWidget, "QUICK_mod")
+        self.RES_mod = self.csheet.findChild(QWidget, "RESOLUTE_mod")
+        self.STR_mod = self.csheet.findChild(QWidget, "STRONG_mod")
+        self.VIG_mod = self.csheet.findChild(QWidget, "VIGILANT_mod")
 
         #all inventory slots
-        self.inventory1 = csheet.findChild(QLineEdit, "inventory1")
-        self.inventory2 = csheet.findChild(QLineEdit, "inventory2")
-        self.inventory3 = csheet.findChild(QLineEdit, "inventory3")
-        self.inventory4 = csheet.findChild(QLineEdit, "inventory4")
-        self.inventory5 = csheet.findChild(QLineEdit, "inventory5")
-        self.inventory6 = csheet.findChild(QLineEdit, "inventory6")
-        self.inventory7 = csheet.findChild(QLineEdit, "inventory7")
-        self.inventory8 = csheet.findChild(QLineEdit, "inventory8")
-        self.inventory9 = csheet.findChild(QLineEdit, "inventory9")
-        self.inventory10 = csheet.findChild(QLineEdit, "inventory10")
-        self.inventory11 = csheet.findChild(QLineEdit, "inventory11")
-        self.inventory12 = csheet.findChild(QLineEdit, "inventory12")
-        self.inventory13 = csheet.findChild(QLineEdit, "inventory13")
-        self.inventory14 = csheet.findChild(QLineEdit, "inventory14")
-        self.inventory15 = csheet.findChild(QLineEdit, "inventory15")
-        self.inventory16 = csheet.findChild(QLineEdit, "inventory16")
-        self.inventory17 = csheet.findChild(QLineEdit, "inventory17")
-        self.inventory18 = csheet.findChild(QLineEdit, "inventory18")
-        self.inventory19 = csheet.findChild(QLineEdit, "inventory19")
-        self.inventory20 = csheet.findChild(QLineEdit, "inventory20")
-
-        #all hero dice slots
-        self.focusdice1 = csheet.findChild(QToolButton, "focusdice1")
-        self.focusdice2 = csheet.findChild(QToolButton, "focusdice2")
-        self.focusdice3 = csheet.findChild(QToolButton, "focusdice3")
-        self.focusdice4 = csheet.findChild(QToolButton, "focusdice4")
-        self.focusdice5 = csheet.findChild(QToolButton, "focusdice5")
-        self.focusdice6 = csheet.findChild(QToolButton, "focusdice6")
-        self.focusdice7 = csheet.findChild(QToolButton, "focusdice7")
-        self.focusdice8 = csheet.findChild(QToolButton, "focusdice8")
-        self.focusdice9 = csheet.findChild(QToolButton, "focusdice9")
-        self.focusdice10 = csheet.findChild(QToolButton, "focusdice10")
-
-        #all spellslot slots
-        self.spellslot1 = csheet.findChild(QToolButton, "spellslot1")
-        self.spellslot2 = csheet.findChild(QToolButton, "spellslot2")
-        self.spellslot3 = csheet.findChild(QToolButton, "spellslot3")
-        self.spellslot4 = csheet.findChild(QToolButton, "spellslot4")
-        self.spellslot5 = csheet.findChild(QToolButton, "spellslot5")
-        self.spellslot6 = csheet.findChild(QToolButton, "spellslot6")
-        self.spellslot7 = csheet.findChild(QToolButton, "spellslot7")
-        self.spellslot8 = csheet.findChild(QToolButton, "spellslot8")
-        self.spellslot9 = csheet.findChild(QToolButton, "spellslot9")
-        self.spellslot10 = csheet.findChild(QToolButton, "spellslot10")
+        self.inventory1 = self.invsheet.findChild(QLineEdit, "inventory1")
+        self.inventory2 = self.invsheet.findChild(QLineEdit, "inventory2")
+        self.inventory3 = self.invsheet.findChild(QLineEdit, "inventory3")
+        self.inventory4 = self.invsheet.findChild(QLineEdit, "inventory4")
+        self.inventory5 = self.invsheet.findChild(QLineEdit, "inventory5")
+        self.inventory6 = self.invsheet.findChild(QLineEdit, "inventory6")
+        self.inventory7 = self.invsheet.findChild(QLineEdit, "inventory7")
+        self.inventory8 = self.invsheet.findChild(QLineEdit, "inventory8")
+        self.inventory9 = self.invsheet.findChild(QLineEdit, "inventory9")
+        self.inventory10 = self.invsheet.findChild(QLineEdit, "inventory10")
+        self.inventory11 = self.invsheet.findChild(QLineEdit, "inventory11")
+        self.inventory12 = self.invsheet.findChild(QLineEdit, "inventory12")
+        self.inventory13 = self.invsheet.findChild(QLineEdit, "inventory13")
+        self.inventory14 = self.invsheet.findChild(QLineEdit, "inventory14")
+        self.inventory15 = self.invsheet.findChild(QLineEdit, "inventory15")
 
     def update_character_dropdown(self):
         print("Updating Character Dropdown")
@@ -110,20 +102,28 @@ class CharacterSheet():
         character_sheet_dictionary = {
             "character": self.character.currentText(),
             "rank": "Player",
-            "level": self.level.text(),
-            "ac": self.ac.text(),
-            "init": str(10+int(self.CHA.text())),
-            "speed": self.speed.text(),
-            "max hp": self.toughness_max.text(),
-            "current hp": self.toughness_current.text(),
-            "current morale": self.current_morale.text(),
+            "experience": self.experience.text(),
+            "experience unspent": self.experience_unspent.text(),
+            "toughness current": self.toughness_current.text(),
             "stats": {
-                "STR": int(self.STR.text()),
-                "DEX": int(self.DEX.text()),
-                "CON": int(self.CON.text()),
-                "INT": int(self.INT.text()),
-                "WIS": int(self.WIS.text()),
-                "CHA": int(self.CHA.text())
+                "ACCURATE": int(self.ACC.text()),
+                "CUNNING": int(self.CUN.text()),
+                "DISCREET": int(self.DIS.text()),
+                "PERSUASIVE": int(self.PER.text()),
+                "QUICK": int(self.QUI.text()),
+                "RESOLUTE": int(self.RES.text()),
+                "STRONG": int(self.STR.text()),
+                "VIGILANT": int(self.VIG.text())
+            },
+            "modifiers": {
+                "ACCURATE": int(self.ACC_mod.text()),
+                "CUNNING": int(self.CUN_mod.text()),
+                "DISCREET": int(self.DIS_mod.text()),
+                "PERSUASIVE": int(self.PER_mod.text()),
+                "QUICK": int(self.QUI_mod.text()),
+                "RESOLUTE": int(self.RES_mod.text()),
+                "STRONG": int(self.STR_mod.text()),
+                "VIGILANT": int(self.VIG_mod.text())
             },
             "inventory": {
                 "inventory1": self.inventory1.text(),
@@ -141,7 +141,6 @@ class CharacterSheet():
                 "inventory13": self.inventory13.text(),
                 "inventory14": self.inventory14.text(),
                 "inventory15": self.inventory15.text(),
-                "inventory16": self.inventory16.text(),
             },            
         }        
         return character_sheet_dictionary
@@ -163,23 +162,47 @@ class CharacterSheet():
             self.collection.insert_one(directory)
 
     def update_sheet(self):
-        self.set_icon()
+        self.set_stats()
 
-        #INVENTORY RULES
-        self.strenght()
-        self.dexterity()
-        self.constitution()
-        self.intelligence()
-        self.wisdom()
-        self.charisma()
-        
+        self.set_toughness()
+        self.set_corruption()
+        self.set_defense()
 
-        self.update_inventory()
-
+        self.set_icon()      
+        # self.update_inventory()
         updated_character_sheet = self.update_dictionary()
         self.update_database(updated_character_sheet)
 
     # ITERATE OVER ITEM JSON TO FIND ITEM
+
+    def set_stats(self):
+        for widget in [self.ACC, self.CUN, self.DIS, self.PER, self.QUI, self.RES, self.STR, self.VIG]:
+            base_objectname = widget.objectName()
+            modifier = self.csheet.findChild(QWidget, base_objectname+"_mod")
+            widget.setText(str(int(widget.text())+int(modifier.text())))
+            if int(modifier.text()) == 0:
+                modifier.setHidden(True)
+
+    def set_defense(self):
+        self.defense.setText(self.QUI.text())
+
+
+    def set_toughness(self):
+        strong = int(self.STR.text())
+        toughness_threshold_math = math.ceil(strong/2)
+        toughness_math = 10 if strong < 10 else strong
+
+        self.toughness_max.setText(str(toughness_math))
+        self.toughness_current.setText(str(toughness_math))
+        self.toughness_threshold.setText(str(toughness_threshold_math))
+
+
+    def set_corruption(self):
+        corruption_threshold_math = math.ceil(int(self.RES.text())/2)
+
+        self.corruption_permanent.setText("0")
+        self.corruption_temporary.setText("0")
+        self.corruption_threshold.setText(str(corruption_threshold_math))
 
     def update_inventory(self):
         all_items = []
@@ -366,22 +389,6 @@ class CharacterSheet():
             injury_slot = random.choice(free_slots)
             self.update_item(injury_slot, "Injury", "damage", self.empty_slot_dict)
 
-
-    def strenght(self):
-        pass 
-
-    def dexterity(self):
-        pass
-
-    def constitution(self):
-        pass
-
-    def intelligence(self):
-        pass
-
-    def wisdom(self):
-        pass
-
     def set_feats(self):
         current_level = math.floor(float(self.level.text()))
         if current_level < 3:
@@ -401,10 +408,6 @@ class CharacterSheet():
             self.feat2.setEnabled(True)
             self.feat3.setEnabled(True)
 
-
-    def charisma(self):
-        pass
-
     def load_character(self):
         print(f"Loading {self.character.currentText()}")
         if self.character.currentText() == "":
@@ -417,17 +420,19 @@ class CharacterSheet():
         document = self.collection.find_one(query)
         if document != None:
             print(document)
-            self.level.setText(str(document["level"]))
-            self.toughness_current.setText(str(document["current hp"]))
+            self.experience.setText(str(document["experience"]))
+            self.experience_unspent.setText(str(document["experience unspent"]))
+            
+            self.toughness_current.setText(str(document["toughness current"]))
 
-            self.ACC.setText(str(document["stats"]["accurate"]))
-            self.CUN.setText(str(document["stats"]["cunning"]))
-            self.DIS.setText(str(document["stats"]["discreet"]))
-            self.PER.setText(str(document["stats"]["persuasive"]))
-            self.QUI.setText(str(document["stats"]["quick"]))
-            self.RES.setText(str(document["stats"]["resolute"]))
-            self.STR.setText(str(document["stats"]["strong"]))
-            self.VIG.setText(str(document["stats"]["vigilant"]))
+            self.ACC.setText(str(document["stats"]["ACCURATE"]))
+            self.CUN.setText(str(document["stats"]["CUNNING"]))
+            self.DIS.setText(str(document["stats"]["DISCREET"]))
+            self.PER.setText(str(document["stats"]["PERSUASIVE"]))
+            self.QUI.setText(str(document["stats"]["QUICK"]))
+            self.RES.setText(str(document["stats"]["RESOLUTE"]))
+            self.STR.setText(str(document["stats"]["STRONG"]))
+            self.VIG.setText(str(document["stats"]["VIGILANT"]))
 
             self.inventory1.setText(str(document["inventory"]["inventory1"]))
             self.inventory2.setText(str(document["inventory"]["inventory2"]))
@@ -444,12 +449,6 @@ class CharacterSheet():
             self.inventory13.setText(str(document["inventory"]["inventory13"]))
             self.inventory14.setText(str(document["inventory"]["inventory14"]))
             self.inventory15.setText(str(document["inventory"]["inventory15"]))
-            self.inventory16.setText(str(document["inventory"]["inventory16"]))
-
-            if int(document["current hp"]) >= 0:
-                self.toughness_current.setStyleSheet(style.BIG_BUTTONS)
-            else:
-                self.toughness_current.setStyleSheet(style.BUTTONS_INJURY)
 
             self.update_sheet()
 

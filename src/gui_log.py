@@ -109,7 +109,6 @@ class CombatLogGUI(QWidget):
 
         #Setting up all slots for the combat log
         for slot in range(20, -1, -1):
-            print(slot)
             self.create_log_entry(slot)
 
         for widget in self.widget_group:

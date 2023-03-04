@@ -2,58 +2,52 @@ from PySide2.QtWidgets import *
 from PySide2.QtGui import *
 from PySide2.QtCore import *
 
-from template.section import Section
-from template.widget import Widget
-
 from gui_sheet import CharacterSheetGUI
 from gui_inventory import InventoryGUI
 from gui_log import CombatLogGUI
 
-import os
 import sys
-import constants as cons
 
-import functions as func
 import stylesheet as style
 
-from combat_log import CombatLog
-from character_sheet import CharacterSheet
-
-
+from class_combat import CombatLog
+from class_sheet import CharacterSheet
 
 class MainWindow(QWidget):
     def __init__(self):
-        super().__init__(None, Qt.WindowStaysOnTopHint)
+        super().__init__()
 
         # Layouts
         self.main_layout = QHBoxLayout()
 
-        character_sheet_gui = CharacterSheetGUI()
-        character_inventory_gui = InventoryGUI()
+        self.character_inventory_gui = InventoryGUI()
+        self.character_sheet_gui = CharacterSheetGUI(self.character_inventory_gui)
 
-        combat_log_gui = CombatLogGUI(character_sheet_gui)
-        
-        #initializing the two main classes
-        self.combat_log = CombatLog(combat_log_gui)    
-        
-        # for widget in Widget.all_widgets:
-        #     widget.connect_to_parent()
-        #     widget.set_signal()
+        self.character_sheet_gui = CharacterSheetGUI()
+        self.character_inventory_gui = InventoryGUI(self.character_sheet_gui)
 
-        # for section in Section.all_sections:
-        #     section.connect_to_parent()
+        # 3 Main GUIS
+        combat_log_gui = CombatLogGUI(self.character_sheet_gui)
 
-        self.main_layout.addWidget(character_inventory_gui)
-        self.main_layout.addWidget(character_sheet_gui)
+        # Simple styling
+        combat_log_gui.setFixedWidth(300)
+        self.character_inventory_gui.setFixedWidth(300)
+
+        # 2 Main classes
+        self.combat_log = CombatLog(combat_log_gui)  
+ 
+
+        self.main_layout.addWidget(self.character_inventory_gui)
+        self.main_layout.addWidget(self.character_sheet_gui)
         self.main_layout.addWidget(combat_log_gui)
 
-        combat_log_gui.setFixedWidth(300)
-        character_inventory_gui.setFixedWidth(300)
+        character_sheet = CharacterSheet(self.character_sheet_gui,self.character_inventory_gui)      
+
+        character_sheet.update_character_dropdown()
+        character_sheet.update_sheet()       
 
         self.setLayout(self.main_layout)
         self.setStyleSheet(style.BASE_STYLE)
-
-        CharacterSheet(character_sheet_gui, character_inventory_gui).update_character_dropdown()
 
         self.combat_log.update_combat_log()
         self.combat_log.start_watching() 

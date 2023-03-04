@@ -3,10 +3,41 @@ from PySide2.QtGui import *
 from PySide2.QtCore import *
 
 import stylesheet as style
+from class_sheet import CharacterSheet
+
+from gui_inventory import InventoryGUI
 
 '''
 This area of code handles the functions of the dice roller.
 '''
+
+def modify_stat(self, stat, adjust="add"):
+    print(stat)
+
+    mod_widget = self.findChild(QPushButton, f"{stat}_mod")
+    base_mod = int(mod_widget.text())
+
+    print(base_mod)
+
+    if adjust == "add":
+        base_mod += 1
+        mod_widget.setHidden(False)
+
+    if adjust == "subtract":
+        base_mod -= 1
+        mod_widget.setHidden(False)
+
+    if base_mod > 0:
+        mod_widget.setText(f"+{base_mod}")
+
+    if base_mod < 0:
+        mod_widget.setText(f"{base_mod}")
+
+    if base_mod == 0:
+        mod_widget.setText("0")
+        mod_widget.setHidden(True)
+
+    CharacterSheet(self,InventoryGUI()).update_sheet()
 
 def add_dice(self, dice, adjust="add"):
     print(dice)

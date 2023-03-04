@@ -4,7 +4,7 @@ from PySide2.QtCore import *
 
 import constants as cons
 
-from character_sheet import CharacterSheet
+from class_sheet import CharacterSheet
 
 def adjust_stat(self, stat, adjust="add"):
     current_level = int(self.character_level.get_widget().text())
