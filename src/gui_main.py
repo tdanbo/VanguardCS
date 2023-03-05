@@ -20,11 +20,10 @@ class MainWindow(QWidget):
         # Layouts
         self.main_layout = QHBoxLayout()
 
-        self.character_inventory_gui = InventoryGUI()
-        self.character_sheet_gui = CharacterSheetGUI(self.character_inventory_gui)
+        self.character_sheet = CharacterSheet()
 
-        self.character_sheet_gui = CharacterSheetGUI()
-        self.character_inventory_gui = InventoryGUI(self.character_sheet_gui)
+        self.character_sheet_gui = CharacterSheetGUI(self.character_sheet)
+        self.character_inventory_gui = InventoryGUI(self.character_sheet)
 
         # 3 Main GUIS
         combat_log_gui = CombatLogGUI(self.character_sheet_gui)
@@ -39,12 +38,7 @@ class MainWindow(QWidget):
 
         self.main_layout.addWidget(self.character_inventory_gui)
         self.main_layout.addWidget(self.character_sheet_gui)
-        self.main_layout.addWidget(combat_log_gui)
-
-        character_sheet = CharacterSheet(self.character_sheet_gui,self.character_inventory_gui)      
-
-        character_sheet.update_character_dropdown()
-        character_sheet.update_sheet()       
+        self.main_layout.addWidget(combat_log_gui)  
 
         self.setLayout(self.main_layout)
         self.setStyleSheet(style.BASE_STYLE)

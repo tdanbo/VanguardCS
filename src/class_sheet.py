@@ -17,113 +17,32 @@ import json
 import copy
 
 class CharacterSheet():
-    def __init__(self, character_gui, inventory_gui):
-        print("---------------------------") 
-        print("Character Sheet Created")
+    def __init__(self):
+        print("Initializing Character Sheet")
 
-        self.csheet = character_gui
-        self.invsheet = inventory_gui
-
-        self.stat_button = None
-
-        self.character_icon = self.invsheet.portrait.get_widget()
-        self.character = self.invsheet.character_name.get_widget()
-        self.experience = self.invsheet.findChild(QWidget,"experience")
-        self.experience_unspent = self.invsheet.findChild(QWidget,"unspent_experience")
-
-        #hp
-        self.toughness_current = self.csheet.toughness_current.get_widget()
-        self.toughness_max = self.csheet.toughness_max.get_widget()
-        self.toughness_threshold = self.csheet.toughness_threshold.get_widget()
-
-        #corruption
-        self.corruption_temporary = self.csheet.corruption_temporary.get_widget()
-        self.corruption_permanent = self.csheet.corruption_permanent.get_widget()
-        self.corruption_threshold = self.csheet.corruption_threshold.get_widget()
-
-        #defense
-        self.defense = self.invsheet.defense.get_widget()
-
-        self.hp_adjuster = self.csheet.findChild(QLineEdit, "hp_adjuster")
-
-        #feats
-        self.feat1 = self.csheet.findChild(QToolButton, "feat1")
-        self.feat2 = self.csheet.findChild(QToolButton, "feat2")
-        self.feat3 = self.csheet.findChild(QToolButton, "feat3")
-
-        #stats
-        self.ACC = self.csheet.findChild(QWidget, "ACCURATE")
-        self.CUN = self.csheet.findChild(QWidget, "CUNNING")
-        self.DIS = self.csheet.findChild(QWidget, "DISCREET")
-        self.PER = self.csheet.findChild(QWidget, "PERSUASIVE")
-        self.QUI = self.csheet.findChild(QWidget, "QUICK")
-        self.RES = self.csheet.findChild(QWidget, "RESOLUTE")
-        self.STR = self.csheet.findChild(QWidget, "STRONG")
-        self.VIG = self.csheet.findChild(QWidget, "VIGILANT")
-
-        #stat modifiers
-        self.ACC_mod = self.csheet.findChild(QWidget, "ACCURATE_mod")
-        self.CUN_mod = self.csheet.findChild(QWidget, "CUNNING_mod")
-        self.DIS_mod = self.csheet.findChild(QWidget, "DISCREET_mod")
-        self.PER_mod = self.csheet.findChild(QWidget, "PERSUASIVE_mod")
-        self.QUI_mod = self.csheet.findChild(QWidget, "QUICK_mod")
-        self.RES_mod = self.csheet.findChild(QWidget, "RESOLUTE_mod")
-        self.STR_mod = self.csheet.findChild(QWidget, "STRONG_mod")
-        self.VIG_mod = self.csheet.findChild(QWidget, "VIGILANT_mod")
-
-        #all inventory slots
-        self.inventory1 = self.invsheet.findChild(QLineEdit, "inventory1")
-        self.inventory2 = self.invsheet.findChild(QLineEdit, "inventory2")
-        self.inventory3 = self.invsheet.findChild(QLineEdit, "inventory3")
-        self.inventory4 = self.invsheet.findChild(QLineEdit, "inventory4")
-        self.inventory5 = self.invsheet.findChild(QLineEdit, "inventory5")
-        self.inventory6 = self.invsheet.findChild(QLineEdit, "inventory6")
-        self.inventory7 = self.invsheet.findChild(QLineEdit, "inventory7")
-        self.inventory8 = self.invsheet.findChild(QLineEdit, "inventory8")
-        self.inventory9 = self.invsheet.findChild(QLineEdit, "inventory9")
-        self.inventory10 = self.invsheet.findChild(QLineEdit, "inventory10")
-        self.inventory11 = self.invsheet.findChild(QLineEdit, "inventory11")
-        self.inventory12 = self.invsheet.findChild(QLineEdit, "inventory12")
-        self.inventory13 = self.invsheet.findChild(QLineEdit, "inventory13")
-        self.inventory14 = self.invsheet.findChild(QLineEdit, "inventory14")
-        self.inventory15 = self.invsheet.findChild(QLineEdit, "inventory15")
-
-    def update_character_dropdown(self):
-        print("Updating Character Dropdown")
-        self.character.clear()
-        self.client = pymongo.MongoClient(cons.CONNECT)
-        self.db = self.client ["dnd"]
-        self.collection = self.db["characters"]
-        character_list = self.collection.distinct("character")
-        self.character.addItems(character_list)
-
+    def update_sheet(self):
+        self.set_icon()      
+        # self.update_inventory()
+        updated_character_sheet = self.update_dictionary()
+        self.set_stats()
+        self.set_toughness()
+        self.set_corruption()
+        self.set_defense()
+        self.update_database(updated_character_sheet)
     def update_dictionary(self):
         print("Updating Character Sheet Dictionary")    
         character_sheet_dictionary = {
-            "character": self.character.currentText(),
-            "rank": "Player",
             "experience": self.experience.text(),
             "experience unspent": self.experience_unspent.text(),
-            "toughness current": self.toughness_current.text(),
-            "stats": {
-                "ACCURATE": int(self.ACC.text()),
-                "CUNNING": int(self.CUN.text()),
-                "DISCREET": int(self.DIS.text()),
-                "PERSUASIVE": int(self.PER.text()),
-                "QUICK": int(self.QUI.text()),
-                "RESOLUTE": int(self.RES.text()),
-                "STRONG": int(self.STR.text()),
-                "VIGILANT": int(self.VIG.text())
-            },
             "modifiers": {
-                "ACCURATE": int(self.ACC_mod.text()),
-                "CUNNING": int(self.CUN_mod.text()),
-                "DISCREET": int(self.DIS_mod.text()),
-                "PERSUASIVE": int(self.PER_mod.text()),
-                "QUICK": int(self.QUI_mod.text()),
-                "RESOLUTE": int(self.RES_mod.text()),
-                "STRONG": int(self.STR_mod.text()),
-                "VIGILANT": int(self.VIG_mod.text())
+                "ACCURATE": self.ACC_mod.text(),
+                "CUNNING": self.CUN_mod.text(),
+                "DISCREET": self.DIS_mod.text(),
+                "PERSUASIVE": self.PER_mod.text(),
+                "QUICK": self.QUI_mod.text(),
+                "RESOLUTE": self.RES_mod.text(),
+                "STRONG": self.STR_mod.text(),
+                "VIGILANT": self.VIG_mod.text()
             },
             "inventory": {
                 "inventory1": self.inventory1.text(),
@@ -141,8 +60,12 @@ class CharacterSheet():
                 "inventory13": self.inventory13.text(),
                 "inventory14": self.inventory14.text(),
                 "inventory15": self.inventory15.text(),
-            },            
-        }        
+            },
+            "toughness current": self.toughness_current.text(),
+            "corruption temporary": self.corruption_temporary.text(),
+            "corruption permanent": self.corruption_permanent.text(),
+
+        }  
         return character_sheet_dictionary
     
     def update_database(self, directory):
@@ -150,9 +73,7 @@ class CharacterSheet():
         self.db = self.client ["dnd"]
         self.collection = self.db["characters"]
 
-        #print(self.character.currentText())
-
-        query = {"character": self.character.currentText()}
+        query = {"character": self.character_name}
         document = self.collection.find_one(query)
 
         if document is not None:
@@ -161,27 +82,21 @@ class CharacterSheet():
         else:
             self.collection.insert_one(directory)
 
-    def update_sheet(self):
-        self.set_stats()
-
-        self.set_toughness()
-        self.set_corruption()
-        self.set_defense()
-
-        self.set_icon()      
-        # self.update_inventory()
-        updated_character_sheet = self.update_dictionary()
-        self.update_database(updated_character_sheet)
-
     # ITERATE OVER ITEM JSON TO FIND ITEM
 
     def set_stats(self):
-        for widget in [self.ACC, self.CUN, self.DIS, self.PER, self.QUI, self.RES, self.STR, self.VIG]:
-            base_objectname = widget.objectName()
-            modifier = self.csheet.findChild(QWidget, base_objectname+"_mod")
-            widget.setText(str(int(widget.text())+int(modifier.text())))
-            if int(modifier.text()) == 0:
-                modifier.setHidden(True)
+        for widget in [(self.ACC, self.ACC_mod), (self.CUN, self.CUN_mod), (self.DIS, self.DIS_mod), (self.PER, self.PER_mod), (self.QUI, self.QUI_mod), (self.RES, self.RES_mod), (self.STR, self.STR_mod), (self.VIG, self.VIG_mod)]:
+            stat = int(self.character_document["stats"][widget[0].objectName()])
+            modifier = int(widget[1].text())
+            modified_stat = stat + modifier
+
+            widget[0].setText(str(modified_stat))
+            if modifier == 0:
+                widget[1].setHidden(True)
+            else:
+                widget[1].setHidden(False)
+
+        pass
 
     def set_defense(self):
         self.defense.setText(self.QUI.text())
@@ -312,8 +227,7 @@ class CharacterSheet():
         self.inventory_slot.clearFocus()        
 
     def set_icon(self):
-        character_name = self.character.currentText().lower()
-        func.set_icon(self.character_icon,f"{character_name}.png","")
+        func.set_icon(self.character_icon,f"{self.character_name}.png","")
 
 
     def set_ac(self):
@@ -408,50 +322,124 @@ class CharacterSheet():
             self.feat2.setEnabled(True)
             self.feat3.setEnabled(True)
 
-    def load_character(self):
-        print(f"Loading {self.character.currentText()}")
-        if self.character.currentText() == "":
+    def load_character(self, character_name):
+        print(f"Loading {character_name}")
+        self.character_name = character_name
+
+        if self.character_name == "":
             return
+
         self.client = pymongo.MongoClient(cons.CONNECT)
         self.db = self.client ["dnd"]
         self.collection = self.db["characters"]
 
-        query = {"character": self.character.currentText()}
-        document = self.collection.find_one(query)
-        if document != None:
-            print(document)
-            self.experience.setText(str(document["experience"]))
-            self.experience_unspent.setText(str(document["experience unspent"]))
-            
-            self.toughness_current.setText(str(document["toughness current"]))
+        query = {"character": self.character_name}
+        self.character_document = self.collection.find_one(query)
+        if self.character_document != None:
+            self.experience.setText(str(self.character_document["experience"]))
+            self.experience_unspent.setText(str(self.character_document["experience unspent"]))
 
-            self.ACC.setText(str(document["stats"]["ACCURATE"]))
-            self.CUN.setText(str(document["stats"]["CUNNING"]))
-            self.DIS.setText(str(document["stats"]["DISCREET"]))
-            self.PER.setText(str(document["stats"]["PERSUASIVE"]))
-            self.QUI.setText(str(document["stats"]["QUICK"]))
-            self.RES.setText(str(document["stats"]["RESOLUTE"]))
-            self.STR.setText(str(document["stats"]["STRONG"]))
-            self.VIG.setText(str(document["stats"]["VIGILANT"]))
+            self.ACC.setText(str(self.character_document["stats"]["ACCURATE"]))
+            self.CUN.setText(str(self.character_document["stats"]["CUNNING"]))
+            self.DIS.setText(str(self.character_document["stats"]["DISCREET"]))
+            self.PER.setText(str(self.character_document["stats"]["PERSUASIVE"]))
+            self.QUI.setText(str(self.character_document["stats"]["QUICK"]))
+            self.RES.setText(str(self.character_document["stats"]["RESOLUTE"]))
+            self.STR.setText(str(self.character_document["stats"]["STRONG"]))
+            self.VIG.setText(str(self.character_document["stats"]["VIGILANT"]))
 
-            self.inventory1.setText(str(document["inventory"]["inventory1"]))
-            self.inventory2.setText(str(document["inventory"]["inventory2"]))
-            self.inventory3.setText(str(document["inventory"]["inventory3"]))
-            self.inventory4.setText(str(document["inventory"]["inventory4"]))
-            self.inventory5.setText(str(document["inventory"]["inventory5"]))
-            self.inventory6.setText(str(document["inventory"]["inventory6"]))
-            self.inventory7.setText(str(document["inventory"]["inventory7"]))
-            self.inventory8.setText(str(document["inventory"]["inventory8"]))
-            self.inventory9.setText(str(document["inventory"]["inventory9"]))
-            self.inventory10.setText(str(document["inventory"]["inventory10"]))
-            self.inventory11.setText(str(document["inventory"]["inventory11"]))
-            self.inventory12.setText(str(document["inventory"]["inventory12"]))
-            self.inventory13.setText(str(document["inventory"]["inventory13"]))
-            self.inventory14.setText(str(document["inventory"]["inventory14"]))
-            self.inventory15.setText(str(document["inventory"]["inventory15"]))
+            try:
+                self.toughness_current.setText(str(self.character_document["toughness current"]))
+
+                self.corruption_permanent.setText(str(self.character_document["corruption permanent"]))
+                self.corruption_temporary.setText(str(self.character_document["corruption temporary"]))
+
+                self.ACC_mod.setText(str(self.character_document["modifiers"]["ACCURATE"]))
+                self.CUN_mod.setText(str(self.character_document["modifiers"]["CUNNING"]))
+                self.DIS_mod.setText(str(self.character_document["modifiers"]["DISCREET"]))
+                self.PER_mod.setText(str(self.character_document["modifiers"]["PERSUASIVE"]))
+                self.QUI_mod.setText(str(self.character_document["modifiers"]["QUICK"]))
+                self.RES_mod.setText(str(self.character_document["modifiers"]["RESOLUTE"]))
+                self.STR_mod.setText(str(self.character_document["modifiers"]["STRONG"]))
+                self.VIG_mod.setText(str(self.character_document["modifiers"]["VIGILANT"]))
+
+                self.inventory1.setText(str(self.character_document["inventory"]["inventory1"]))
+                self.inventory2.setText(str(self.character_document["inventory"]["inventory2"]))
+                self.inventory3.setText(str(self.character_document["inventory"]["inventory3"]))
+                self.inventory4.setText(str(self.character_document["inventory"]["inventory4"]))
+                self.inventory5.setText(str(self.character_document["inventory"]["inventory5"]))
+                self.inventory6.setText(str(self.character_document["inventory"]["inventory6"]))
+                self.inventory7.setText(str(self.character_document["inventory"]["inventory7"]))
+                self.inventory8.setText(str(self.character_document["inventory"]["inventory8"]))
+                self.inventory9.setText(str(self.character_document["inventory"]["inventory9"]))
+                self.inventory10.setText(str(self.character_document["inventory"]["inventory10"]))
+                self.inventory11.setText(str(self.character_document["inventory"]["inventory11"]))
+                self.inventory12.setText(str(self.character_document["inventory"]["inventory12"]))
+                self.inventory13.setText(str(self.character_document["inventory"]["inventory13"]))
+                self.inventory14.setText(str(self.character_document["inventory"]["inventory14"]))
+                self.inventory15.setText(str(self.character_document["inventory"]["inventory15"]))
+            except:
+                print("No modifiers or inventory")
+                print("Likely new character")
 
             self.update_sheet()
-                
+
+    def set_sheet_vars(self, csheet):
+        print("Setting sheet vars")
+        self.toughness_current = csheet.toughness_current.get_widget()
+        self.toughness_max = csheet.toughness_max.get_widget()
+        self.toughness_threshold = csheet.toughness_threshold.get_widget()
+
+        self.corruption_permanent = csheet.corruption_permanent.get_widget()
+        self.corruption_temporary = csheet.corruption_temporary.get_widget()
+        self.corruption_threshold = csheet.corruption_threshold.get_widget()
+
+        self.ACC = csheet.findChild(QWidget, "ACCURATE")
+        print(self.ACC)
+        self.CUN = csheet.findChild(QWidget, "CUNNING")
+        self.DIS = csheet.findChild(QWidget, "DISCREET")
+        self.PER = csheet.findChild(QWidget, "PERSUASIVE")
+        self.QUI = csheet.findChild(QWidget, "QUICK")
+        self.RES = csheet.findChild(QWidget, "RESOLUTE")
+        self.STR = csheet.findChild(QWidget, "STRONG")
+        self.VIG = csheet.findChild(QWidget, "VIGILANT")
+        
+        self.ACC_mod = csheet.findChild(QWidget, "ACCURATE_mod")
+        self.CUN_mod = csheet.findChild(QWidget, "CUNNING_mod")
+        self.DIS_mod = csheet.findChild(QWidget, "DISCREET_mod")
+        self.PER_mod = csheet.findChild(QWidget, "PERSUASIVE_mod")
+        self.QUI_mod = csheet.findChild(QWidget, "QUICK_mod")
+        self.RES_mod = csheet.findChild(QWidget, "RESOLUTE_mod")
+        self.STR_mod = csheet.findChild(QWidget, "STRONG_mod")
+        self.VIG_mod = csheet.findChild(QWidget, "VIGILANT_mod")
+
+    def set_inv_vars(self, isheet):
+        print("Setting inv vars")
+
+        self.character_icon = isheet.portrait.get_widget()
+
+        self.defense = isheet.defense.get_widget()
+        self.experience = isheet.experience.get_widget()
+
+        print(self.experience)
+        self.experience_unspent = isheet.unspent_experience.get_widget()
+
+        self.inventory1 = isheet.findChild(QWidget, "inventory1")
+        self.inventory2 = isheet.findChild(QWidget, "inventory2")
+        self.inventory3 = isheet.findChild(QWidget, "inventory3")
+        self.inventory4 = isheet.findChild(QWidget, "inventory4")
+        self.inventory5 = isheet.findChild(QWidget, "inventory5")
+        self.inventory6 = isheet.findChild(QWidget, "inventory6")
+        self.inventory7 = isheet.findChild(QWidget, "inventory7")
+        self.inventory8 = isheet.findChild(QWidget, "inventory8")
+        self.inventory9 = isheet.findChild(QWidget, "inventory9")
+        self.inventory10 = isheet.findChild(QWidget, "inventory10")
+        self.inventory11 = isheet.findChild(QWidget, "inventory11")
+        self.inventory12 = isheet.findChild(QWidget, "inventory12")
+        self.inventory13 = isheet.findChild(QWidget, "inventory13")
+        self.inventory14 = isheet.findChild(QWidget, "inventory14")
+        self.inventory15 = isheet.findChild(QWidget, "inventory15")
+
     def get_character(self):
         return self.character_name.get_widget().currentText()
 

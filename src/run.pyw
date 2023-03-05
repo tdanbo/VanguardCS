@@ -15,8 +15,6 @@ import constants as cons
 import stylesheet as style
 import functions as func
 
-
-
 [reload(module) for module in [gui_main, func, cons, style]]
 
 def run():

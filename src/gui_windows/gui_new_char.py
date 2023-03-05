@@ -16,16 +16,17 @@ from template.widget import Widget
 import template.stylesheet as tstyle
 import constants as cons
 
+import pymongo
 
 
 class NewCharacter(QWidget):
-    def __init__(self, gui_inventory, gui_sheet):
+    def __init__(self, isheet, csheet):
         super().__init__(None, Qt.WindowStaysOnTopHint)
 
-        # settings up the character sheet
-        self.gui_inventory = gui_inventory
-        self.gui_sheet = gui_sheet
+        self.isheet = isheet
+        self.csheet = csheet
 
+        # settings up the character sheet
         self.master_layout = QVBoxLayout()
         self.section_group = []
         self.widget_group = []
@@ -143,25 +144,39 @@ class NewCharacter(QWidget):
 
 
     def create_character(self):
-        cname = self.name.get_widget().text()
-        for i in range(self.gui_inventory.character_name.get_widget().count()):
-            if self.gui_inventory.character_name.get_widget().itemText(i).lower() == cname.lower():
+        self.character_name = self.name.get_widget().text()
+
+        for i in range(self.isheet.character_name.get_widget().count()):
+            if self.isheet.character_name.get_widget().itemText(i).lower() == self.character_name.lower():
                 self.name.get_widget().setText("Character already exists")
                 return
 
+
+
         state = self.sender().objectName()
         if state == "accept":
+            new_character = {"character":"","rank":"","experience unspent":"","stats":{}}
+            new_character["character"] = self.character_name
+            new_character["rank"] = "Player"
+            new_character["experience"] = "0"
+            new_character["experience unspent"] = "40"
+
             for stat in cons.STATS:
                 stat_value = self.findChild(QPushButton,stat).text()
-                sheet_widget = self.gui_sheet.findChild(QPushButton,stat)
-                sheet_widget.setText(stat_value)
+                new_character["stats"][stat] = stat_value
 
-            self.gui_inventory.unspent_experience.get_widget().setText("40")
+            self.isheet.character_name.get_widget().addItem(self.character_name)
+            self.isheet.character_name.get_widget().setCurrentText(self.character_name)
 
-            self.gui_inventory.character_name.get_widget().addItem(cname)
-            self.gui_inventory.character_name.get_widget().setCurrentText(cname)
-            CharacterSheet(self.gui_sheet,self.gui_inventory).update_sheet()
+            self.update_database(new_character)
+            self.csheet.load_character(self.character_name)
 
             self.hide()
         else:
             self.hide()
+
+    def update_database(self, directory):
+        self.client = pymongo.MongoClient(cons.CONNECT)
+        self.db = self.client ["dnd"]
+        self.collection = self.db["characters"]
+        self.collection.insert_one(directory)

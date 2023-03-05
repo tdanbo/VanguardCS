@@ -10,6 +10,7 @@ import functions as func
 import functools
 import stylesheet as style
 import template.stylesheet as tstyle
+import pymongo
 
 from class_sheet import CharacterSheet
 
@@ -23,11 +24,11 @@ from gui_functions import character_reset
 from gui_windows.gui_new_char import NewCharacter
 
 class InventoryGUI(QWidget):
-    def __init__(self, gui_sheet = None):
+    def __init__(self, csheet):
         super().__init__()
 
         # setting up character sheet
-        self.gui_sheet = gui_sheet
+        self.character_sheet = csheet
 
         self.master_layout = QVBoxLayout()
         self.section_group = []
@@ -89,7 +90,7 @@ class InventoryGUI(QWidget):
             objectname="name",
             text=[""],
             class_group=self.widget_group,
-            signal=lambda: CharacterSheet(self.gui_sheet, self).load_character(),
+            signal=lambda: self.character_sheet.load_character(self.character_name.get_widget().currentText()),
 
         )
 
@@ -187,7 +188,11 @@ class InventoryGUI(QWidget):
         for section in self.section_group:
             section.connect_to_parent()
 
-        self.setLayout(self.master_layout)    
+        self.setLayout(self.master_layout)   
+
+        #Updating the character dropdown
+        self.character_sheet.set_inv_vars(self)
+        self.update_character_dropdown() 
 
     def make_item_slot(self,count,layout,descriptor):
         self.slot_layot = Section(
@@ -327,7 +332,7 @@ class InventoryGUI(QWidget):
         return  self.character
 
     def open_new_character(self):
-        self.new_character = NewCharacter(self, self.gui_sheet)
+        self.new_character = NewCharacter(self, self.character_sheet)
         self.new_character.show()        
 
     def select_item(self):
@@ -336,3 +341,10 @@ class InventoryGUI(QWidget):
             self.spells = SpellsGUI(self, sender)
         else:
             CharacterSheet(self).update_sheet()
+
+    def update_character_dropdown(self):
+        self.client = pymongo.MongoClient(cons.CONNECT)
+        self.db = self.client ["dnd"]
+        self.collection = self.db["characters"]
+        character_list = self.collection.distinct("character")
+        self.character_name.get_widget().addItems(character_list)

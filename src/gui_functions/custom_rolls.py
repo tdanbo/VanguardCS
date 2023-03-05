@@ -11,13 +11,11 @@ from gui_inventory import InventoryGUI
 This area of code handles the functions of the dice roller.
 '''
 
-def modify_stat(self, stat, adjust="add"):
-    print(stat)
+def modify_stat(self, character_sheet, stat, adjust="add"):
 
     mod_widget = self.findChild(QPushButton, f"{stat}_mod")
     base_mod = int(mod_widget.text())
 
-    print(base_mod)
 
     if adjust == "add":
         base_mod += 1
@@ -34,10 +32,12 @@ def modify_stat(self, stat, adjust="add"):
         mod_widget.setText(f"{base_mod}")
 
     if base_mod == 0:
-        mod_widget.setText("0")
+        mod_widget.setText(f"{base_mod}")
         mod_widget.setHidden(True)
 
-    CharacterSheet(self,InventoryGUI()).update_sheet()
+    print(base_mod)
+
+    character_sheet.update_sheet()
 
 def add_dice(self, dice, adjust="add"):
     print(dice)

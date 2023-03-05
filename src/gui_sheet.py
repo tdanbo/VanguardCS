@@ -18,11 +18,10 @@ from gui_functions import character_stats
 from gui_functions import custom_rolls
 
 class CharacterSheetGUI(QWidget):
-    def __init__(self, gui_inventory = None):
+    def __init__(self, csheet):
         super().__init__()
 
-
-        self.gui_inventory = gui_inventory
+        self.character_sheet = csheet
 
         self.master_layout = QVBoxLayout()
         self.section_group = []
@@ -191,6 +190,7 @@ class CharacterSheetGUI(QWidget):
                 signal=functools.partial(
                     custom_rolls.modify_stat,
                     self,
+                    self.character_sheet,
                     stat
                 ),
                 class_group=self.widget_group,
@@ -206,6 +206,7 @@ class CharacterSheetGUI(QWidget):
                 signal=functools.partial(
                     custom_rolls.modify_stat,
                     self,
+                    self.character_sheet,
                     stat
                 ),
                 class_group=self.widget_group,
@@ -326,14 +327,15 @@ class CharacterSheetGUI(QWidget):
 
         for section in self.section_group:
             section.connect_to_parent()
-
         self.setLayout(self.master_layout)       
+
+        self.character_sheet.set_sheet_vars(self)
 
     def mousePressEvent(self, event): #this is a very specific event used to subtract values when right clicking on a widget
         if event.button() == Qt.RightButton:
             widget = self.childAt(event.pos())
             if widget.objectName() in [stat+"_label" for stat in cons.STATS]+[stat+"_mod" for stat in cons.STATS]:
-                custom_rolls.modify_stat(self, widget.objectName().split("_")[0], adjust="subtract")
+                custom_rolls.modify_stat(self, self.character_sheet, widget.objectName().split("_")[0], adjust="subtract")
 
     def open_features(self):
         sender = self.sender()
