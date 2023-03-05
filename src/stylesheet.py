@@ -114,8 +114,8 @@ QComboBox::drop-down {
 '''
 
 
-#PORTRAIT = f"QLabel {{background-image: url(.icons/beasttoe.png); background-position: center; background-repeat: no-repeat; background-color: {DARK_COLOR}; border: 1px solid {BORDER_COLOR_LIGHT}; border-radius: {RADIUS}}}"	
-PORTRAIT = f"QLabel {{background-position: center; background-repeat: no-repeat; background-color: {DARK_COLOR}; border: 1px solid {BORDER_COLOR_LIGHT}; border-radius: {RADIUS}}}"	
+PORTRAIT = f"QLabel {{background-image: url(chakademus.png); background-position: center; background-repeat: no-repeat; background-color: {DARK_COLOR}; border: 1px solid {BORDER_COLOR_LIGHT}; border-radius: {RADIUS}}}"	
+#PORTRAIT = f"QLabel {{background-position: center; background-repeat: no-repeat; background-color: {DARK_COLOR}; border: 1px solid {BORDER_COLOR_LIGHT}; border-radius: {RADIUS}}}"	
 
 
 INVENTORY = f"QToolButton {{background-color: {DARK_COLOR}; border: 0px solid {MID_COLOR};}}"\

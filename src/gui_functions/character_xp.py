@@ -7,7 +7,7 @@ import constants as cons
 from class_sheet import CharacterSheet
 
 def adjust_xp(self, adjust="add", increment=1):
-    level_w = self.character_level.get_widget()
+    level_w = self.experie.get_widget()
     current_level = float(level_w.text())
 
     if adjust == "add":

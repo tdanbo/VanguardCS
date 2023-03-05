@@ -313,8 +313,8 @@ class CharacterSheet():
 
     def set_icon(self):
         character_name = self.character.currentText().lower()
-        PORTRAIT = f"QLabel {{background-image: url(.icons/{character_name}.png); background-position: center; background-repeat: no-repeat; background-color: {style.DARK_COLOR}; border: 1px solid {style.BORDER_COLOR_LIGHT}; border-radius: {style.RADIUS}}}"	
-        self.character_icon.setStyleSheet(PORTRAIT)
+        func.set_icon(self.character_icon,f"{character_name}.png","")
+
 
     def set_ac(self):
         ac = int(self.ac.text())
@@ -451,23 +451,6 @@ class CharacterSheet():
             self.inventory15.setText(str(document["inventory"]["inventory15"]))
 
             self.update_sheet()
-
-    def update_feat(self, selected_feat, widget):
-        print(f"Updating {selected_feat} in {widget}")
-        if selected_feat == "":
-            func.set_icon(widget, "",cons.ICON_COLOR)
-            widget.setToolTip("")
-            widget.setText("")
-            widget.setProperty("feat", "")
-            return
-        
-        for feat_dict in os.listdir(cons.FEATURES):
-            for feat in json.load(open(os.path.join(cons.FEATURES,feat_dict), "r")):
-                if feat["name"] == selected_feat:
-                    func.set_icon(widget, feat["icon"],cons.ICON_COLOR)
-                    widget.setToolTip(feat["description"])
-                    widget.setProperty("feat", feat["name"])
-                    return
                 
     def get_character(self):
         return self.character_name.get_widget().currentText()

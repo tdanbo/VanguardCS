@@ -332,7 +332,7 @@ class CharacterSheetGUI(QWidget):
     def mousePressEvent(self, event): #this is a very specific event used to subtract values when right clicking on a widget
         if event.button() == Qt.RightButton:
             widget = self.childAt(event.pos())
-            if widget.objectName() in [stat+"_label" for stat in self.attribute_list]+[stat+"_mod" for stat in self.attribute_list]:
+            if widget.objectName() in [stat+"_label" for stat in cons.STATS]+[stat+"_mod" for stat in cons.STATS]:
                 custom_rolls.modify_stat(self, widget.objectName().split("_")[0], adjust="subtract")
 
     def open_features(self):

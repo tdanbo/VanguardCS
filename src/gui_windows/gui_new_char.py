@@ -156,6 +156,8 @@ class NewCharacter(QWidget):
                 sheet_widget = self.gui_sheet.findChild(QPushButton,stat)
                 sheet_widget.setText(stat_value)
 
+            self.gui_inventory.unspent_experience.get_widget().setText("40")
+
             self.gui_inventory.character_name.get_widget().addItem(cname)
             self.gui_inventory.character_name.get_widget().setCurrentText(cname)
             CharacterSheet(self.gui_sheet,self.gui_inventory).update_sheet()

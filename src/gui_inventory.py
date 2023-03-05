@@ -42,8 +42,16 @@ class InventoryGUI(QWidget):
             group = True,
             title = "CHARACTER",
             icon = ("plus.png",cons.WSIZE/2,cons.ICON_COLOR),
-            spacing = 3,
             class_group = self.section_group,
+            spacing=3
+        )
+
+        self.name_layout = Section(
+            outer_layout = QVBoxLayout(),
+            inner_layout = ("HBox", 2),
+            parent_layout = self.portrait_layout.inner_layout(2),
+            class_group=self.section_group,
+            content_margin=(0,0,0,0),
         )
 
         self.inventory_scroll = Section(
@@ -65,14 +73,18 @@ class InventoryGUI(QWidget):
         self.portrait = Widget(
             widget_type=QLabel(),
             parent_layout=self.portrait_layout.inner_layout(1),
-            stylesheet=style.PORTRAIT,
             objectname="portrait",
-            class_group=self.widget_group
+            class_group=self.widget_group,
+            height=cons.WSIZE*2,
+            width=cons.WSIZE*6,
         )
+
+        self.portrait.get_widget().setAlignment(Qt.AlignCenter)
+    
 
         self.character_name = Widget(
             widget_type=QComboBox(),
-            parent_layout=self.portrait_layout.inner_layout(2),
+            parent_layout=self.name_layout.inner_layout(1),
             stylesheet=style.TEST_COMBO,
             objectname="name",
             text=[""],
@@ -83,19 +95,21 @@ class InventoryGUI(QWidget):
 
         self.experience= Widget(
             widget_type=QLineEdit(),
-            parent_layout=self.portrait_layout.inner_layout(2),
+            parent_layout=self.name_layout.inner_layout(2),
             stylesheet=tstyle.WIDGETS,
             objectname="experience",
-            class_group=self.widget_group
+            class_group=self.widget_group,
+            align="center"
         )
 
         self.unspent_experience= Widget(
             widget_type=QLineEdit(),
-            parent_layout=self.portrait_layout.inner_layout(2),
+            parent_layout=self.name_layout.inner_layout(2),
             stylesheet=tstyle.WIDGETS,
             objectname="unspent_experience",
             signal = lambda: character_xp.adjust_xp(self,adjust="add"),
-            class_group=self.widget_group
+            class_group=self.widget_group,
+            align="center"
         )
 
         portrait_title = self.portrait_layout.get_title()[0]
