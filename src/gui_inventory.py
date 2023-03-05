@@ -59,14 +59,15 @@ class InventoryGUI(QWidget):
             outer_layout = QVBoxLayout(),
             inner_layout = ("VBox", 1),
             parent_layout = self.master_layout,
-            scroll=(True,"top"),
+            scroll=(True,"bottom"),
             title="EQUIPMENT",
             group = True,   
             class_group = self.section_group,
             spacing=5,	
         )
 
-        for count in range(1, 16):
+        for count in range(15, 0, -1):
+            print(count)
             self.make_item_slot(count, self.inventory_scroll.inner_layout(1), "inventory")
 
         self.inventory_scroll.get_title()[1].setAlignment(Qt.AlignCenter)
@@ -90,7 +91,7 @@ class InventoryGUI(QWidget):
             objectname="name",
             text=[""],
             class_group=self.widget_group,
-            signal=lambda: self.character_sheet.load_character(self.character_name.get_widget().currentText()),
+            signal=lambda: self.character_sheet.load_character(self,self.character_name.get_widget().currentText()),
 
         )
 
@@ -199,7 +200,6 @@ class InventoryGUI(QWidget):
             outer_layout = QHBoxLayout(),
             inner_layout = ("VBox", 5),
             parent_layout=layout,
-            content_margin=(0,0,8,0),
             class_group=self.section_group
 
         )
@@ -209,8 +209,8 @@ class InventoryGUI(QWidget):
             text="",
             parent_layout=self.slot_layot.inner_layout(1),
             width = cons.WSIZE*1.50,
-            height = cons.WSIZE,
-            objectname=f"{descriptor}_icon{count}",
+            height = cons.WSIZE*1.5,
+            objectname=f"icon{descriptor}{count}",
             signal=functools.partial(roll.inventory_prepare_double_roll, self,count),
             class_group=self.widget_group
         )
@@ -220,7 +220,7 @@ class InventoryGUI(QWidget):
             stylesheet=style.INVENTORY,
             parent_layout=self.slot_layot.inner_layout(1),
             height = cons.WSIZE/1.5,
-            objectname=f"{descriptor}_icon_label{count}",
+            objectname=f"icon_label{descriptor}{count}",
             text=f"{count}.",
             align="center",
             class_group=self.widget_group
@@ -230,11 +230,11 @@ class InventoryGUI(QWidget):
             widget_type=QLineEdit(),
             stylesheet=style.INVENTORY,
             parent_layout=self.slot_layot.inner_layout(2),
-            height = cons.WSIZE,
-            signal= self.select_item,
-            objectname=f"{descriptor}{count}",
+            height = cons.WSIZE*1.5,
+            signal= lambda: self.character_sheet.update_inventory(self),
+            objectname=f"item{count}",
+            class_group=self.widget_group,
             align="center",
-            class_group=self.widget_group
 
         )
 
@@ -244,30 +244,7 @@ class InventoryGUI(QWidget):
             text="",
             parent_layout=self.slot_layot.inner_layout(2),
             height = cons.WSIZE/1.5,
-            objectname=f"{descriptor}_inventory_label{count}",
-            align="center",
-            class_group=self.widget_group
-        )
-
-        self.backpack_action= Widget(
-            widget_type=QPushButton(),
-            stylesheet=style.INVENTORY,
-            text="",
-            parent_layout=self.slot_layot.inner_layout(3),
-            width = cons.WSIZE*3,
-            height = cons.WSIZE,
-            objectname=f"{descriptor}_evoke{count}",
-            signal = functools.partial(roll.inventory_prepare_roll, self, "evoke", count),
-            class_group=self.widget_group
-        )
-
-        self.backpack_action_label = Widget(
-            widget_type=QLabel(),
-            stylesheet=style.INVENTORY,
-            text="",
-            parent_layout=self.slot_layot.inner_layout(3),
-            height = cons.WSIZE/1.5,  
-            objectname=f"{descriptor}_evoke_label{count}",
+            objectname=f"inventory_label{count}",
             align="center",
             class_group=self.widget_group
         )
@@ -277,11 +254,10 @@ class InventoryGUI(QWidget):
             stylesheet=style.INVENTORY,
             text="",
             parent_layout=self.slot_layot.inner_layout(4),
-            width = cons.WSIZE*3,
-            height = cons.WSIZE,
-            objectname=f"{descriptor}_hit_dc{count}",
-            signal = functools.partial(roll.inventory_prepare_roll, self, "hit_dc", count),
-            class_group=self.widget_group
+            height = cons.WSIZE*1.5,
+            objectname=f"quality{count}",
+            class_group=self.widget_group,
+            size_policy=(QSizePolicy.Expanding, QSizePolicy.Fixed)
         )
 
         self.backpack_hit_label = Widget(
@@ -290,20 +266,21 @@ class InventoryGUI(QWidget):
             text="",
             parent_layout=self.slot_layot.inner_layout(4),
             height = cons.WSIZE/1.5,
-            objectname=f"{descriptor}_hit_dc_label{count}",
+            objectname=f"quality_label{count}",
             align="center",
-            class_group=self.widget_group
+            class_group=self.widget_group,
+            size_policy=(QSizePolicy.Expanding, QSizePolicy.Fixed)
         )
 
         self.weapon_modifier = Widget(
             widget_type=QPushButton(),
             stylesheet=style.INVENTORY,
             parent_layout=self.slot_layot.inner_layout(5),
-            width = cons.WSIZE*3,
-            height = cons.WSIZE,
-            objectname=f"{descriptor}_roll{count}",
+            height = cons.WSIZE*1.5,
+            objectname=f"roll{count}",
             signal = functools.partial(roll.inventory_prepare_roll, self, "roll", count),
-            class_group=self.widget_group
+            class_group=self.widget_group,
+            size_policy=(QSizePolicy.Expanding, QSizePolicy.Fixed)
 
         )
 
@@ -313,9 +290,10 @@ class InventoryGUI(QWidget):
             text="",
             parent_layout=self.slot_layot.inner_layout(5),
             height = cons.WSIZE/1.5,
-            objectname=f"{descriptor}_roll_label{count}",
+            objectname=f"roll_label{count}",
             align="center",
-            class_group=self.widget_group
+            class_group=self.widget_group,
+            size_policy=(QSizePolicy.Expanding, QSizePolicy.Fixed)
         )
 
     def mousePressEvent(self, event): #this is a very specific event used to subtract values when right clicking on a widget
@@ -336,11 +314,7 @@ class InventoryGUI(QWidget):
         self.new_character.show()        
 
     def select_item(self):
-        sender = self.sender()
-        if sender.text().lower() in cons.SPELL_LISTS:
-            self.spells = SpellsGUI(self, sender)
-        else:
-            CharacterSheet(self).update_sheet()
+        self.character_sheet.update_sheet()
 
     def update_character_dropdown(self):
         self.client = pymongo.MongoClient(cons.CONNECT)

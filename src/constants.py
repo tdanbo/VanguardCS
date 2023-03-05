@@ -60,6 +60,7 @@ COLOR_LABEL = {
     "gold": "#3d1f34",
     "misc": "#1a1a1a",
     "injury": "#1f293d",
+    "spells": "#1f293d",
 }
 
 func.create_folder(LOCAL_DIRECTORY)

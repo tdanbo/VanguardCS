@@ -18,17 +18,19 @@ import copy
 
 class CharacterSheet():
     def __init__(self):
-        print("Initializing Character Sheet")
+        self.equipment = self.get_equipment()
 
     def update_sheet(self):
         self.set_icon()      
-        # self.update_inventory()
-        updated_character_sheet = self.update_dictionary()
+
         self.set_stats()
         self.set_toughness()
         self.set_corruption()
         self.set_defense()
+
+        updated_character_sheet = self.update_dictionary()
         self.update_database(updated_character_sheet)
+        
     def update_dictionary(self):
         print("Updating Character Sheet Dictionary")    
         character_sheet_dictionary = {
@@ -68,6 +70,19 @@ class CharacterSheet():
         }  
         return character_sheet_dictionary
     
+    def get_equipment(self):
+        all_equipment = {}
+        client = pymongo.MongoClient(cons.CONNECT)
+        # get a list of collection names
+        db = client["equipment"]
+        collection_names = db.list_collection_names()
+        for name in collection_names:
+            # get a collection object
+            collection = db[name]
+            document = collection.find_one()
+            all_equipment[name] = document
+        return all_equipment
+
     def update_database(self, directory):
         self.client = pymongo.MongoClient(cons.CONNECT)
         self.db = self.client ["dnd"]
@@ -119,121 +134,62 @@ class CharacterSheet():
         self.corruption_temporary.setText("0")
         self.corruption_threshold.setText(str(corruption_threshold_math))
 
-    def update_inventory(self):
-        all_items = []
+    def update_inventory(self, isheet):
+        self.all_items = []
+        for inventory_slot in self.inventory_list:
+            item_string = inventory_slot.text().lower()
+            if item_string == "":
+                item_string = inventory_slot.objectName()
+            self.all_items.append(self.find_item(item_string))
 
-        self.empty_slot_dict = {"Hit":"","Evoke":"","Evoke Mod":["","",""],"Hit Mod":["","",""],"Roll":"","Roll Mod":["","",""]}
-        for slot in range(1,5):
-            self.inventory_slot = self.csheet.findChild(QLineEdit, f"inventory{slot}")
-            if self.inventory_slot.text() != "":
-                all_items.append(self.inventory_slot.text())
-            else:
-                pass
+        print(self.all_items)
 
-        for slot in range(1,5):
-            self.update_item(slot, "", "", self.empty_slot_dict)
+        priority = {'melee': 0, 'ranged': 1, 'armor': 2, 'elixirs': 3}
+        self.sorted_list = sorted(self.all_items, key=lambda x: priority.get(x.get('Category', ''), len(priority)))
+        for slot,item in enumerate(self.sorted_list):
+            self.update_item(isheet, slot+1, item)
+        self.update_sheet()
 
-        misc_items = copy.deepcopy(all_items)
-        self.armor_items = []
-        slot = 1
-        for item_type in os.listdir(cons.ITEMS):
-            item_type_json = func.read_json(os.path.join(cons.ITEMS,item_type))
-            for item in all_items:
-                for item_key in item_type_json:
-                    if item_key.lower() == item.lower():
-                        this_item_type = item_type.split(".")[0].split("_")[1]
-                        if this_item_type == "armor":
-                            self.armor_items.append(item)
-                        self.update_item(slot, item_key, this_item_type, item_type_json[item_key])
-                        misc_items.remove(item)
-                        slot += 1
+    def update_item(self, isheet, slot, item):
+        self.inventory_icon = isheet.findChild(QToolButton, f"icon{slot}")
+        self.inventory_quality = isheet.findChild(QPushButton, f"quality{slot}")
+        self.inventory_roll = isheet.findChild(QPushButton, f"roll{slot}")
+        self.inventory_slot = isheet.findChild(QLineEdit, f"item{slot}")
 
-        for item in misc_items:
-            self.update_item(slot, item, "misc", self.empty_slot_dict)
-            all_items.remove(item)
-            slot += 1
+        self.inventory_icon_label = isheet.findChild(QLabel, f"icon_label{slot}")
+        self.inventory_quality_label = isheet.findChild(QLabel, f"quality_label{slot}")
+        self.inventory_roll_label = isheet.findChild(QLabel, f"roll_label{slot}")
+        self.inventory_slot_label = isheet.findChild(QLabel, f"inventory_label{slot}")
 
-        self.set_ac()
-        self.set_hp()
-        self.set_feats()
+        self.inventory_slot.setText(item["Name"])
+        self.inventory_slot_label.setText(item["Category"])
 
-    def update_item(self, slot, item, inventory_type, inventory_item):
-        self.inventory_icon = self.csheet.findChild(QToolButton, f"icon{slot}")
-        self.inventory_evoke = self.csheet.findChild(QPushButton, f"evoke{slot}")
-        self.inventory_hit = self.csheet.findChild(QPushButton, f"hit_dc{slot}")
-        self.inventory_roll = self.csheet.findChild(QPushButton, f"roll{slot}")
-        self.inventory_slot = self.csheet.findChild(QLineEdit, f"inventory{slot}")
-
-        self.inventory_icon_label = self.csheet.findChild(QLabel, f"icon_label{slot}")
-        self.inventory_evoke_label = self.csheet.findChild(QLabel, f"evoke_label{slot}")
-        self.inventory_hit_label = self.csheet.findChild(QLabel, f"hit_dc_label{slot}")
-        self.inventory_roll_label = self.csheet.findChild(QLabel, f"roll_label{slot}")
-        self.inventory_slot_label = self.csheet.findChild(QLabel, f"inventory_label{slot}")
-
-        inventory_widgets = [self.inventory_icon,self.inventory_evoke,self.inventory_hit,self.inventory_roll,self.inventory_slot]
-        inventory_labels = [self.inventory_icon_label,self.inventory_evoke_label,self.inventory_hit_label,self.inventory_roll_label,self.inventory_slot_label]
-        func.set_icon(self.inventory_icon,f"{inventory_type}.png",cons.ICON_COLOR)
-
-        self.inventory_evoke.setText("")
-        self.inventory_evoke_label.setText("")
-        self.inventory_hit.setText("")
-        self.inventory_hit_label.setText("")
-        self.inventory_roll.setText("")
-        self.inventory_roll_label.setText("")   
-
-        # if "Evoke" in inventory_item:
-        #     if inventory_item["Evoke"] != "":
-        #         self.inventory_evoke.setText(self.get_action_modifier(inventory_item["Evoke"],inventory_item["Evoke Mod"]))
-        #         self.inventory_evoke_label.setText(inventory_item["Evoke"])
-
-
-        # if "Hit" in inventory_item:
-        #     if inventory_item["Hit"] != "":
-        #         self.inventory_hit.setText(self.get_action_modifier(inventory_item["Hit"],inventory_item["Hit Mod"]))
-        #         self.inventory_hit_label.setText(inventory_item["Hit"])
-
-        # if "Roll" in inventory_item:
-        #     if inventory_item["Roll"] != "":
-        #         self.inventory_roll.setText(self.get_roll(inventory_item["Roll Mod"],inventory_type))
-        #         self.inventory_roll_label.setText(inventory_item["Roll"])
-                
-        self.inventory_slot.setText(item)
-
-        if "level" in inventory_item:
-            self.inventory_slot_label.setText(inventory_type.capitalize()+" "+inventory_item["level"])
+        self.inventory_roll.setText(item["Roll"][1])
+        self.inventory_roll_label.setText(item["Roll"][0])
+        
+        if "Quality" in item:
+            self.inventory_quality.setText(",".join(item["Quality"]))
+            self.inventory_quality_label.setText("Quality")
         else:
-            self.inventory_slot_label.setText(inventory_type.capitalize())
+            self.inventory_quality.setText("")
+            self.inventory_quality_label.setText("")
 
-        if inventory_type == "damage":     
-            [widget.setStyleSheet(style.INVENTORY_INJURY) for widget in inventory_widgets]
-            [widget.setStyleSheet(style.INVENTORY_INJURY_LABELS) for widget in inventory_labels]
-            func.set_icon(self.inventory_icon,f"{inventory_type}.png",style.INJURY_RED_BRIGHT)
-        elif inventory_type != "":
-
-            label_style = f"QLabel {{font: 10px; color:{style.TEXT_DARK_COLOR}; background-color: {cons.COLOR_LABEL[inventory_type]}; border: 0px; border-bottom: 1px solid {cons.COLOR_LABEL[inventory_type]};}}"
-            label_style2 = f"QLabel {{font: 10px; color:{style.TEXT_DARK_COLOR}; background-color: {style.DARK_COLOR}; border: 0px; border-bottom: 1px solid {cons.COLOR_LABEL[inventory_type]};}}"\
-                           f"QPushButton {{font: 10px; color:{style.TEXT_DARK_COLOR}; background-color: {style.DARK_COLOR}; border: 0px; border-bottom: 1px solid {cons.COLOR_LABEL[inventory_type]};}}"\
-
-            self.inventory_icon_label.setStyleSheet(label_style)
-            self.inventory_slot_label.setStyleSheet(label_style2)
-            self.inventory_evoke_label.setStyleSheet(label_style2)
-            self.inventory_hit_label.setStyleSheet(label_style2)
-            self.inventory_roll_label.setStyleSheet(label_style2)
-
-        else:
-            [widget.setStyleSheet(style.INVENTORY) for widget in inventory_widgets]
-            [widget.setStyleSheet(style.INVENTORY) for widget in inventory_labels]
-
-        self.inventory_slot.clearFocus()        
+    def find_item(self,item_string):
+        for category in self.equipment:
+            for item in self.equipment[category]:
+                if item_string == item.lower():
+                    print(f"found {item}")
+                    item_dict = self.equipment[category][item]
+                    item_dict["Name"] = item
+                    item_dict["Category"] = category
+                    return item_dict
+                else:
+                    pass
+        return {"Name":"","Category":"","Roll":["",""]}
+        
 
     def set_icon(self):
         func.set_icon(self.character_icon,f"{self.character_name}.png","")
-
-
-    def set_ac(self):
-        ac = int(self.ac.text())
-        ac += len(self.armor_items)
-        self.ac.setText(str(ac))
 
     def set_hp(self):
         level = math.floor(float(self.level.text()))
@@ -322,7 +278,7 @@ class CharacterSheet():
             self.feat2.setEnabled(True)
             self.feat3.setEnabled(True)
 
-    def load_character(self, character_name):
+    def load_character(self, isheet, character_name):
         print(f"Loading {character_name}")
         self.character_name = character_name
 
@@ -382,6 +338,7 @@ class CharacterSheet():
                 print("No modifiers or inventory")
                 print("Likely new character")
 
+            self.update_inventory(isheet)
             self.update_sheet()
 
     def set_sheet_vars(self, csheet):
@@ -415,7 +372,6 @@ class CharacterSheet():
 
     def set_inv_vars(self, isheet):
         print("Setting inv vars")
-
         self.character_icon = isheet.portrait.get_widget()
 
         self.defense = isheet.defense.get_widget()
@@ -424,21 +380,23 @@ class CharacterSheet():
         print(self.experience)
         self.experience_unspent = isheet.unspent_experience.get_widget()
 
-        self.inventory1 = isheet.findChild(QWidget, "inventory1")
-        self.inventory2 = isheet.findChild(QWidget, "inventory2")
-        self.inventory3 = isheet.findChild(QWidget, "inventory3")
-        self.inventory4 = isheet.findChild(QWidget, "inventory4")
-        self.inventory5 = isheet.findChild(QWidget, "inventory5")
-        self.inventory6 = isheet.findChild(QWidget, "inventory6")
-        self.inventory7 = isheet.findChild(QWidget, "inventory7")
-        self.inventory8 = isheet.findChild(QWidget, "inventory8")
-        self.inventory9 = isheet.findChild(QWidget, "inventory9")
-        self.inventory10 = isheet.findChild(QWidget, "inventory10")
-        self.inventory11 = isheet.findChild(QWidget, "inventory11")
-        self.inventory12 = isheet.findChild(QWidget, "inventory12")
-        self.inventory13 = isheet.findChild(QWidget, "inventory13")
-        self.inventory14 = isheet.findChild(QWidget, "inventory14")
-        self.inventory15 = isheet.findChild(QWidget, "inventory15")
+        self.inventory1 = isheet.findChild(QWidget, "item1")
+        self.inventory2 = isheet.findChild(QWidget, "item2")
+        self.inventory3 = isheet.findChild(QWidget, "item3")
+        self.inventory4 = isheet.findChild(QWidget, "item4")
+        self.inventory5 = isheet.findChild(QWidget, "item5")
+        self.inventory6 = isheet.findChild(QWidget, "item6")
+        self.inventory7 = isheet.findChild(QWidget, "item7")
+        self.inventory8 = isheet.findChild(QWidget, "item8")
+        self.inventory9 = isheet.findChild(QWidget, "item9")
+        self.inventory10 = isheet.findChild(QWidget, "item10")
+        self.inventory11 = isheet.findChild(QWidget, "item11")
+        self.inventory12 = isheet.findChild(QWidget, "item12")
+        self.inventory13 = isheet.findChild(QWidget, "item13")
+        self.inventory14 = isheet.findChild(QWidget, "item14")
+        self.inventory15 = isheet.findChild(QWidget, "item15")
+
+        self.inventory_list = [self.inventory1, self.inventory2, self.inventory3, self.inventory4, self.inventory5, self.inventory6, self.inventory7, self.inventory8, self.inventory9, self.inventory10, self.inventory11, self.inventory12, self.inventory13, self.inventory14, self.inventory15]
 
     def get_character(self):
         return self.character_name.get_widget().currentText()
