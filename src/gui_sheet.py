@@ -19,6 +19,8 @@ from gui_functions import custom_rolls
 
 from gui_abilities import AbilityGUI
 
+import math
+
 class CharacterSheetGUI(QWidget):
     def __init__(self, csheet):
         super().__init__()
@@ -38,15 +40,19 @@ class CharacterSheetGUI(QWidget):
             class_group = self.section_group
         )
 
-        self.inventory_layout = Section(
-            outer_layout = QHBoxLayout(),
-            inner_layout = ("VBox", 2),
+        self.ability_layout = Section(
+            outer_layout = QVBoxLayout(),
+            inner_layout = ("HBox", 6),
             parent_layout = self.master_layout,
             title = "ABILITIES & POWERS",
             group = True,
+            icon = ("plus.png", cons.WSIZE, cons.ICON_COLOR),
             spacing=5,
             class_group=self.section_group
         )
+        
+        self.ability_layout.get_title()[0].clicked.connect(self.open_abilities)
+
 
         self.character_basic = Section(
             outer_layout = QVBoxLayout(),
@@ -81,48 +87,39 @@ class CharacterSheetGUI(QWidget):
         self.hp_layout.get_title()[1].setAlignment(Qt.AlignCenter)
 
         for power in range(1, 13):
-            if power % 2 == 0:
-                layout_number = 1
-            else:
-                layout_number = 2
-
+            layout_number = math.ceil(power / 2)
+            print(layout_number)
             # Below is all the code for the power section
             self.master_power_section = Section(
                 outer_layout = QHBoxLayout(),
                 inner_layout = ("HBox", 1),
-                parent_layout = self.inventory_layout.inner_layout(layout_number),
-                group = True,
+                parent_layout = self.ability_layout.inner_layout(layout_number),
                 spacing = 3,
                 class_group=self.section_group
             )
 
             self.add_power_button = Widget(
-                widget_type=QToolButton(),
-                stylesheet=tstyle.QTITLE,
+                widget_type=QTextEdit(),
+                stylesheet=f"background-color: {tstyle.GROUP_BACKGROUND};",
                 parent_layout = self.master_power_section.inner_layout(1),
                 class_group=self.widget_group,
-                icon = ("plus.png",cons.WSIZE,cons.ICON_COLOR),
                 size_policy=(QSizePolicy.Expanding, QSizePolicy.Expanding),
-                signal=self.open_abilities
-
+                objectname=f"ability{power}",
+                enabled=False,
             )
             
-
-            title = "Acrobatics"
-            test_text = "The character may roll against Quick to avoid Free Attacks from enemies in melee combat, either when trying to slip past an enemy or when attempting to withdraw from melee. Should the test fail, the player must choose to either remain in its original place or to move anyway and suffer a Free Attack from the opponent."
-
             self.power_section = Section(
                 outer_layout = QHBoxLayout(),
                 inner_layout = ("HBox", 1),
                 parent_layout = self.master_power_section.inner_layout(1),
-                title=title,
+                title="empty",
                 group = True,
                 spacing = 3,
                 class_group=self.section_group,
-                objectname=f"power{power}",
-                hidden=True
+                objectname=f"ability{power}_section",
+                icon = ("plus.png",cons.WSIZE,cons.ICON_COLOR),
+                hidden=True,
             )
-
             title_layout = self.power_section.get_title()[2]
             self.power_section.get_title()[1].setAlignment(Qt.AlignCenter)
             
@@ -130,9 +127,9 @@ class CharacterSheetGUI(QWidget):
                 widget_type=QTextEdit(),
                 stylesheet=style.QSTATS,
                 parent_layout = self.power_section.inner_layout(1),
-                text=test_text,
-                objectname="power_description",
-                class_group=self.widget_group
+                text="",
+                objectname=f"ability{power}_label",
+                class_group=self.widget_group,
             )
 
             self.novice = Widget(
@@ -140,7 +137,8 @@ class CharacterSheetGUI(QWidget):
                 stylesheet=tstyle.QTITLE,
                 text="N",
                 width=cons.WSIZE,
-                height=cons.WSIZE
+                height=cons.WSIZE,
+                objectname=f"ability{power}_Novice"
             )
 
             self.adept = Widget(
@@ -149,7 +147,7 @@ class CharacterSheetGUI(QWidget):
                 text="A",
                 width=cons.WSIZE,
                 height=cons.WSIZE,
-                enabled=False
+                objectname=f"ability{power}_Adept"
             )
 
             self.master = Widget(
@@ -158,7 +156,7 @@ class CharacterSheetGUI(QWidget):
                 text="M",
                 width=cons.WSIZE,
                 height=cons.WSIZE,
-                enabled=False
+                objectname=f"ability{power}_Master"
             )
 
             self.delete = Widget(
@@ -169,14 +167,21 @@ class CharacterSheetGUI(QWidget):
                 width=cons.WSIZE,
                 height=cons.WSIZE,
                 icon = ("delete.png",cons.WSIZE,cons.ICON_COLOR),
+                objectname=f"ability{power}_delete",
+                signal=self.delete_ability
             )
 
-            title_layout.insertWidget(0, self.novice.widget)
-            title_layout.insertWidget(1, self.adept.widget)
-            title_layout.insertWidget(2, self.master.widget)
+
+            title_layout.insertWidget(1, self.novice.widget)
+            title_layout.insertWidget(2, self.adept.widget)
+            title_layout.insertWidget(3, self.master.widget)
+
+            self.master.get_widget().clicked.connect(self.change_rank)
+            self.adept.get_widget().clicked.connect(self.change_rank)
+            self.novice.get_widget().clicked.connect(self.change_rank)
 
 
-        self.inventory_layout.get_title()[1].setAlignment(Qt.AlignCenter)
+        self.ability_layout.get_title()[1].setAlignment(Qt.AlignCenter)
 
         #Below is all the widgets used in the character sheet
         for number,stat in enumerate(cons.STATS):
@@ -363,11 +368,31 @@ class CharacterSheetGUI(QWidget):
                 custom_rolls.modify_stat(self, self.character_sheet, widget.objectName().split("_")[0], adjust="subtract")
 
     def open_abilities(self):
-        sender = self.sender()
-        self.abilities = AbilityGUI(self, sender)
+        print("opening abilities")
+        slot = f"ability{self.get_free_ability_slot()}"
+        print(slot)
+        self.abilities = AbilityGUI(self, self.character_sheet, slot)
         self.abilities.show()
+
+    def delete_ability(self):
+        sender_object = self.sender().objectName()
+        sender_object.split("_")[0]
+        self.findChild(QWidget, f"{sender_object.split('_')[0]}_section_title").setText("empty")
+        self.character_sheet.update_sheet()
+
+    def get_free_ability_slot(self):
+        for slot in range(1, 13):
+            ability_slot = self.findChild(QWidget, f"ability{slot}_section_title").text()
+            if ability_slot == "empty":
+                return slot
 
     def open_addsub(self):
         sender = self.sender()
         self.addsub = AddSubGUI(self, sender)
         self.addsub.show()
+
+    def change_rank(self):
+        print("changing rank")
+        slot = self.sender().objectName().split("_")[0]
+        rank = self.sender().objectName().split("_")[1]
+        self.character_sheet.set_rank(slot, rank)

@@ -48,3 +48,7 @@ LABELS = (
 )
 
 MAIN_WINDOW = f"QWidget {{background-color: {GUI_BACKGROUND}; border-style: outset;}}"
+
+LEVEL_BUTTONS_DISABLED = f"QWidget {{font-size: 10px; color: {DISABLED_COLOR}; background-color:{GROUP_HEADER}}}"
+LEVEL_BUTTONS = f"QWidget {{font-size: 10px; color: {FONT_COLOR}; background-color:{GROUP_HEADER}}}"
+

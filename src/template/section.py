@@ -64,12 +64,13 @@ class Section(QWidget):
                 self.title_layout = QHBoxLayout()
                 self.title_label = QLabel(title)
                 self.title_label.setStyleSheet(style.QTITLE)
-                self.title_label.setObjectName("title")
+                self.title_label.setObjectName(f"{objectname}_title")
                 self.outer_layout_type.addWidget(self.title_label)
                 self.title_label.setFixedHeight(cons.WSIZE)
                 self.title_icon = ""
                 if icon != "":
                     self.title_icon = QToolButton()
+                    self.title_icon.setObjectName(f"{objectname}_icon")
                     self.title_icon.setStyleSheet(style.QTITLE)
                     self.title_icon.setFixedSize(cons.WSIZE, cons.WSIZE)
                     func.set_icon(self.title_icon, icon[0], icon[2])

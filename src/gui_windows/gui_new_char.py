@@ -169,7 +169,7 @@ class NewCharacter(QWidget):
             self.isheet.character_name.get_widget().setCurrentText(self.character_name)
 
             self.update_database(new_character)
-            self.csheet.load_character(self.character_name)
+            self.csheet.load_character(self.isheet, self.character_name)
 
             self.hide()
         else:

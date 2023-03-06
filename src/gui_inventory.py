@@ -231,7 +231,7 @@ class InventoryGUI(QWidget):
             stylesheet=style.INVENTORY,
             parent_layout=self.slot_layot.inner_layout(2),
             height = cons.WSIZE*1.5,
-            signal= lambda: self.character_sheet.update_inventory(self),
+            signal= lambda: self.character_sheet.update_sheet(),
             objectname=f"item{count}",
             class_group=self.widget_group,
             align="center",
