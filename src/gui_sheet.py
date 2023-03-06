@@ -17,6 +17,8 @@ import template.stylesheet as tstyle
 from gui_functions import character_stats
 from gui_functions import custom_rolls
 
+from gui_abilities import AbilityGUI
+
 class CharacterSheetGUI(QWidget):
     def __init__(self, csheet):
         super().__init__()
@@ -83,19 +85,42 @@ class CharacterSheetGUI(QWidget):
                 layout_number = 1
             else:
                 layout_number = 2
-                
+
+            # Below is all the code for the power section
+            self.master_power_section = Section(
+                outer_layout = QHBoxLayout(),
+                inner_layout = ("HBox", 1),
+                parent_layout = self.inventory_layout.inner_layout(layout_number),
+                group = True,
+                spacing = 3,
+                class_group=self.section_group
+            )
+
+            self.add_power_button = Widget(
+                widget_type=QToolButton(),
+                stylesheet=tstyle.QTITLE,
+                parent_layout = self.master_power_section.inner_layout(1),
+                class_group=self.widget_group,
+                icon = ("plus.png",cons.WSIZE,cons.ICON_COLOR),
+                size_policy=(QSizePolicy.Expanding, QSizePolicy.Expanding),
+                signal=self.open_abilities
+
+            )
+            
+
             title = "Acrobatics"
             test_text = "The character may roll against Quick to avoid Free Attacks from enemies in melee combat, either when trying to slip past an enemy or when attempting to withdraw from melee. Should the test fail, the player must choose to either remain in its original place or to move anyway and suffer a Free Attack from the opponent."
-
 
             self.power_section = Section(
                 outer_layout = QHBoxLayout(),
                 inner_layout = ("HBox", 1),
-                parent_layout = self.inventory_layout.inner_layout(layout_number),
+                parent_layout = self.master_power_section.inner_layout(1),
                 title=title,
                 group = True,
                 spacing = 3,
-                class_group=self.section_group
+                class_group=self.section_group,
+                objectname=f"power{power}",
+                hidden=True
             )
 
             title_layout = self.power_section.get_title()[2]
@@ -337,10 +362,10 @@ class CharacterSheetGUI(QWidget):
             if widget.objectName() in [stat+"_label" for stat in cons.STATS]+[stat+"_mod" for stat in cons.STATS]:
                 custom_rolls.modify_stat(self, self.character_sheet, widget.objectName().split("_")[0], adjust="subtract")
 
-    def open_features(self):
+    def open_abilities(self):
         sender = self.sender()
-        self.features = FeatsGUI(self, sender)
-        self.features.show()
+        self.abilities = AbilityGUI(self, sender)
+        self.abilities.show()
 
     def open_addsub(self):
         sender = self.sender()

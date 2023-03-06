@@ -8,71 +8,79 @@ import constants as cons
 import json
 import functions as func
 import os
+import sys
 
 from template.section import Section
 from template.widget import Widget
 
-from character_sheet import CharacterSheet
+from class_sheet import CharacterSheet
 
-class FeatsGUI(QWidget):
+class AbilityGUI(QWidget):
     def __init__(self, csheet, feature_slot = ""):
         super().__init__(None, Qt.WindowStaysOnTopHint)
 
         self.csheet = csheet
         self.feature_slot = feature_slot
 
-        self.feat_main_layout = Section(
-            outer_layout = QVBoxLayout(),
-            inner_layout = ("VBox", 1),
-            spacing = 10,   
-        )
+        self.master_layout = QVBoxLayout()
+        self.master_layout.setSpacing(5)
+
+        self.section_group = []
+        self.widget_group = []
 
         self.feats_scroll = Section(
             outer_layout = QVBoxLayout(),
             inner_layout = ("VBox", 1),
-            parent_layout = self.feat_main_layout.inner_layout(1),
+            parent_layout = self.master_layout,
             scroll=(True,"top"),
-            spacing = 10, 
+            spacing = 0,
+            class_group=self.section_group, 
         )
 
         for feat_dict in os.listdir(cons.FEATURES):
             for feat in json.load(open(os.path.join(cons.FEATURES,feat_dict), "r")):
-                self.single_feat_layout = Section (
-                outer_layout = QVBoxLayout(),
-                inner_layout = ("HBox", 3),
-                group = (True,None,125), 
-                title=feat["name"],
-                icon = (feat["icon"],cons.WSIZE*1.5,cons.ICON_COLOR),	  
-                parent_layout = self.feats_scroll.inner_layout(1),
+                self.single_feat_layout = Section(
+                    outer_layout = QVBoxLayout(),
+                    inner_layout = ("VBox", 1),
+                    parent_layout = self.feats_scroll.inner_layout(2),
+                    spacing = 0,
+                    class_group=self.section_group,
+                    group=True,
+                    title=feat["name"],
                 )
+
 
                 self.feat_label = Widget(
                     widget_type=QPlainTextEdit(),
                     stylesheet=style.BUTTONS,
-                    parent_layout=self.single_feat_layout.inner_layout(2),
+                    parent_layout=self.single_feat_layout.inner_layout(1),
                     text = feat["description"],
                     size_policy = (QSizePolicy.Expanding , QSizePolicy.Expanding),
+                    class_group=self.widget_group,
                     )
                 
                 self.select_feat = Widget(
                     widget_type=QPushButton(),
                     stylesheet=style.BUTTONS,
-                    parent_layout=self.single_feat_layout.inner_layout(3),
+                    parent_layout=self.single_feat_layout.inner_layout(2),
                     text = "Select",
                     size_policy = (QSizePolicy.Expanding , QSizePolicy.Expanding),
-                    height = cons.WSIZE*1.5,
+                    height = cons.WSIZE,
                     objectname=feat["name"],
+                    signal=self.confirm_feat,
+                    class_group=self.widget_group
                     )
 
-                self.select_feat.get_widget().clicked.connect(self.confirm_feat)
-                self.single_feat_layout.inner_layout(2).addWidget(self.feat_label.get_widget())
-                self.single_feat_layout.inner_layout(3).addWidget(self.select_feat.get_widget())
-                self.feats_scroll.inner_layout(1).addLayout(self.single_feat_layout.outer_layout())
+        for widget in self.widget_group:
+            widget.connect_to_parent()
+            widget.set_signal()
 
-        self.feat_main_layout.outer_layout().addLayout(self.feats_scroll.outer_layout())
+        for section in self.section_group:
+            section.connect_to_parent()
+
+        self.setLayout(self.master_layout)     
+
         self.setWindowTitle("Select Feat")
-        self.setLayout(self.feat_main_layout.outer_layout())
-
         self.setStyleSheet(style.BASE_STYLE)
 
     def confirm_feat(self):
@@ -86,3 +94,12 @@ class FeatsGUI(QWidget):
                     self.hide()
                     CharacterSheet(self.csheet).update_sheet()
                     return
+                
+def run_gui(name, version):
+    app = QApplication(sys.argv)
+    w = AbilityGUI("","")
+    w.show()
+    app.exec_()
+
+if __name__ == "__main__":
+    run_gui("Character Sheet", "0.1")

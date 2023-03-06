@@ -28,6 +28,8 @@ class Section(QWidget):
         class_group=[],
         width="",
         height="",
+        objectname="",
+        hidden=False,
     ):
         super().__init__()
 
@@ -47,6 +49,7 @@ class Section(QWidget):
         if self.height != "":
             self.setFixedHeight(self.height)
 
+        self.setObjectName(objectname)
         self.section_layout = QVBoxLayout()
         self.section_layout.setContentsMargins(0, 0, 0, 0)
         self.inner_layouts = self.inner_layout_list()
@@ -120,6 +123,10 @@ class Section(QWidget):
         self.class_group.append(self)
 
         self.setLayout(self.section_layout)
+
+        if hidden != False:
+            self.setHidden(hidden)
+
 
     def inner_layout_list(self):
         self.all_inner_layouts = []
