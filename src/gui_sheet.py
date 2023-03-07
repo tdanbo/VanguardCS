@@ -31,10 +31,28 @@ class CharacterSheetGUI(QWidget):
         self.section_group = []
         self.widget_group = []
 
+        self.top_layout = Section(
+            outer_layout = QHBoxLayout(),
+            inner_layout = ("HBox", 2),
+            parent_layout = self.master_layout,
+            spacing = 5,
+            class_group = self.section_group
+        )
+
+        self.defense_layout = Section(
+            outer_layout = QHBoxLayout(),
+            inner_layout = ("VBox", 2),
+            parent_layout = self.top_layout.inner_layout(1),
+            group = True,
+            spacing = 3,
+            class_group = self.section_group,
+            width = 150
+        )
+
         self.stat_layout = Section(
             outer_layout = QHBoxLayout(),
             inner_layout = ("VBox", 9),
-            parent_layout = self.master_layout,
+            parent_layout = self.top_layout.inner_layout(2),
             group = True,
             spacing = 3,
             class_group = self.section_group
@@ -42,10 +60,11 @@ class CharacterSheetGUI(QWidget):
 
         self.ability_layout = Section(
             outer_layout = QVBoxLayout(),
-            inner_layout = ("HBox", 6),
+            inner_layout = ("VBox", 1),
             parent_layout = self.master_layout,
             title = "ABILITIES & POWERS",
             group = True,
+            scroll=(True,"top"),
             icon = ("plus.png", cons.WSIZE, cons.ICON_COLOR),
             spacing=5,
             class_group=self.section_group
@@ -87,34 +106,34 @@ class CharacterSheetGUI(QWidget):
         self.hp_layout.get_title()[1].setAlignment(Qt.AlignCenter)
 
         for power in range(1, 13):
-            layout_number = math.ceil(power / 2)
+            #layout_number = math.ceil(power / 2)
+            layout_number = 1
             print(layout_number)
             # Below is all the code for the power section
             self.master_power_section = Section(
                 outer_layout = QHBoxLayout(),
-                inner_layout = ("HBox", 1),
+                inner_layout = ("VBox", 1),
                 parent_layout = self.ability_layout.inner_layout(layout_number),
                 spacing = 3,
                 class_group=self.section_group
             )
 
             self.add_power_button = Widget(
-                widget_type=QTextEdit(),
+                widget_type=QWidget(),
                 stylesheet=f"background-color: {tstyle.GROUP_BACKGROUND};",
                 parent_layout = self.master_power_section.inner_layout(1),
                 class_group=self.widget_group,
-                size_policy=(QSizePolicy.Expanding, QSizePolicy.Expanding),
                 objectname=f"ability{power}",
                 enabled=False,
             )
             
             self.power_section = Section(
-                outer_layout = QHBoxLayout(),
-                inner_layout = ("HBox", 1),
+                outer_layout = QVBoxLayout(),
+                inner_layout = ("HBox", 3),
                 parent_layout = self.master_power_section.inner_layout(1),
                 title="empty",
                 group = True,
-                spacing = 3,
+                spacing = 10,
                 class_group=self.section_group,
                 objectname=f"ability{power}_section",
                 icon = ("plus.png",cons.WSIZE,cons.ICON_COLOR),
@@ -123,14 +142,71 @@ class CharacterSheetGUI(QWidget):
             title_layout = self.power_section.get_title()[2]
             self.power_section.get_title()[1].setAlignment(Qt.AlignCenter)
             
+            self.rank_label = Widget(
+                widget_type=QLabel(),
+                stylesheet=style.QSTATS,
+                parent_layout = self.power_section.inner_layout(1),
+                text="Novice",
+                class_group=self.widget_group,
+                align="top",
+                width=35
+            )
+
             self.power_description = Widget(
-                widget_type=QTextEdit(),
+                widget_type=QLabel(),
                 stylesheet=style.QSTATS,
                 parent_layout = self.power_section.inner_layout(1),
                 text="",
                 objectname=f"ability{power}_label",
-                class_group=self.widget_group,
+                class_group=self.widget_group
             )
+
+            self.power_description.get_widget().setWordWrap(True)
+
+            self.rank_label = Widget(
+                widget_type=QLabel(),
+                stylesheet=style.QSTATS,
+                parent_layout = self.power_section.inner_layout(2),
+                text="Adept",
+                class_group=self.widget_group,
+                align="top",
+                width=35
+            )
+
+            self.adept_box = Widget(
+                widget_type=QLabel(),
+                stylesheet=f"background-color: {tstyle.GROUP_BACKGROUND};",
+                parent_layout = self.power_section.inner_layout(2),
+                class_group=self.widget_group,
+                objectname=f"ability{power}",
+                enabled=False,
+                text = "<b>Passive</b>. The character makes two separate knife-attacks at the same target with every combat action. If the character also has Twin Attack, this ability only affects one of the attacks, for a total of three attacks (two with the main hand and one with the other)."
+            )
+
+            self.adept_box.get_widget().setWordWrap(True)
+
+            self.rank_label = Widget(
+                widget_type=QLabel(),
+                stylesheet=style.QSTATS,
+                parent_layout = self.power_section.inner_layout(3),
+                text="Master",
+                class_group=self.widget_group,
+                align="top",
+                width=35
+            )
+
+            self.master_box = Widget(
+                widget_type=QLabel(),
+                stylesheet=f"background-color: {tstyle.GROUP_BACKGROUND};",
+                parent_layout = self.power_section.inner_layout(3),
+                class_group=self.widget_group,
+                objectname=f"ability{power}",
+                enabled=False,
+                text = "<b>Passive</b>. The character makes two separate knife-attacks at the same target with every combat action. If the character also has Twin Attack, this ability only affects one of the attacks, for a total of three attacks (two with the main hand and one with the other)."
+
+            )
+
+            self.master_box.get_widget().setWordWrap(True)
 
             self.novice = Widget(
                 widget_type=QPushButton(),
@@ -183,14 +259,22 @@ class CharacterSheetGUI(QWidget):
 
         self.ability_layout.get_title()[1].setAlignment(Qt.AlignCenter)
 
+
+        []
+
         #Below is all the widgets used in the character sheet
         for number,stat in enumerate(cons.STATS):
-            number = number + 1
+            if stat in ["DEFENSE","ARMOR"]:
+                stat_parent_layout = self.defense_layout.inner_layout(number)
+            else:
+                number = number - 1
+                stat_parent_layout = self.stat_layout.inner_layout(number)
+
             print(stat)
             self.stat_button = Widget(
                 widget_type=QPushButton(),
                 stylesheet=style.BIG_BUTTONS,
-                parent_layout = self.stat_layout.inner_layout(number),
+                parent_layout = stat_parent_layout,
                 text="10",
                 signal=functools.partial(
                     character_stats.adjust_stat,
@@ -205,7 +289,7 @@ class CharacterSheetGUI(QWidget):
             self.stat_sub_layout = Section(
                 outer_layout = QHBoxLayout(),
                 inner_layout = ("HBox", 1),
-                parent_layout = self.stat_layout.inner_layout(number),
+                parent_layout = stat_parent_layout,
                 spacing=0,
                 class_group = self.section_group
                 

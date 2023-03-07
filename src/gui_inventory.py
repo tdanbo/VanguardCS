@@ -121,7 +121,7 @@ class InventoryGUI(QWidget):
             outer_layout = QHBoxLayout(),
             inner_layout = ("VBox", 3),
             parent_layout = self.master_layout,
-            title="COMBAT",
+            title="Currency",
             group = True,   
             class_group = self.section_group	
         )

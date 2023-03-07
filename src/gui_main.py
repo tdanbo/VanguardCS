@@ -35,7 +35,7 @@ class MainWindow(QWidget):
         # 2 Main classes
         self.combat_log = CombatLog(combat_log_gui)  
  
-
+ 
         self.main_layout.addWidget(self.character_inventory_gui)
         self.main_layout.addWidget(self.character_sheet_gui)
         self.main_layout.addWidget(combat_log_gui)  
