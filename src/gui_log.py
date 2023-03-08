@@ -8,17 +8,19 @@ from template.widget import Widget
 import constants as cons
 import functions as func
 import functools
-import stylesheet as style
 
 from gui_functions import custom_rolls
 from gui_functions import custom_log
 from gui_functions import roll
+
+import constants as cons
 
 class CombatLogGUI(QWidget):
     def __init__(self, csheet):
         super().__init__()
         
         self.master_layout = QVBoxLayout()
+        self.master_layout.setContentsMargins(0,0,0,0)
         self.section_group = []
         self.widget_group = []
 
@@ -33,26 +35,27 @@ class CombatLogGUI(QWidget):
             scroll=(True,"bottom"),
             title="COMBAT LOG",
             group = True,   
-            icon = ("combatlog.png",cons.WSIZE/2,cons.ICON_COLOR),	
-            class_group = self.section_group	
+            class_group = self.section_group,
+            content_margin=(0,0,0,0),	
         )
 
+        self.log_scroll.get_title()[1].setAlignment(Qt.AlignCenter)
         self.log_dice = Section(
             outer_layout = QHBoxLayout(),
             inner_layout = ("HBox", 2),   
             parent_layout = self.master_layout,
             title="DICE",  
             group = True,
-            icon = ("dice.png",cons.WSIZE/2,cons.ICON_COLOR),
             spacing = 3,	
             class_group = self.section_group,
         )
+
+        self.log_dice.get_title()[1].setAlignment(Qt.AlignCenter)
 
         self.roll_button = Widget(
             widget_type=QPushButton(),
             parent_layout=self.log_dice.get_title()[2],
             text="ROLL",
-            stylesheet=style.QTITLE,
             height=cons.WSIZE,
             objectname="roll",
             signal= lambda: roll.custom_prepare_roll(self,self.get_charater(),"Custom"),
@@ -79,28 +82,30 @@ class CombatLogGUI(QWidget):
                 widget_type=QPushButton(),
                 parent_layout=self.dice_layout.inner_layout(0),
                 text="",
-                stylesheet=style.DICE_TRAY2,
                 objectname=f"{die_type[0]}_count",
                 signal=functools.partial(
                     custom_rolls.add_dice,
                     self,
                     die_type[0],
                 ),
-                class_group=self.widget_group
+                class_group=self.widget_group,
+                stylesheet=f"font-weight: bold; color: {cons.FONT_COLOR}; background-color: {cons.PRIMARY_LIGHTER}; border: 1px solid {cons.BORDER}; border-radius: 6px;"
+
             )   
 
             self.dice_w = Widget(
                 widget_type=QPushButton(),
                 parent_layout=self.dice_layout.inner_layout(0),
                 text=die_type[0],
-                stylesheet=style.DICE_TRAY,
                 objectname=die_type[0],
                 signal=functools.partial(
                     custom_rolls.add_dice,
                     self,
                     die_type[0]
                 ),
-                class_group=self.widget_group
+                class_group=self.widget_group,
+                stylesheet=f"font-weight: bold; color: {cons.FONT_COLOR}; background-color: {cons.PRIMARY_LIGHTER}; border: 1px solid {cons.BORDER}; border-radius: 6px;"
+
             )       
 
             self.dice_count.get_widget().setMinimumWidth(cons.WSIZE*1.5)
@@ -110,6 +115,15 @@ class CombatLogGUI(QWidget):
         #Setting up all slots for the combat log
         for slot in range(20, -1, -1):
             self.create_log_entry(slot)
+
+            # divider
+            self.divider = Widget(
+                widget_type=QFrame(),
+                parent_layout=self.log_scroll.inner_layout(1),
+                class_group=self.section_group,
+                height=2,
+                stylesheet=f"background-color: {cons.BORDER};"
+            )
 
         for widget in self.widget_group:
             widget.connect_to_parent()
@@ -121,16 +135,21 @@ class CombatLogGUI(QWidget):
         self.setLayout(self.master_layout)        
 
     def create_log_entry(self, slot):
-        layout = self.log_scroll.inner_layout(0)
+        layout = self.log_scroll.inner_layout(1)
+
+        if slot % 2 == 0:
+            color = cons.PRIMARY_DARKER
+        else:
+            color = cons.PRIMARY
 
         # MAIN LOG LAYOUT
         self.single_log_layout = Section (
             outer_layout = QVBoxLayout(),
             inner_layout = ("HBox", 3),
             parent_layout = layout,
-            spacing = 3,
-            content_margin=(0,0,15,0),
-            class_group = self.section_group
+            content_margin=(0,0,0,0),
+            class_group = self.section_group,
+            stylesheet=f"background-color: {color};"
         )    
 
         self.main_roll_layout = Section (
@@ -158,7 +177,6 @@ class CombatLogGUI(QWidget):
         self.log_character = Widget(
             widget_type = QLabel(),
             parent_layout = self.single_log_layout.inner_layout(1),
-            stylesheet = style.COMBAT_LOG,
             objectname = f"character{slot}",
             class_group=self.widget_group
         )
@@ -167,7 +185,6 @@ class CombatLogGUI(QWidget):
             widget_type = QLabel(),
             parent_layout = self.main_roll_layout.inner_layout(1),
             size_policy = (QSizePolicy.Expanding , QSizePolicy.Expanding),
-            stylesheet = style.COMBAT_LOG,
             width = cons.WSIZE*2.20,
             height = cons.WSIZE*2.20,
             objectname = f"icon{slot}",
@@ -177,7 +194,6 @@ class CombatLogGUI(QWidget):
         self.log_action_name = Widget(
             widget_type = QLabel(),
             parent_layout = self.label_roll_layout.inner_layout(1),
-            stylesheet = style.COMBAT_LOG,
             height = cons.WSIZE*1.10,
             size_policy = (QSizePolicy.Expanding , QSizePolicy.Expanding),
             objectname = f"action name{slot}",
@@ -187,7 +203,6 @@ class CombatLogGUI(QWidget):
         self.log_action_dice = Widget(
             widget_type = QLabel(),
             parent_layout = self.label_roll_layout.inner_layout(2),
-            stylesheet = style.COMBAT_LOG,
             height = cons.WSIZE*1.10,
             size_policy = (QSizePolicy.Expanding , QSizePolicy.Expanding),
             objectname = f"action dice{slot}",
@@ -199,7 +214,6 @@ class CombatLogGUI(QWidget):
             parent_layout = self.result_roll_layout.inner_layout(1),
             height = cons.WSIZE*1.10,
             #width = cons.WSIZE*1.75, 
-            stylesheet = style.COMBAT_BUTTON_1_REROLL,
             size_policy = (QSizePolicy.Expanding , QSizePolicy.Expanding),
             objectname=f"second hit{slot}",
             class_group=self.widget_group
@@ -208,7 +222,6 @@ class CombatLogGUI(QWidget):
         self.desc_hit = Widget(
             widget_type = QPushButton(),
             parent_layout = self.result_roll_layout.inner_layout(1),
-            stylesheet = style.COMBAT_LOG,
             width = cons.WSIZE*2.5,
             height = cons.WSIZE*1.10,
             size_policy = (QSizePolicy.Expanding , QSizePolicy.Expanding),
@@ -222,7 +235,6 @@ class CombatLogGUI(QWidget):
             parent_layout = self.result_roll_layout.inner_layout(1),
             height = cons.WSIZE*1.10,
             width = cons.WSIZE*1.75, 
-            stylesheet = style.COMBAT_BUTTON_1,
             objectname=f"first hit{slot}",
             class_group=self.widget_group
         )
@@ -232,7 +244,6 @@ class CombatLogGUI(QWidget):
             parent_layout = self.result_roll_layout.inner_layout(2),
             height = cons.WSIZE*1.10,
             #width = cons.WSIZE*1.75, 
-            stylesheet = style.COMBAT_BUTTON_2_REROLL,
             size_policy = (QSizePolicy.Expanding , QSizePolicy.Expanding),
             objectname=f"second roll{slot}",
             class_group=self.widget_group,
@@ -241,7 +252,6 @@ class CombatLogGUI(QWidget):
         self.desc_roll = Widget(
             widget_type = QPushButton(),
             parent_layout = self.result_roll_layout.inner_layout(2),
-            stylesheet = style.COMBAT_LOG,
             width = cons.WSIZE*2.5,
             height = cons.WSIZE*1.10,
             size_policy = (QSizePolicy.Expanding , QSizePolicy.Expanding),
@@ -255,7 +265,6 @@ class CombatLogGUI(QWidget):
             parent_layout = self.result_roll_layout.inner_layout(2),
             height = cons.WSIZE*1.10,
             width = cons.WSIZE*1.75, 
-            stylesheet = style.COMBAT_BUTTON_2,
             objectname=f"first roll{slot}",
             class_group=self.widget_group
         )
@@ -264,7 +273,6 @@ class CombatLogGUI(QWidget):
             widget_type = QLabel(),
             parent_layout = self.single_log_layout.inner_layout(3),
             align="right",
-            stylesheet = style.COMBAT_LOG,
             objectname = f"time{slot}",
             class_group=self.widget_group
         )

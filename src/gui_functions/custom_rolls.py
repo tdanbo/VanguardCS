@@ -2,7 +2,6 @@ from PySide2.QtWidgets import *
 from PySide2.QtGui import *
 from PySide2.QtCore import *
 
-import stylesheet as style
 from class_sheet import CharacterSheet
 
 from gui_inventory import InventoryGUI
@@ -70,16 +69,16 @@ def add_dice(self, dice, adjust="add"):
         widget = self.findChild(QPushButton, objectname)
         counter = self.findChild(QPushButton, f"{objectname}_count")
         if counter.text() == "":
-            widget.setStyleSheet(style.DICE_TRAY)
+            pass
+            #widget.setStyleSheet(style.DICE_TRAY)
         else:
-            widget.setStyleSheet(style.DICE_TRAY1)
+            #widget.setStyleSheet(style.DICE_TRAY1)
             roll_button(self, shown=True)
             
 
 
 def roll_button(self, shown=False):
     title_widgets = self.log_dice.get_title()
-    title_widgets[0].setHidden(shown)
     title_widgets[1].setHidden(shown)
 
     self.roll_button.get_widget().setHidden(not shown)
@@ -90,5 +89,4 @@ def clear_rolls(self):
         counter = self.findChild(QPushButton, f"{objectname}_count")
         counter.setText("")
         counter.setHidden(True)
-        widget.setStyleSheet(style.DICE_TRAY)
     roll_button(self, shown=False)

@@ -11,8 +11,6 @@ import constants as cons
 from class_sheet import CharacterSheet
 
 import functools
-import stylesheet as style
-import template.stylesheet as tstyle
 
 from gui_functions import character_stats
 from gui_functions import custom_rolls
@@ -28,6 +26,7 @@ class CharacterSheetGUI(QWidget):
         self.character_sheet = csheet
 
         self.master_layout = QVBoxLayout()
+        self.master_layout.setContentsMargins(0,0,0,0)
         self.section_group = []
         self.widget_group = []
 
@@ -120,7 +119,6 @@ class CharacterSheetGUI(QWidget):
 
             self.add_power_button = Widget(
                 widget_type=QWidget(),
-                stylesheet=f"background-color: {tstyle.GROUP_BACKGROUND};",
                 parent_layout = self.master_power_section.inner_layout(1),
                 class_group=self.widget_group,
                 objectname=f"ability{power}",
@@ -144,7 +142,6 @@ class CharacterSheetGUI(QWidget):
             
             self.rank_label = Widget(
                 widget_type=QLabel(),
-                stylesheet=style.QSTATS,
                 parent_layout = self.power_section.inner_layout(1),
                 text="Novice",
                 class_group=self.widget_group,
@@ -152,20 +149,18 @@ class CharacterSheetGUI(QWidget):
                 width=35
             )
 
-            self.power_description = Widget(
+            self.novice_rank = Widget(
                 widget_type=QLabel(),
-                stylesheet=style.QSTATS,
                 parent_layout = self.power_section.inner_layout(1),
                 text="",
                 objectname=f"ability{power}_label",
                 class_group=self.widget_group
             )
 
-            self.power_description.get_widget().setWordWrap(True)
+            self.novice_rank.get_widget().setWordWrap(True)
 
             self.rank_label = Widget(
                 widget_type=QLabel(),
-                stylesheet=style.QSTATS,
                 parent_layout = self.power_section.inner_layout(2),
                 text="Adept",
                 class_group=self.widget_group,
@@ -175,7 +170,6 @@ class CharacterSheetGUI(QWidget):
 
             self.adept_box = Widget(
                 widget_type=QLabel(),
-                stylesheet=f"background-color: {tstyle.GROUP_BACKGROUND};",
                 parent_layout = self.power_section.inner_layout(2),
                 class_group=self.widget_group,
                 objectname=f"ability{power}",
@@ -187,7 +181,6 @@ class CharacterSheetGUI(QWidget):
 
             self.rank_label = Widget(
                 widget_type=QLabel(),
-                stylesheet=style.QSTATS,
                 parent_layout = self.power_section.inner_layout(3),
                 text="Master",
                 class_group=self.widget_group,
@@ -197,7 +190,6 @@ class CharacterSheetGUI(QWidget):
 
             self.master_box = Widget(
                 widget_type=QLabel(),
-                stylesheet=f"background-color: {tstyle.GROUP_BACKGROUND};",
                 parent_layout = self.power_section.inner_layout(3),
                 class_group=self.widget_group,
                 objectname=f"ability{power}",
@@ -210,7 +202,6 @@ class CharacterSheetGUI(QWidget):
 
             self.novice = Widget(
                 widget_type=QPushButton(),
-                stylesheet=tstyle.QTITLE,
                 text="N",
                 width=cons.WSIZE,
                 height=cons.WSIZE,
@@ -219,7 +210,6 @@ class CharacterSheetGUI(QWidget):
 
             self.adept = Widget(
                 widget_type=QPushButton(),
-                stylesheet=tstyle.QTITLE,
                 text="A",
                 width=cons.WSIZE,
                 height=cons.WSIZE,
@@ -228,7 +218,6 @@ class CharacterSheetGUI(QWidget):
 
             self.master = Widget(
                 widget_type=QPushButton(),
-                stylesheet=tstyle.QTITLE,
                 text="M",
                 width=cons.WSIZE,
                 height=cons.WSIZE,
@@ -237,7 +226,6 @@ class CharacterSheetGUI(QWidget):
 
             self.delete = Widget(
                 widget_type=QToolButton(),
-                stylesheet=tstyle.QTITLE,
                 parent_layout = title_layout,
                 class_group=self.widget_group,
                 width=cons.WSIZE,
@@ -273,7 +261,6 @@ class CharacterSheetGUI(QWidget):
             print(stat)
             self.stat_button = Widget(
                 widget_type=QPushButton(),
-                stylesheet=style.BIG_BUTTONS,
                 parent_layout = stat_parent_layout,
                 text="10",
                 signal=functools.partial(
@@ -285,6 +272,7 @@ class CharacterSheetGUI(QWidget):
                 objectname=stat,
                 class_group=self.widget_group,
                 height=cons.WSIZE*2,
+                stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_COLOR}; font-size: 20px; font-weight: bold; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-top-right-radius: 6px;"
             )
             self.stat_sub_layout = Section(
                 outer_layout = QHBoxLayout(),
@@ -299,7 +287,6 @@ class CharacterSheetGUI(QWidget):
                 widget_type=QPushButton(),
                 parent_layout=self.stat_sub_layout.inner_layout(0),
                 text=stat,
-                stylesheet=style.QSTATS,
                 objectname=f"{stat}_label",
                 signal=functools.partial(
                     custom_rolls.modify_stat,
@@ -308,14 +295,15 @@ class CharacterSheetGUI(QWidget):
                     stat
                 ),
                 class_group=self.widget_group,
-                height=cons.WSIZE
+                height=cons.WSIZE,
+                stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_DARK}; font-size: 10px; font-weight: bold; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;"
+
             )
 
             self.stat_modifier = Widget(
                 widget_type=QPushButton(),
                 parent_layout=self.stat_sub_layout.inner_layout(0),
                 text="0",
-                stylesheet=style.QSTATS,
                 objectname=f"{stat}_mod",
                 signal=functools.partial(
                     custom_rolls.modify_stat,
@@ -324,7 +312,9 @@ class CharacterSheetGUI(QWidget):
                     stat
                 ),
                 class_group=self.widget_group,
-                height=cons.WSIZE
+                height=cons.WSIZE,
+                stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_DARK}; font-size: 10px; font-weight: bold; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;"
+
             )   
 
         self.toughness_threshold = Widget(
@@ -332,7 +322,7 @@ class CharacterSheetGUI(QWidget):
             parent_layout=self.hp_layout.inner_layout(1),
             objectname = "toughness_threshold",
             class_group=self.widget_group,
-            stylesheet = tstyle.WIDGETS
+            stylesheet=f"color: {cons.FONT_DARK}; font-size: 20px;"
         )
 
         self.toughness_max = Widget(
@@ -340,7 +330,7 @@ class CharacterSheetGUI(QWidget):
             parent_layout=self.hp_layout.inner_layout(2),
             objectname = "toughness_max",
             class_group=self.widget_group,
-            stylesheet = tstyle.WIDGETS
+            stylesheet=f"color: {cons.FONT_DARK}; font-size: 20px;"
         )
 
         self.toughness_current= Widget(
@@ -349,7 +339,7 @@ class CharacterSheetGUI(QWidget):
             signal=self.open_addsub,
             objectname = "toughness_current",
             class_group=self.widget_group,
-            stylesheet = tstyle.WIDGETS
+            stylesheet=f"color: {cons.FONT_DARK}; font-size: 20px;"
         )
 
         self.toughness_threshold_label = Widget(
@@ -357,7 +347,6 @@ class CharacterSheetGUI(QWidget):
             parent_layout=self.hp_layout.inner_layout(1),
             text = "THRESHOLD",
             class_group=self.widget_group,
-            stylesheet = tstyle.LABELS,
             align=Qt.AlignCenter
         )
 
@@ -367,7 +356,6 @@ class CharacterSheetGUI(QWidget):
             objectname = "toughness_max",
             class_group=self.widget_group,
             text = "MAXIMUM",
-            stylesheet = tstyle.LABELS,
             align=Qt.AlignCenter
         )
 
@@ -378,17 +366,16 @@ class CharacterSheetGUI(QWidget):
             objectname = "toughness_current",
             text = "CURRENT",
             class_group=self.widget_group,
-            stylesheet = tstyle.LABELS,
-            align=Qt.AlignCenter
+            align=Qt.AlignCenter,
         )
 
         self.corruption_threshold = Widget(
             widget_type=QPushButton(),
             parent_layout=self.corruption_layout.inner_layout(1),
             signal=lambda: CharacterSheet(self).update_sheet(),
-            text = "99",
+            text = "",
             class_group=self.widget_group,
-            stylesheet = tstyle.WIDGETS
+            stylesheet=f"color: {cons.FONT_DARK}; font-size: 20px;"
         )
 
         self.corruption_permanent = Widget(
@@ -396,7 +383,7 @@ class CharacterSheetGUI(QWidget):
             parent_layout=self.corruption_layout.inner_layout(2),
             objectname = "toughness_permanenet",
             class_group=self.widget_group,
-            stylesheet = tstyle.WIDGETS
+            stylesheet=f"color: {cons.FONT_DARK}; font-size: 20px;"
         )
 
         self.corruption_temporary= Widget(
@@ -405,7 +392,7 @@ class CharacterSheetGUI(QWidget):
             signal=self.open_addsub,
             objectname = "corruption_current",
             class_group=self.widget_group,
-            stylesheet = tstyle.WIDGETS
+            stylesheet=f"color: {cons.FONT_DARK}; font-size: 20px;"
         )
 
         self.corruption_threshold_label = Widget(
@@ -413,7 +400,6 @@ class CharacterSheetGUI(QWidget):
             parent_layout=self.corruption_layout.inner_layout(1),
             text = "THRESHOLD",
             class_group=self.widget_group,
-            stylesheet = tstyle.LABELS,
             align=Qt.AlignCenter
         )
 
@@ -421,7 +407,6 @@ class CharacterSheetGUI(QWidget):
             widget_type=QLabel(),
             parent_layout=self.corruption_layout.inner_layout(2),
             class_group=self.widget_group,
-            stylesheet = tstyle.LABELS,
             text = "PERMANENT",
             align=Qt.AlignCenter
         )
@@ -430,7 +415,6 @@ class CharacterSheetGUI(QWidget):
             widget_type=QLabel(),
             parent_layout=self.corruption_layout.inner_layout(3),
             class_group=self.widget_group,
-            stylesheet = tstyle.LABELS,
             text = "TEMPORARY",
             align=Qt.AlignCenter
         )

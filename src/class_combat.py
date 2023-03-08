@@ -11,7 +11,6 @@ from datetime import datetime
 from bson import json_util
 import json
 import threading
-import stylesheet as style
 
 class CombatLog:
     def __init__(
@@ -140,15 +139,15 @@ class CombatLog:
 
             time.setText(entry["time"])
 
-            if entry["desc roll"].upper() == "DAMAGE":
-                get_updater().call_latest(desc_roll.setStyleSheet, style.COMBAT_LABEL_DAMAGE)
-            elif entry["desc roll"].upper() == "HEALING":
-                get_updater().call_latest(desc_roll.setStyleSheet, style.COMBAT_LABEL_HEALING)
-            elif entry["desc roll"].upper() == "CUSTOM":
-                get_updater().call_latest(desc_roll.setStyleSheet, style.COMBAT_LABEL_CUSTOM)
-            elif entry["desc roll"].upper() == "CHECK":
-                get_updater().call_latest(desc_roll.setStyleSheet, style.COMBAT_LABEL_CHECK)
-            elif "EVOKE" in entry["desc roll"].upper():
-                get_updater().call_latest(desc_roll.setStyleSheet, style.COMBAT_LABEL_EVOKE)
-            else:
-                get_updater().call_latest(desc_roll.setStyleSheet, style.COMBAT_LABEL)
+            # if entry["desc roll"].upper() == "DAMAGE":
+            #     get_updater().call_latest(desc_roll.setStyleSheet, style.COMBAT_LABEL_DAMAGE)
+            # elif entry["desc roll"].upper() == "HEALING":
+            #     get_updater().call_latest(desc_roll.setStyleSheet, style.COMBAT_LABEL_HEALING)
+            # elif entry["desc roll"].upper() == "CUSTOM":
+            #     get_updater().call_latest(desc_roll.setStyleSheet, style.COMBAT_LABEL_CUSTOM)
+            # elif entry["desc roll"].upper() == "CHECK":
+            #     get_updater().call_latest(desc_roll.setStyleSheet, style.COMBAT_LABEL_CHECK)
+            # elif "EVOKE" in entry["desc roll"].upper():
+            #     get_updater().call_latest(desc_roll.setStyleSheet, style.COMBAT_LABEL_EVOKE)
+            # else:
+            #     get_updater().call_latest(desc_roll.setStyleSheet, style.COMBAT_LABEL)

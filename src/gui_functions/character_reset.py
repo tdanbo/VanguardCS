@@ -2,7 +2,6 @@ from PySide2.QtWidgets import *
 from PySide2.QtGui import *
 from PySide2.QtCore import *
 
-import stylesheet as style
 from class_sheet import CharacterSheet
 
 def reset_hp(self):
@@ -16,7 +15,6 @@ def reset_hp(self):
 def reset_morale(self):
     max_morale = self.character_max_morale.get_widget().text()
     self.character_current_morale.get_widget().setText(max_morale)
-    self.character_current_morale.get_widget().setStyleSheet(style.BIG_BUTTONS)
     CharacterSheet(self).update_sheet()
 
 def reset_focus(self):

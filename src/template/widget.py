@@ -7,7 +7,6 @@ import json
 
 import constants as cons
 
-import template.stylesheet as style
 import template.functions as func
 
 

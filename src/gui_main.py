@@ -8,10 +8,10 @@ from gui_log import CombatLogGUI
 
 import sys
 
-import stylesheet as style
-
 from class_combat import CombatLog
 from class_sheet import CharacterSheet
+
+import constants as cons
 
 class MainWindow(QWidget):
     def __init__(self):
@@ -41,7 +41,8 @@ class MainWindow(QWidget):
         self.main_layout.addWidget(combat_log_gui)  
 
         self.setLayout(self.main_layout)
-        self.setStyleSheet(style.BASE_STYLE)
+        self.spacing = 0
+        self.setStyleSheet(f"border-style: outset; color: {cons.FONT_DARK}; background-color: {cons.DARK};border-style: outset;")
 
         self.combat_log.update_combat_log()
         self.combat_log.start_watching() 

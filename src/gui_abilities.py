@@ -2,7 +2,6 @@ from PySide2.QtWidgets import *
 from PySide2.QtGui import *
 from PySide2.QtCore import *
 
-import stylesheet as style
 import constants as cons
 
 import json
@@ -16,7 +15,6 @@ import pymongo
 
 from template.section import Section
 from template.widget import Widget
-import template.stylesheet as tstyle
 
 class AbilityGUI(QWidget):
     def __init__(self, gui_sheet, csheet,slot):
@@ -44,7 +42,6 @@ class AbilityGUI(QWidget):
         for category in self.all_abilities:
             self.ability_widget = Widget(
                 widget_type=QToolButton(),
-                stylesheet=style.BUTTONS,
                 parent_layout=self.ability_section.inner_layout(1),
                 icon = (f"{category}.png",cons.WSIZE/2,cons.ICON_COLOR),
                 height=cons.WSIZE*2,
@@ -66,7 +63,6 @@ class AbilityGUI(QWidget):
 
         self.search_bar = Widget(
             widget_type=QLineEdit(),
-            stylesheet=style.QADDSUB,
             parent_layout=self.search_section.inner_layout(1),
             text="",
             align="center",
@@ -95,7 +91,6 @@ class AbilityGUI(QWidget):
         self.setLayout(self.master_layout)     
 
         self.setWindowTitle("Select Feat")
-        self.setStyleSheet(style.BASE_STYLE)
 
     def add_abilities(self):
         self.category = self.sender().objectName()
@@ -132,7 +127,6 @@ class AbilityGUI(QWidget):
 
                 self.feat_label = Widget(
                     widget_type=QPlainTextEdit(),
-                    stylesheet=style.BUTTONS,
                     parent_layout=self.single_feat_layout.inner_layout(1),
                     text = item_json["Description"],
                     size_policy = (QSizePolicy.Expanding , QSizePolicy.Expanding),
@@ -140,11 +134,8 @@ class AbilityGUI(QWidget):
                     objectname=f'{item_json["Name"]}_label'
                     )
 
-
-
                 self.select_feat = Widget(
                     widget_type=QPushButton(),
-                    stylesheet=style.BUTTONS,
                     parent_layout=self.ability_section.inner_layout(2),
                     text = "Select",
                     height = cons.WSIZE,
@@ -167,8 +158,7 @@ class AbilityGUI(QWidget):
                         signal=self.set_level,
                         objectname=f"{item_json['Name']}_Novice",
                         parent_layout=title_layout,
-                        class_group=self.ability_widget_group,
-                        stylesheet = tstyle.LEVEL_BUTTONS
+                        class_group=self.ability_widget_group
                     )
 
                     self.adept = Widget(
@@ -180,7 +170,6 @@ class AbilityGUI(QWidget):
                         objectname=f"{item_json['Name']}_Adept",
                         parent_layout=title_layout,
                         class_group=self.ability_widget_group,
-                        stylesheet = tstyle.LEVEL_BUTTONS_DISABLED
                     )
 
                     self.master = Widget(
@@ -192,7 +181,6 @@ class AbilityGUI(QWidget):
                         objectname=f"{item_json['Name']}_Master",
                         parent_layout=title_layout,
                         class_group=self.ability_widget_group,
-                        stylesheet = tstyle.LEVEL_BUTTONS_DISABLED
                     )
 
         for widget in self.ability_widget_group:
@@ -216,9 +204,9 @@ class AbilityGUI(QWidget):
         master = self.findChild(QPushButton, f"{item_name}_Master")
 
         level_list = [novice, adept, master]
-        [level_widget.setStyleSheet(tstyle.LEVEL_BUTTONS_DISABLED) for level_widget in level_list]
+        #[level_widget.setStyleSheet(tstyle.LEVEL_BUTTONS_DISABLED) for level_widget in level_list]
 
-        [level_widget.setStyleSheet(tstyle.LEVEL_BUTTONS) if level in level_widget.objectName() else None for level_widget in level_list]
+        #[level_widget.setStyleSheet(tstyle.LEVEL_BUTTONS) if level in level_widget.objectName() else None for level_widget in level_list]
 
         # Set new text
         text = self.all_abilities[self.category][item_name][level]

@@ -2,8 +2,6 @@ from PySide2.QtWidgets import *
 from PySide2.QtGui import *
 from PySide2.QtCore import *
 
-import stylesheet as style
-
 from class_sheet import CharacterSheet
 
 def adjust_morale(self, adjust = "add"):
@@ -17,10 +15,10 @@ def adjust_morale(self, adjust = "add"):
     else:
         current_value -= 1
 
-    if current_value >= 0:
-        current_morale.setStyleSheet(style.BIG_BUTTONS)
-    else:
-        current_morale.setStyleSheet(style.BUTTONS_INJURY)
+    # if current_value >= 0:
+    #     current_morale.setStyleSheet(style.BIG_BUTTONS)
+    # else:
+    #     current_morale.setStyleSheet(style.BUTTONS_INJURY)
 
     current_morale.setText(str(current_value))
     

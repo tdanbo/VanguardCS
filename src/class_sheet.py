@@ -9,9 +9,7 @@ import math
 import constants as cons
 import os
 import template.functions as func
-import template.stylesheet as tstyle
 import random
-import stylesheet as style
 
 import json
 import copy
@@ -190,10 +188,10 @@ class CharacterSheet():
         print(f"{novice} {adept} {master}")
 
         level_list = [novice, adept, master]
-        [level_widget.setStyleSheet(tstyle.LEVEL_BUTTONS_DISABLED) for level_widget in level_list]
+        #[level_widget.setStyleSheet(tstyle.LEVEL_BUTTONS_DISABLED) for level_widget in level_list]
 
         active_rank = self.csheet.findChild(QPushButton, f"{ability_slot}_{ability_rank}")
-        active_rank.setStyleSheet(tstyle.LEVEL_BUTTONS)
+        #active_rank.setStyleSheet(tstyle.LEVEL_BUTTONS)
 
     def find_ability_category(self):
         for category in self.abilities:
@@ -324,7 +322,6 @@ class CharacterSheet():
         toughness_current = int(self.toughness_current.text())
         self.max_slots = int(self.CON.text())+cons.START_SLOTS
 
-        self.toughness_current.setStyleSheet(style.BUTTONS)
         for point in range(1,int(value)+1):
             if state == "minus":
                 toughness_current -= 1
@@ -342,11 +339,6 @@ class CharacterSheet():
             self.toughness_current.setText(str(-abs(self.max_slots)))
         else:
             self.toughness_current.setText(str(toughness_current))   
-
-        if toughness_current >= 0:
-            self.toughness_current.setStyleSheet(style.BIG_BUTTONS)
-        else:
-            self.toughness_current.setStyleSheet(style.BUTTONS_INJURY)
 
         self.update_sheet()
 

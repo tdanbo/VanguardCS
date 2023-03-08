@@ -8,8 +8,6 @@ from template.widget import Widget
 import constants as cons
 import functions as func
 import functools
-import stylesheet as style
-import template.stylesheet as tstyle
 import pymongo
 
 from class_sheet import CharacterSheet
@@ -33,7 +31,7 @@ class InventoryGUI(QWidget):
         self.master_layout = QVBoxLayout()
         self.section_group = []
         self.widget_group = []
-
+        self.master_layout.setContentsMargins(0,0,0,0)
         #Setting up layouts/sections
         
         self.portrait_layout = Section(
@@ -63,12 +61,22 @@ class InventoryGUI(QWidget):
             title="EQUIPMENT",
             group = True,   
             class_group = self.section_group,
-            spacing=5,	
+            spacing=0,
+            content_margin=(0,0,0,0),	
         )
 
         for count in range(15, 0, -1):
             print(count)
             self.make_item_slot(count, self.inventory_scroll.inner_layout(1), "inventory")
+            
+            # divider
+            self.divider = Widget(
+                widget_type=QFrame(),
+                parent_layout=self.inventory_scroll.inner_layout(1),
+                class_group=self.section_group,
+                height=2,
+                stylesheet=f"background-color: {cons.BORDER};"
+            )
 
         self.inventory_scroll.get_title()[1].setAlignment(Qt.AlignCenter)
 
@@ -87,18 +95,17 @@ class InventoryGUI(QWidget):
         self.character_name = Widget(
             widget_type=QComboBox(),
             parent_layout=self.name_layout.inner_layout(1),
-            stylesheet=style.TEST_COMBO,
             objectname="name",
             text=[""],
             class_group=self.widget_group,
             signal=lambda: self.character_sheet.load_character(self,self.character_name.get_widget().currentText()),
+            stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; border: 1px solid {cons.BORDER};",
 
         )
 
         self.experience= Widget(
             widget_type=QLineEdit(),
             parent_layout=self.name_layout.inner_layout(2),
-            stylesheet=tstyle.WIDGETS,
             objectname="experience",
             class_group=self.widget_group,
             align="center"
@@ -107,7 +114,6 @@ class InventoryGUI(QWidget):
         self.unspent_experience= Widget(
             widget_type=QLineEdit(),
             parent_layout=self.name_layout.inner_layout(2),
-            stylesheet=tstyle.WIDGETS,
             objectname="unspent_experience",
             signal = lambda: character_xp.adjust_xp(self,adjust="add"),
             class_group=self.widget_group,
@@ -131,7 +137,6 @@ class InventoryGUI(QWidget):
         self.armor = Widget(
             widget_type=QPushButton(),
             parent_layout=self.combat_section.inner_layout(1),
-            stylesheet=tstyle.WIDGETS,
             objectname="armor",
             text="0",
             class_group=self.widget_group
@@ -139,9 +144,8 @@ class InventoryGUI(QWidget):
         self.armor_label = Widget(
             widget_type=QLabel(),
             parent_layout=self.combat_section.inner_layout(1),
-            stylesheet=tstyle.LABELS,
             objectname="armor_label",
-            text="ARMOR",
+            text="Thaler",
             align="center",
             class_group=self.widget_group
         )
@@ -149,7 +153,6 @@ class InventoryGUI(QWidget):
         self.defense = Widget(
             widget_type=QPushButton(),
             parent_layout=self.combat_section.inner_layout(2),
-            stylesheet=tstyle.WIDGETS,
             objectname="defense",
             text="0",
             class_group=self.widget_group
@@ -157,16 +160,14 @@ class InventoryGUI(QWidget):
         self.defense_label = Widget(
             widget_type=QLabel(),
             parent_layout=self.combat_section.inner_layout(2),
-            stylesheet=tstyle.LABELS,
             objectname="defense_label",
-            text="DEFENSE",
+            text="Schellings",
             align=Qt.AlignCenter,
             class_group=self.widget_group
         )
         self.damage = Widget(
             widget_type=QPushButton(),
             parent_layout=self.combat_section.inner_layout(3),
-            stylesheet=tstyle.WIDGETS,
             objectname="damage",
             text="0",
             class_group=self.widget_group
@@ -175,9 +176,8 @@ class InventoryGUI(QWidget):
         self.damage_label = Widget(
             widget_type=QLabel(),
             parent_layout=self.combat_section.inner_layout(3),
-            stylesheet=tstyle.LABELS,
             objectname="damage_label",
-            text="DAMAGE",
+            text="Ortheg",
             align=Qt.AlignCenter,
             class_group=self.widget_group
         )
@@ -196,16 +196,21 @@ class InventoryGUI(QWidget):
         self.update_character_dropdown() 
 
     def make_item_slot(self,count,layout,descriptor):
+        if count % 2 == 0:
+            color = cons.PRIMARY_DARKER
+        else:
+            color = cons.PRIMARY
+
         self.slot_layot = Section(
             outer_layout = QHBoxLayout(),
             inner_layout = ("VBox", 5),
             parent_layout=layout,
-            class_group=self.section_group
+            class_group=self.section_group,
+            stylesheet=f"background-color: {color};"
 
         )
         self.backpack= Widget(
             widget_type=QToolButton(),
-            stylesheet=style.INVENTORY,
             text="",
             parent_layout=self.slot_layot.inner_layout(1),
             width = cons.WSIZE*1.50,
@@ -217,7 +222,6 @@ class InventoryGUI(QWidget):
 
         self.backpack_label = Widget(
             widget_type=QLabel(),
-            stylesheet=style.INVENTORY,
             parent_layout=self.slot_layot.inner_layout(1),
             height = cons.WSIZE/1.5,
             objectname=f"icon_label{descriptor}{count}",
@@ -228,7 +232,6 @@ class InventoryGUI(QWidget):
             
         self.backpack_item = Widget(
             widget_type=QLineEdit(),
-            stylesheet=style.INVENTORY,
             parent_layout=self.slot_layot.inner_layout(2),
             height = cons.WSIZE*1.5,
             signal= lambda: self.character_sheet.update_sheet(),
@@ -240,7 +243,6 @@ class InventoryGUI(QWidget):
 
         self.backpack_item_label = Widget(
             widget_type=QLabel(),
-            stylesheet=style.INVENTORY,
             text="",
             parent_layout=self.slot_layot.inner_layout(2),
             height = cons.WSIZE/1.5,
@@ -251,7 +253,6 @@ class InventoryGUI(QWidget):
 
         self.backpack= Widget(
             widget_type=QPushButton(),
-            stylesheet=style.INVENTORY,
             text="",
             parent_layout=self.slot_layot.inner_layout(4),
             height = cons.WSIZE*1.5,
@@ -262,7 +263,6 @@ class InventoryGUI(QWidget):
 
         self.backpack_hit_label = Widget(
             widget_type=QLabel(),
-            stylesheet=style.INVENTORY,
             text="",
             parent_layout=self.slot_layot.inner_layout(4),
             height = cons.WSIZE/1.5,
@@ -274,19 +274,17 @@ class InventoryGUI(QWidget):
 
         self.weapon_modifier = Widget(
             widget_type=QPushButton(),
-            stylesheet=style.INVENTORY,
             parent_layout=self.slot_layot.inner_layout(5),
-            height = cons.WSIZE*1.5,
+            height = cons.WSIZE,
             objectname=f"roll{count}",
             signal = functools.partial(roll.inventory_prepare_roll, self, "roll", count),
             class_group=self.widget_group,
-            size_policy=(QSizePolicy.Expanding, QSizePolicy.Fixed)
+            stylesheet=f"font-weight: bold; color: {cons.FONT_COLOR}; background-color: {cons.PRIMARY_LIGHTER}; border: 1px solid {cons.BORDER}; border-radius: 6px;"
 
         )
 
         self.backpack_damage_label = Widget(
             widget_type=QLabel(),
-            stylesheet=style.INVENTORY,
             text="",
             parent_layout=self.slot_layot.inner_layout(5),
             height = cons.WSIZE/1.5,

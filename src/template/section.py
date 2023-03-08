@@ -7,7 +7,6 @@ import json
 
 import constants as cons
 
-import template.stylesheet as style
 import template.functions as func
 
 
@@ -30,6 +29,7 @@ class Section(QWidget):
         height="",
         objectname="",
         hidden=False,
+        stylesheet="",
     ):
         super().__init__()
 
@@ -63,7 +63,9 @@ class Section(QWidget):
             if title != "":
                 self.title_layout = QHBoxLayout()
                 self.title_label = QLabel(title)
-                self.title_label.setStyleSheet(style.QTITLE)
+                self.title_label.setStyleSheet(
+                    f"color: {cons.FONT_LIGHT}; font-size: 12px; background-color: {cons.DARK};"
+                )
                 self.title_label.setObjectName(f"{objectname}_title")
                 self.outer_layout_type.addWidget(self.title_label)
                 self.title_label.setFixedHeight(cons.WSIZE)
@@ -71,7 +73,7 @@ class Section(QWidget):
                 if icon != "":
                     self.title_icon = QToolButton()
                     self.title_icon.setObjectName(f"{objectname}_icon")
-                    self.title_icon.setStyleSheet(style.QTITLE)
+                    self.title_icon.setStyleSheet(f"background-color: {cons.DARK};")
                     self.title_icon.setFixedSize(cons.WSIZE, cons.WSIZE)
                     func.set_icon(self.title_icon, icon[0], icon[2])
                     self.title_layout.addWidget(self.title_icon)
@@ -80,7 +82,7 @@ class Section(QWidget):
                 self.section_layout.addLayout(self.title_layout)
 
             self.groupbox = QGroupBox()
-            self.groupbox.setStyleSheet(style.QGROUPBOX)
+            self.groupbox.setStyleSheet(f"background-color: {cons.PRIMARY};")
 
             self.groupbox.setLayout(self.outer_layout_type)
             self.section_layout.addWidget(self.groupbox)
@@ -112,8 +114,8 @@ class Section(QWidget):
                     Qt.ScrollBarAlwaysOff
                 )
 
-                self.scroll_widget.setStyleSheet(style.QGROUPBOX)
-                self.scroll_area_widget.setStyleSheet(style.QGROUPBOX)
+                self.scroll_widget.setStyleSheet(f"background-color: {cons.PRIMARY};")
+                self.scroll_area_widget.setStyleSheet(f"background-color: {cons.PRIMARY};")
 
                 self.outer_layout_type.addWidget(self.scroll_area_widget)
         else:
@@ -128,6 +130,8 @@ class Section(QWidget):
         if hidden != False:
             self.setHidden(hidden)
 
+        if stylesheet != "":
+            self.setStyleSheet(stylesheet)
 
     def inner_layout_list(self):
         self.all_inner_layouts = []

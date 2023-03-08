@@ -2,7 +2,6 @@ from PySide2.QtWidgets import *
 from PySide2.QtGui import *
 from PySide2.QtCore import *
 
-import stylesheet as style
 import constants as cons
 
 import json
@@ -13,7 +12,6 @@ from class_sheet import CharacterSheet
 
 from template.section import Section
 from template.widget import Widget
-import template.stylesheet as tstyle
 import constants as cons
 
 import pymongo
@@ -42,7 +40,6 @@ class NewCharacter(QWidget):
 
         self.name = Widget(
             widget_type=QLineEdit(),
-            stylesheet=tstyle.WIDGETS,
             text="",
             align="center",
             objectname = "name",
@@ -72,7 +69,6 @@ class NewCharacter(QWidget):
 
             self.stat_input = Widget(
                 widget_type=QPushButton(),
-                stylesheet=tstyle.WIDGETS,
                 text=stat_pool[count],
                 parent_layout=self.stat_section.inner_layout(count),
                 class_group = self.widget_group,
@@ -93,7 +89,6 @@ class NewCharacter(QWidget):
 
         self.cancel_widget = Widget(
             widget_type=QPushButton(),
-            stylesheet=style.BUTTONS,
             text="Cancel",
             objectname = "cancel",
             size_policy = (QSizePolicy.Expanding , QSizePolicy.Expanding),
@@ -104,7 +99,6 @@ class NewCharacter(QWidget):
 
         self.accept_widget = Widget(
             widget_type=QPushButton(),
-            stylesheet=style.BUTTONS,
             text="Accept",
             objectname = "accept",
             size_policy = (QSizePolicy.Expanding , QSizePolicy.Expanding),
@@ -123,7 +117,6 @@ class NewCharacter(QWidget):
         self.setLayout(self.master_layout)     
 
         self.setWindowTitle("New Character")
-        self.setStyleSheet(style.BASE_STYLE)
 
     def set_stat(self):
         if len(self.state) == 0:

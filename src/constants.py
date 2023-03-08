@@ -64,3 +64,17 @@ COLOR_LABEL = {
 }
 
 func.create_folder(LOCAL_DIRECTORY)
+
+PRIMARY_DARKER = "#e1ddcd"
+PRIMARY = "#f0e8d9"
+PRIMARY_LIGHTER = "#f1efe9"
+
+DARK = "#231f20"
+
+
+
+FONT_LIGHT = "#ffffff"
+FONT_DARK = "#282425"
+FONT_COLOR = "#864433"
+
+BORDER = "#BAAD96"
