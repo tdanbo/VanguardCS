@@ -82,7 +82,11 @@ class Section(QWidget):
                 self.section_layout.addLayout(self.title_layout)
 
             self.groupbox = QGroupBox()
-            self.groupbox.setStyleSheet(f"background-color: {cons.PRIMARY};")
+            if stylesheet != "":
+                self.groupbox.setStyleSheet(stylesheet)
+            else:
+                self.groupbox.setStyleSheet(f"background-color: {cons.PRIMARY};")
+            #self.groupbox.setStyleSheet(f"background-color: {cons.PRIMARY};")
 
             self.groupbox.setLayout(self.outer_layout_type)
             self.section_layout.addWidget(self.groupbox)
@@ -130,8 +134,8 @@ class Section(QWidget):
         if hidden != False:
             self.setHidden(hidden)
 
-        if stylesheet != "":
-            self.setStyleSheet(stylesheet)
+        # if stylesheet != "":
+        #     self.setStyleSheet(stylesheet)
 
     def inner_layout_list(self):
         self.all_inner_layouts = []

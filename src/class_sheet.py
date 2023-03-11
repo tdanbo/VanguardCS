@@ -14,6 +14,8 @@ import random
 import json
 import copy
 
+from gui_windows.gui_inventory_item import InventoryItem
+
 class CharacterSheet():
     def __init__(self):
         self.equipment = self.get_equipment()
@@ -31,8 +33,8 @@ class CharacterSheet():
         self.set_corruption()
         self.set_defense()
 
-        updated_character_sheet = self.update_dictionary()
-        self.update_database(updated_character_sheet)
+        # updated_character_sheet = self.update_dictionary()
+        # self.update_database(updated_character_sheet)
         
     def update_dictionary(self):
         print("Updating Character Sheet Dictionary")    
@@ -178,14 +180,10 @@ class CharacterSheet():
             add_ability_button.setHidden(True)
             slot_section.setHidden(False)
 
-        print(f"{ability_slot} {item['Name']} {item['Rank']}")
-
         # Reset all colors
         novice = self.csheet.findChild(QPushButton, f"{ability_slot}_Novice")
         adept = self.csheet.findChild(QPushButton, f"{ability_slot}_Adept")
         master = self.csheet.findChild(QPushButton, f"{ability_slot}_Master")
-
-        print(f"{novice} {adept} {master}")
 
         level_list = [novice, adept, master]
         #[level_widget.setStyleSheet(tstyle.LEVEL_BUTTONS_DISABLED) for level_widget in level_list]
@@ -199,7 +197,6 @@ class CharacterSheet():
                 return category
             else:
                 return ""
-
 
     def update_database(self, directory):
         self.client = pymongo.MongoClient(cons.CONNECT)
@@ -219,7 +216,7 @@ class CharacterSheet():
 
     def set_stats(self):
         for widget in [(self.ACC, self.ACC_mod), (self.CUN, self.CUN_mod), (self.DIS, self.DIS_mod), (self.PER, self.PER_mod), (self.QUI, self.QUI_mod), (self.RES, self.RES_mod), (self.STR, self.STR_mod), (self.VIG, self.VIG_mod)]:
-            stat = int(self.character_document["stats"][widget[0].objectName()])
+            stat = int(self.CHARACTER_DOC["stats"][widget[0].objectName()])
             modifier = int(widget[1].text())
             modified_stat = stat + modifier
 
@@ -253,56 +250,71 @@ class CharacterSheet():
         self.corruption_threshold.setText(str(corruption_threshold_math))
 
     def update_inventory(self):
-        self.all_items = []
-        for inventory_slot in self.inventory_list:
-            item_string = inventory_slot.text().lower()
-            if item_string == "":
-                item_string = inventory_slot.objectName()
-            self.all_items.append(self.find_item(item_string))
+        print(self.CHARACTER_DOC["inventory"])
+        func.clear_layout(self.isheet.inventory_scroll.inner_layout(1))
+        self.CHARACTER_ITEMS = self.CHARACTER_DOC["inventory"]
+        print(self.CHARACTER_ITEMS)
+        for count,item in enumerate(self.CHARACTER_ITEMS.values()):
+            item_dict = self.find_item(item)
+            print(item_dict)
+            item_widget = InventoryItem(count, item_dict)
+            self.isheet.inventory_scroll.inner_layout(1).addWidget(item_widget)
 
-        print(self.all_items)
+            self.divider = QFrame()
+            self.divider.setFixedHeight(1)
+            self.divider.setStyleSheet(f"background-color: {cons.BORDER}")
+            self.isheet.inventory_scroll.inner_layout(1).addWidget(self.divider)
 
-        priority = {'melee': 0, 'ranged': 1, 'armor': 2, 'elixirs': 3}
-        self.sorted_list = sorted(self.all_items, key=lambda x: priority.get(x.get('Category', ''), len(priority)))
-        for slot,item in enumerate(self.sorted_list):
-            self.update_item(slot+1, item)
+
+        # self.all_items = []
+        # for inventory_slot in self.inventory_list:
+        #     item_string = inventory_slot.text().lower()
+        #     if item_string == "":
+        #         item_string = inventory_slot.objectName()
+        #     self.all_items.append(self.find_item(item_string))
+
+        # print(self.all_items)
+
+        # priority = {'melee': 0, 'ranged': 1, 'armor': 2, 'elixirs': 3}
+        # self.sorted_list = sorted(self.all_items, key=lambda x: priority.get(x.get('Category', ''), len(priority)))
+        # for slot,item in enumerate(self.sorted_list):
+        #     self.update_item(slot+1, item)
 
     def update_item(self, slot, item):
-        self.inventory_icon = self.isheet.findChild(QToolButton, f"icon{slot}")
-        self.inventory_quality = self.isheet.findChild(QPushButton, f"quality{slot}")
-        self.inventory_roll = self.isheet.findChild(QPushButton, f"roll{slot}")
-        self.inventory_slot = self.isheet.findChild(QLineEdit, f"item{slot}")
+        print(f"Updating item {slot} {item['Name']}")
+        # self.inventory_icon = self.isheet.findChild(QToolButton, f"icon{slot}")
+        # self.inventory_quality = self.isheet.findChild(QPushButton, f"quality{slot}")
+        # self.inventory_roll = self.isheet.findChild(QPushButton, f"roll{slot}")
+        # self.inventory_slot = self.isheet.findChild(QLineEdit, f"item{slot}")
 
-        self.inventory_icon_label = self.isheet.findChild(QLabel, f"icon_label{slot}")
-        self.inventory_quality_label = self.isheet.findChild(QLabel, f"quality_label{slot}")
-        self.inventory_roll_label = self.isheet.findChild(QLabel, f"roll_label{slot}")
-        self.inventory_slot_label = self.isheet.findChild(QLabel, f"inventory_label{slot}")
+        # self.inventory_icon_label = self.isheet.findChild(QLabel, f"icon_label{slot}")
+        # self.inventory_quality_label = self.isheet.findChild(QLabel, f"quality_label{slot}")
+        # self.inventory_slot_label = self.isheet.findChild(QLabel, f"inventory_label{slot}")
 
-        self.inventory_slot.setText(item["Name"])
-        self.inventory_slot_label.setText(item["Category"])
+        # self.inventory_slot.setText(item["Name"])
+        # self.inventory_slot_label.setText(item["Category"])
 
-        self.inventory_roll.setText(item["Roll"][1])
-        self.inventory_roll_label.setText(item["Roll"][0])
+        # self.inventory_roll.setText(item["Roll"][1])
         
-        if "Quality" in item:
-            self.inventory_quality.setText(",".join(item["Quality"]))
-            self.inventory_quality_label.setText("Quality")
-        else:
-            self.inventory_quality.setText("")
-            self.inventory_quality_label.setText("")
+        # if "Quality" in item:
+        #     self.inventory_quality.setText(",".join(item["Quality"]))
+        #     self.inventory_quality_label.setText("Quality")
+        # else:
+        #     self.inventory_quality.setText("")
+        #     self.inventory_quality_label.setText("")
 
     def find_item(self,item_string):
+        print(f"Searching for {item_string}")
         for category in self.equipment:
             for item in self.equipment[category]:
-                if item_string == item.lower():
-                    print(f"found {item}")
+                if item_string.lower() == item.lower():
                     item_dict = self.equipment[category][item]
                     item_dict["Name"] = item
                     item_dict["Category"] = category
                     return item_dict
                 else:
                     pass
-        return {"Name":"","Category":"","Roll":["",""]}
+        return {} # If item not found, return empty dictionary
         
 
     def set_icon(self):
@@ -406,76 +418,76 @@ class CharacterSheet():
         self.collection = self.db["characters"]
 
         query = {"character": self.character_name}
-        self.character_document = self.collection.find_one(query)
-        if self.character_document != None:
-            self.experience.setText(str(self.character_document["experience"]))
-            self.experience_unspent.setText(str(self.character_document["experience unspent"]))
+        self.CHARACTER_DOC = self.collection.find_one(query)
+        if self.CHARACTER_DOC != None:
+            self.experience.setText(str(self.CHARACTER_DOC["experience"]))
+            self.experience_unspent.setText(str(self.CHARACTER_DOC["experience unspent"]))
 
-            self.ACC.setText(str(self.character_document["stats"]["ACCURATE"]))
-            self.CUN.setText(str(self.character_document["stats"]["CUNNING"]))
-            self.DIS.setText(str(self.character_document["stats"]["DISCREET"]))
-            self.PER.setText(str(self.character_document["stats"]["PERSUASIVE"]))
-            self.QUI.setText(str(self.character_document["stats"]["QUICK"]))
-            self.RES.setText(str(self.character_document["stats"]["RESOLUTE"]))
-            self.STR.setText(str(self.character_document["stats"]["STRONG"]))
-            self.VIG.setText(str(self.character_document["stats"]["VIGILANT"]))
+            self.ACC.setText(str(self.CHARACTER_DOC["stats"]["ACCURATE"]))
+            self.CUN.setText(str(self.CHARACTER_DOC["stats"]["CUNNING"]))
+            self.DIS.setText(str(self.CHARACTER_DOC["stats"]["DISCREET"]))
+            self.PER.setText(str(self.CHARACTER_DOC["stats"]["PERSUASIVE"]))
+            self.QUI.setText(str(self.CHARACTER_DOC["stats"]["QUICK"]))
+            self.RES.setText(str(self.CHARACTER_DOC["stats"]["RESOLUTE"]))
+            self.STR.setText(str(self.CHARACTER_DOC["stats"]["STRONG"]))
+            self.VIG.setText(str(self.CHARACTER_DOC["stats"]["VIGILANT"]))
 
             try:
-                self.toughness_current.setText(str(self.character_document["toughness current"]))
+                self.toughness_current.setText(str(self.CHARACTER_DOC["toughness current"]))
 
-                self.corruption_permanent.setText(str(self.character_document["corruption permanent"]))
-                self.corruption_temporary.setText(str(self.character_document["corruption temporary"]))
+                self.corruption_permanent.setText(str(self.CHARACTER_DOC["corruption permanent"]))
+                self.corruption_temporary.setText(str(self.CHARACTER_DOC["corruption temporary"]))
 
-                self.ACC_mod.setText(str(self.character_document["modifiers"]["ACCURATE"]))
-                self.CUN_mod.setText(str(self.character_document["modifiers"]["CUNNING"]))
-                self.DIS_mod.setText(str(self.character_document["modifiers"]["DISCREET"]))
-                self.PER_mod.setText(str(self.character_document["modifiers"]["PERSUASIVE"]))
-                self.QUI_mod.setText(str(self.character_document["modifiers"]["QUICK"]))
-                self.RES_mod.setText(str(self.character_document["modifiers"]["RESOLUTE"]))
-                self.STR_mod.setText(str(self.character_document["modifiers"]["STRONG"]))
-                self.VIG_mod.setText(str(self.character_document["modifiers"]["VIGILANT"]))
+                self.ACC_mod.setText(str(self.CHARACTER_DOC["modifiers"]["ACCURATE"]))
+                self.CUN_mod.setText(str(self.CHARACTER_DOC["modifiers"]["CUNNING"]))
+                self.DIS_mod.setText(str(self.CHARACTER_DOC["modifiers"]["DISCREET"]))
+                self.PER_mod.setText(str(self.CHARACTER_DOC["modifiers"]["PERSUASIVE"]))
+                self.QUI_mod.setText(str(self.CHARACTER_DOC["modifiers"]["QUICK"]))
+                self.RES_mod.setText(str(self.CHARACTER_DOC["modifiers"]["RESOLUTE"]))
+                self.STR_mod.setText(str(self.CHARACTER_DOC["modifiers"]["STRONG"]))
+                self.VIG_mod.setText(str(self.CHARACTER_DOC["modifiers"]["VIGILANT"]))
 
-                self.inventory1.setText(str(self.character_document["inventory"]["inventory1"]))
-                self.inventory2.setText(str(self.character_document["inventory"]["inventory2"]))
-                self.inventory3.setText(str(self.character_document["inventory"]["inventory3"]))
-                self.inventory4.setText(str(self.character_document["inventory"]["inventory4"]))
-                self.inventory5.setText(str(self.character_document["inventory"]["inventory5"]))
-                self.inventory6.setText(str(self.character_document["inventory"]["inventory6"]))
-                self.inventory7.setText(str(self.character_document["inventory"]["inventory7"]))
-                self.inventory8.setText(str(self.character_document["inventory"]["inventory8"]))
-                self.inventory9.setText(str(self.character_document["inventory"]["inventory9"]))
-                self.inventory10.setText(str(self.character_document["inventory"]["inventory10"]))
-                self.inventory11.setText(str(self.character_document["inventory"]["inventory11"]))
-                self.inventory12.setText(str(self.character_document["inventory"]["inventory12"]))
-                self.inventory13.setText(str(self.character_document["inventory"]["inventory13"]))
-                self.inventory14.setText(str(self.character_document["inventory"]["inventory14"]))
-                self.inventory15.setText(str(self.character_document["inventory"]["inventory15"]))
+                self.inventory1.setText(str(self.CHARACTER_DOC["inventory"]["inventory1"]))
+                self.inventory2.setText(str(self.CHARACTER_DOC["inventory"]["inventory2"]))
+                self.inventory3.setText(str(self.CHARACTER_DOC["inventory"]["inventory3"]))
+                self.inventory4.setText(str(self.CHARACTER_DOC["inventory"]["inventory4"]))
+                self.inventory5.setText(str(self.CHARACTER_DOC["inventory"]["inventory5"]))
+                self.inventory6.setText(str(self.CHARACTER_DOC["inventory"]["inventory6"]))
+                self.inventory7.setText(str(self.CHARACTER_DOC["inventory"]["inventory7"]))
+                self.inventory8.setText(str(self.CHARACTER_DOC["inventory"]["inventory8"]))
+                self.inventory9.setText(str(self.CHARACTER_DOC["inventory"]["inventory9"]))
+                self.inventory10.setText(str(self.CHARACTER_DOC["inventory"]["inventory10"]))
+                self.inventory11.setText(str(self.CHARACTER_DOC["inventory"]["inventory11"]))
+                self.inventory12.setText(str(self.CHARACTER_DOC["inventory"]["inventory12"]))
+                self.inventory13.setText(str(self.CHARACTER_DOC["inventory"]["inventory13"]))
+                self.inventory14.setText(str(self.CHARACTER_DOC["inventory"]["inventory14"]))
+                self.inventory15.setText(str(self.CHARACTER_DOC["inventory"]["inventory15"]))
 
-                self.ability1.setText(str(self.character_document["abilities"]["ability1"][0]))
-                self.ability2.setText(str(self.character_document["abilities"]["ability2"][0]))
-                self.ability3.setText(str(self.character_document["abilities"]["ability3"][0]))
-                self.ability4.setText(str(self.character_document["abilities"]["ability4"][0]))
-                self.ability5.setText(str(self.character_document["abilities"]["ability5"][0]))
-                self.ability6.setText(str(self.character_document["abilities"]["ability6"][0]))
-                self.ability7.setText(str(self.character_document["abilities"]["ability7"][0]))
-                self.ability8.setText(str(self.character_document["abilities"]["ability8"][0]))
-                self.ability9.setText(str(self.character_document["abilities"]["ability9"][0]))
-                self.ability10.setText(str(self.character_document["abilities"]["ability10"][0]))
-                self.ability11.setText(str(self.character_document["abilities"]["ability11"][0]))
-                self.ability12.setText(str(self.character_document["abilities"]["ability12"][0]))
+                self.ability1.setText(str(self.CHARACTER_DOC["abilities"]["ability1"][0]))
+                self.ability2.setText(str(self.CHARACTER_DOC["abilities"]["ability2"][0]))
+                self.ability3.setText(str(self.CHARACTER_DOC["abilities"]["ability3"][0]))
+                self.ability4.setText(str(self.CHARACTER_DOC["abilities"]["ability4"][0]))
+                self.ability5.setText(str(self.CHARACTER_DOC["abilities"]["ability5"][0]))
+                self.ability6.setText(str(self.CHARACTER_DOC["abilities"]["ability6"][0]))
+                self.ability7.setText(str(self.CHARACTER_DOC["abilities"]["ability7"][0]))
+                self.ability8.setText(str(self.CHARACTER_DOC["abilities"]["ability8"][0]))
+                self.ability9.setText(str(self.CHARACTER_DOC["abilities"]["ability9"][0]))
+                self.ability10.setText(str(self.CHARACTER_DOC["abilities"]["ability10"][0]))
+                self.ability11.setText(str(self.CHARACTER_DOC["abilities"]["ability11"][0]))
+                self.ability12.setText(str(self.CHARACTER_DOC["abilities"]["ability12"][0]))
 
-                self.ability1.setProperty("Rank",str(self.character_document["abilities"]["ability1"][1]))
-                self.ability2.setProperty("Rank",str(self.character_document["abilities"]["ability2"][1]))
-                self.ability3.setProperty("Rank",str(self.character_document["abilities"]["ability3"][1]))
-                self.ability4.setProperty("Rank",str(self.character_document["abilities"]["ability4"][1]))
-                self.ability5.setProperty("Rank",str(self.character_document["abilities"]["ability5"][1]))
-                self.ability6.setProperty("Rank",str(self.character_document["abilities"]["ability6"][1]))
-                self.ability7.setProperty("Rank",str(self.character_document["abilities"]["ability7"][1]))
-                self.ability8.setProperty("Rank",str(self.character_document["abilities"]["ability8"][1]))
-                self.ability9.setProperty("Rank",str(self.character_document["abilities"]["ability9"][1]))
-                self.ability10.setProperty("Rank",str(self.character_document["abilities"]["ability10"][1]))
-                self.ability11.setProperty("Rank",str(self.character_document["abilities"]["ability11"][1]))
-                self.ability12.setProperty("Rank",str(self.character_document["abilities"]["ability12"][1]))
+                self.ability1.setProperty("Rank",str(self.CHARACTER_DOC["abilities"]["ability1"][1]))
+                self.ability2.setProperty("Rank",str(self.CHARACTER_DOC["abilities"]["ability2"][1]))
+                self.ability3.setProperty("Rank",str(self.CHARACTER_DOC["abilities"]["ability3"][1]))
+                self.ability4.setProperty("Rank",str(self.CHARACTER_DOC["abilities"]["ability4"][1]))
+                self.ability5.setProperty("Rank",str(self.CHARACTER_DOC["abilities"]["ability5"][1]))
+                self.ability6.setProperty("Rank",str(self.CHARACTER_DOC["abilities"]["ability6"][1]))
+                self.ability7.setProperty("Rank",str(self.CHARACTER_DOC["abilities"]["ability7"][1]))
+                self.ability8.setProperty("Rank",str(self.CHARACTER_DOC["abilities"]["ability8"][1]))
+                self.ability9.setProperty("Rank",str(self.CHARACTER_DOC["abilities"]["ability9"][1]))
+                self.ability10.setProperty("Rank",str(self.CHARACTER_DOC["abilities"]["ability10"][1]))
+                self.ability11.setProperty("Rank",str(self.CHARACTER_DOC["abilities"]["ability11"][1]))
+                self.ability12.setProperty("Rank",str(self.CHARACTER_DOC["abilities"]["ability12"][1]))
 
             except:
                 print("No modifiers or inventory")
@@ -496,7 +508,6 @@ class CharacterSheet():
         self.corruption_threshold = csheet.corruption_threshold.get_widget()
 
         self.ACC = csheet.findChild(QWidget, "ACCURATE")
-        print(self.ACC)
         self.CUN = csheet.findChild(QWidget, "CUNNING")
         self.DIS = csheet.findChild(QWidget, "DISCREET")
         self.PER = csheet.findChild(QWidget, "PERSUASIVE")
@@ -538,7 +549,6 @@ class CharacterSheet():
         self.defense = self.isheet.defense.get_widget()
         self.experience = self.isheet.experience.get_widget()
 
-        print(self.experience)
         self.experience_unspent = self.isheet.unspent_experience.get_widget()
 
         self.inventory1 = self.isheet.findChild(QWidget, "item1")

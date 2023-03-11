@@ -38,24 +38,17 @@ class CharacterSheetGUI(QWidget):
             class_group = self.section_group
         )
 
-        self.defense_layout = Section(
-            outer_layout = QHBoxLayout(),
-            inner_layout = ("VBox", 2),
-            parent_layout = self.top_layout.inner_layout(1),
-            group = True,
-            spacing = 3,
-            class_group = self.section_group,
-            width = 150
-        )
-
         self.stat_layout = Section(
             outer_layout = QHBoxLayout(),
             inner_layout = ("VBox", 9),
             parent_layout = self.top_layout.inner_layout(2),
             group = True,
             spacing = 3,
-            class_group = self.section_group
+            class_group = self.section_group,
+            title = "STATS",
         )
+
+        self.stat_layout.get_title()[1].setAlignment(Qt.AlignCenter)
 
         self.ability_layout = Section(
             outer_layout = QVBoxLayout(),
@@ -107,7 +100,6 @@ class CharacterSheetGUI(QWidget):
         for power in range(1, 13):
             #layout_number = math.ceil(power / 2)
             layout_number = 1
-            print(layout_number)
             # Below is all the code for the power section
             self.master_power_section = Section(
                 outer_layout = QHBoxLayout(),
@@ -252,16 +244,9 @@ class CharacterSheetGUI(QWidget):
 
         #Below is all the widgets used in the character sheet
         for number,stat in enumerate(cons.STATS):
-            if stat in ["DEFENSE","ARMOR"]:
-                stat_parent_layout = self.defense_layout.inner_layout(number)
-            else:
-                number = number - 1
-                stat_parent_layout = self.stat_layout.inner_layout(number)
-
-            print(stat)
             self.stat_button = Widget(
                 widget_type=QPushButton(),
-                parent_layout = stat_parent_layout,
+                parent_layout = self.stat_layout.inner_layout(number),
                 text="10",
                 signal=functools.partial(
                     character_stats.adjust_stat,
@@ -277,7 +262,7 @@ class CharacterSheetGUI(QWidget):
             self.stat_sub_layout = Section(
                 outer_layout = QHBoxLayout(),
                 inner_layout = ("HBox", 1),
-                parent_layout = stat_parent_layout,
+                parent_layout = self.stat_layout.inner_layout(number),
                 spacing=0,
                 class_group = self.section_group
                 
@@ -317,37 +302,33 @@ class CharacterSheetGUI(QWidget):
 
             )   
 
-        self.toughness_threshold = Widget(
+        self.toughness_current= Widget(
             widget_type=QPushButton(),
             parent_layout=self.hp_layout.inner_layout(1),
-            objectname = "toughness_threshold",
+            signal=self.open_addsub,
+            objectname = "toughness_current",
             class_group=self.widget_group,
-            stylesheet=f"color: {cons.FONT_DARK}; font-size: 20px;"
+            stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_COLOR}; font-size: 20px; font-weight: bold; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-top-right-radius: 6px;"
+
         )
 
+        self.toughness_current_label= Widget(
+            widget_type=QLabel(),
+            parent_layout=self.hp_layout.inner_layout(1),
+            signal=self.open_addsub,
+            objectname = "toughness_current",
+            text = "CURRENT",
+            class_group=self.widget_group,
+            align=Qt.AlignCenter,
+            stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_DARK}; font-size: 10px; font-weight: bold; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;"
+
+        )
         self.toughness_max = Widget(
             widget_type=QPushButton(),
             parent_layout=self.hp_layout.inner_layout(2),
             objectname = "toughness_max",
             class_group=self.widget_group,
             stylesheet=f"color: {cons.FONT_DARK}; font-size: 20px;"
-        )
-
-        self.toughness_current= Widget(
-            widget_type=QPushButton(),
-            parent_layout=self.hp_layout.inner_layout(3),
-            signal=self.open_addsub,
-            objectname = "toughness_current",
-            class_group=self.widget_group,
-            stylesheet=f"color: {cons.FONT_DARK}; font-size: 20px;"
-        )
-
-        self.toughness_threshold_label = Widget(
-            widget_type=QLabel(),
-            parent_layout=self.hp_layout.inner_layout(1),
-            text = "THRESHOLD",
-            class_group=self.widget_group,
-            align=Qt.AlignCenter
         )
 
         self.toughness_max_label = Widget(
@@ -359,14 +340,20 @@ class CharacterSheetGUI(QWidget):
             align=Qt.AlignCenter
         )
 
-        self.toughness_current_label= Widget(
+        self.toughness_threshold = Widget(
+            widget_type=QPushButton(),
+            parent_layout=self.hp_layout.inner_layout(3),
+            objectname = "toughness_threshold",
+            class_group=self.widget_group,
+            stylesheet=f"color: {cons.FONT_DARK}; font-size: 20px;"
+        )
+
+        self.toughness_threshold_label = Widget(
             widget_type=QLabel(),
             parent_layout=self.hp_layout.inner_layout(3),
-            signal=self.open_addsub,
-            objectname = "toughness_current",
-            text = "CURRENT",
+            text = "THRESHOLD",
             class_group=self.widget_group,
-            align=Qt.AlignCenter,
+            align=Qt.AlignCenter
         )
 
         self.corruption_threshold = Widget(
@@ -392,7 +379,8 @@ class CharacterSheetGUI(QWidget):
             signal=self.open_addsub,
             objectname = "corruption_current",
             class_group=self.widget_group,
-            stylesheet=f"color: {cons.FONT_DARK}; font-size: 20px;"
+            stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_COLOR}; font-size: 20px; font-weight: bold; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-top-right-radius: 6px;"
+
         )
 
         self.corruption_threshold_label = Widget(
@@ -416,7 +404,9 @@ class CharacterSheetGUI(QWidget):
             parent_layout=self.corruption_layout.inner_layout(3),
             class_group=self.widget_group,
             text = "TEMPORARY",
-            align=Qt.AlignCenter
+            align=Qt.AlignCenter,
+            stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_DARK}; font-size: 10px; font-weight: bold; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;"
+
         )
 
         for widget in self.widget_group:
@@ -438,7 +428,6 @@ class CharacterSheetGUI(QWidget):
     def open_abilities(self):
         print("opening abilities")
         slot = f"ability{self.get_free_ability_slot()}"
-        print(slot)
         self.abilities = AbilityGUI(self, self.character_sheet, slot)
         self.abilities.show()
 

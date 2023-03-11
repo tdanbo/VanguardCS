@@ -149,7 +149,8 @@ class CombatLogGUI(QWidget):
             parent_layout = layout,
             content_margin=(0,0,0,0),
             class_group = self.section_group,
-            stylesheet=f"background-color: {color};"
+            stylesheet=f"background-color: {color};",
+            group=True,
         )    
 
         self.main_roll_layout = Section (

@@ -29,7 +29,7 @@ CHARACTER = "Beasttoe"
 START_SLOTS = 6
 MAX_SLOTS = 16
 
-STATS = ["ARMOR","DEFENSE","ACCURATE", "CUNNING", "DISCREET", "PERSUASIVE", "QUICK", "RESOLUTE", "STRONG", "VIGILANT"]
+STATS = ["ACCURATE", "CUNNING", "DISCREET", "PERSUASIVE", "QUICK", "RESOLUTE", "STRONG", "VIGILANT"]
 
 ELEMENTS = json.load(open(os.path.join(ROOT, ".creatures", "elements.json"), "r"))
 

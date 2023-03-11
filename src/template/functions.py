@@ -5,6 +5,9 @@ from PySide2.QtCore import *
 import os
 import constants as cons
 
+def clear_layout(layout):
+    for item in range(layout.count()):
+        layout.itemAt(item).widget().deleteLater()
 
 def set_icon(widget, icon, color, width=0):
     qicon = QIcon()

@@ -20,7 +20,7 @@ from gui_functions import roll
 from gui_functions import character_reset
 
 from gui_windows.gui_new_char import NewCharacter
-
+from gui_windows.gui_inventory_item import InventoryItem
 class InventoryGUI(QWidget):
     def __init__(self, csheet):
         super().__init__()
@@ -53,6 +53,15 @@ class InventoryGUI(QWidget):
             content_margin=(0,0,0,0),
         )
 
+        self.combat_section = Section(
+            outer_layout = QHBoxLayout(),
+            inner_layout = ("VBox", 3),
+            parent_layout = self.master_layout,
+            title="Currency",
+            group = True,   
+            class_group = self.section_group	
+        )
+
         self.inventory_scroll = Section(
             outer_layout = QVBoxLayout(),
             inner_layout = ("VBox", 1),
@@ -64,19 +73,6 @@ class InventoryGUI(QWidget):
             spacing=0,
             content_margin=(0,0,0,0),	
         )
-
-        for count in range(15, 0, -1):
-            print(count)
-            self.make_item_slot(count, self.inventory_scroll.inner_layout(1), "inventory")
-            
-            # divider
-            self.divider = Widget(
-                widget_type=QFrame(),
-                parent_layout=self.inventory_scroll.inner_layout(1),
-                class_group=self.section_group,
-                height=2,
-                stylesheet=f"background-color: {cons.BORDER};"
-            )
 
         self.inventory_scroll.get_title()[1].setAlignment(Qt.AlignCenter)
 
@@ -123,13 +119,50 @@ class InventoryGUI(QWidget):
         portrait_title = self.portrait_layout.get_title()[0]
         portrait_title.clicked.connect(self.open_new_character)
 
-        self.combat_section = Section(
+        self.defense_layout = Section(
             outer_layout = QHBoxLayout(),
-            inner_layout = ("VBox", 3),
+            inner_layout = ("VBox", 2),
             parent_layout = self.master_layout,
-            title="Currency",
-            group = True,   
-            class_group = self.section_group	
+            group = True,
+            title = "DEFENSE",
+            spacing = 3,
+            class_group = self.section_group,
+        )
+
+        self.defense = Widget(
+            widget_type=QPushButton(),
+            parent_layout=self.defense_layout.inner_layout(1),
+            objectname = "armor",
+            class_group=self.widget_group,
+            text = "0",
+            stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_COLOR}; font-size: 20px; font-weight: bold; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-top-right-radius: 6px;"
+        )
+
+        self.defense_label = Widget(
+            widget_type=QPushButton(),
+            parent_layout=self.defense_layout.inner_layout(1),
+            objectname = "armmor_label",
+            class_group=self.widget_group,
+            text = "DEFENSE",
+            stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_DARK}; font-size: 10px; font-weight: bold; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;"
+        )
+
+        self.armor = Widget(
+            widget_type=QPushButton(),
+            parent_layout=self.defense_layout.inner_layout(2),
+            objectname = "defense",
+            class_group=self.widget_group,
+            text = "0",
+            stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_COLOR}; font-size: 20px; font-weight: bold; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-top-right-radius: 6px;"
+        )
+
+        self.armor_label = Widget(
+            widget_type=QPushButton(),
+            parent_layout=self.defense_layout.inner_layout(2),
+            objectname = "defense_label",
+            class_group=self.widget_group,
+            text = "ARMOR",
+            stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_DARK}; font-size: 10px; font-weight: bold; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;"
         )
 
         self.combat_section.get_title()[1].setAlignment(Qt.AlignCenter)
@@ -153,14 +186,14 @@ class InventoryGUI(QWidget):
         self.defense = Widget(
             widget_type=QPushButton(),
             parent_layout=self.combat_section.inner_layout(2),
-            objectname="defense",
+            objectname="Schellings",
             text="0",
             class_group=self.widget_group
         )
         self.defense_label = Widget(
             widget_type=QLabel(),
             parent_layout=self.combat_section.inner_layout(2),
-            objectname="defense_label",
+            objectname="Schellings_label",
             text="Schellings",
             align=Qt.AlignCenter,
             class_group=self.widget_group
