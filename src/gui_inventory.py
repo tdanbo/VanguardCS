@@ -13,8 +13,6 @@ import pymongo
 from class_sheet import CharacterSheet
 
 from gui_functions import character_xp
-from gui_functions import character_stats
-from gui_functions import character_morale
 from gui_functions import custom_rolls
 from gui_functions import roll
 from gui_functions import character_reset
@@ -51,6 +49,7 @@ class InventoryGUI(QWidget):
             parent_layout = self.portrait_layout.inner_layout(2),
             class_group=self.section_group,
             content_margin=(0,0,0,0),
+            spacing=3,
         )
 
         self.combat_section = Section(
@@ -81,7 +80,7 @@ class InventoryGUI(QWidget):
             parent_layout=self.portrait_layout.inner_layout(1),
             objectname="portrait",
             class_group=self.widget_group,
-            height=cons.WSIZE*2,
+            height=67,
             width=cons.WSIZE*6,
         )
 
@@ -99,21 +98,53 @@ class InventoryGUI(QWidget):
 
         )
 
+        self.experience_section = Section(
+            outer_layout = QHBoxLayout(),
+            inner_layout = ("VBox", 2),
+            parent_layout = self.name_layout.inner_layout(2),
+            class_group=self.section_group,
+            spacing = 3,
+        )
+
         self.experience= Widget(
             widget_type=QLineEdit(),
-            parent_layout=self.name_layout.inner_layout(2),
+            parent_layout=self.experience_section.inner_layout(1),
             objectname="experience",
             class_group=self.widget_group,
-            align="center"
+            align="center",
+            stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_COLOR}; font-size: 16px; font-weight: bold; border: 1px solid {cons.BORDER}"
+
+        )
+
+        self.experience_label = Widget(
+            widget_type=QPushButton(),
+            parent_layout=self.experience_section.inner_layout(1),
+            objectname = "experience_label",
+            class_group=self.widget_group,
+            text = "XP",
+            height=cons.WSIZE,
+            stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_DARK}; font-size: 10px; font-weight: bold; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;"
         )
 
         self.unspent_experience= Widget(
             widget_type=QLineEdit(),
-            parent_layout=self.name_layout.inner_layout(2),
+            parent_layout=self.experience_section.inner_layout(2),
             objectname="unspent_experience",
             signal = lambda: character_xp.adjust_xp(self,adjust="add"),
             class_group=self.widget_group,
-            align="center"
+            align="center",
+            stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_COLOR}; font-size: 16px; font-weight: bold; border: 1px solid {cons.BORDER}"
+
+        )
+
+        self.unspent_experience_label = Widget(
+            widget_type=QPushButton(),
+            parent_layout=self.experience_section.inner_layout(2),
+            objectname = "experience_label",
+            class_group=self.widget_group,
+            text = "UNSPENT XP",
+            height=cons.WSIZE,
+            stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_DARK}; font-size: 10px; font-weight: bold; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;"
         )
 
         portrait_title = self.portrait_layout.get_title()[0]

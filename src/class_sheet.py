@@ -15,9 +15,11 @@ import json
 import copy
 
 from gui_windows.gui_inventory_item import InventoryItem
+from gui_functions.class_roll import DiceRoll
 
-class CharacterSheet():
+class CharacterSheet(QWidget):
     def __init__(self):
+        super().__init__()
         self.equipment = self.get_equipment()
         self.abilities = self.get_abilities()
 
@@ -34,7 +36,7 @@ class CharacterSheet():
         self.set_defense()
 
         # updated_character_sheet = self.update_dictionary()
-        # self.update_database(updated_character_sheet)
+        self.update_database()
         
     def update_dictionary(self):
         print("Updating Character Sheet Dictionary")    
@@ -51,23 +53,7 @@ class CharacterSheet():
                 "STRONG": self.STR_mod.text(),
                 "VIGILANT": self.VIG_mod.text()
             },
-            "inventory": {
-                "inventory1": self.inventory1.text(),
-                "inventory2": self.inventory2.text(),
-                "inventory3": self.inventory3.text(),
-                "inventory4": self.inventory4.text(),
-                "inventory5": self.inventory5.text(),
-                "inventory6": self.inventory6.text(),
-                "inventory7": self.inventory7.text(),
-                "inventory8": self.inventory8.text(),
-                "inventory9": self.inventory9.text(),
-                "inventory10": self.inventory10.text(),
-                "inventory11": self.inventory11.text(),
-                "inventory12": self.inventory12.text(),
-                "inventory13": self.inventory13.text(),
-                "inventory14": self.inventory14.text(),
-                "inventory15": self.inventory15.text(),
-            },
+            "inventory": {},
             "abilities": {
                 "ability1": [self.ability1.text(), self.ability1.property("Rank")],
                 "ability2": [self.ability2.text(), self.ability2.property("Rank")],
@@ -198,7 +184,7 @@ class CharacterSheet():
             else:
                 return ""
 
-    def update_database(self, directory):
+    def update_database(self):
         self.client = pymongo.MongoClient(cons.CONNECT)
         self.db = self.client ["dnd"]
         self.collection = self.db["characters"]
@@ -206,11 +192,13 @@ class CharacterSheet():
         query = {"character": self.character_name}
         document = self.collection.find_one(query)
 
+        print(self.CHARACTER_DOC)
+
         if document is not None:
-            new_values = {"$set": directory}
+            new_values = {"$set": self.CHARACTER_DOC}
             self.collection.update_one(query, new_values)
         else:
-            self.collection.insert_one(directory)
+            print("No document found")
 
     # ITERATE OVER ITEM JSON TO FIND ITEM
 
@@ -250,58 +238,44 @@ class CharacterSheet():
         self.corruption_threshold.setText(str(corruption_threshold_math))
 
     def update_inventory(self):
-        print(self.CHARACTER_DOC["inventory"])
         func.clear_layout(self.isheet.inventory_scroll.inner_layout(1))
-        self.CHARACTER_ITEMS = self.CHARACTER_DOC["inventory"]
-        print(self.CHARACTER_ITEMS)
-        for count,item in enumerate(self.CHARACTER_ITEMS.values()):
-            item_dict = self.find_item(item)
-            print(item_dict)
-            item_widget = InventoryItem(count, item_dict)
+        for count in range(20,-1,-1):
+            try:
+                item_dict = self.CHARACTER_DOC["inventory"][count]
+            except:
+                item_dict = {}
+            
+            item_widget = InventoryItem(self.combat_log, self, count, item_dict)
+            item_widget.item.get_widget().editingFinished.connect(self.update_inventory_dict)
             self.isheet.inventory_scroll.inner_layout(1).addWidget(item_widget)
-
+                
             self.divider = QFrame()
             self.divider.setFixedHeight(1)
             self.divider.setStyleSheet(f"background-color: {cons.BORDER}")
             self.isheet.inventory_scroll.inner_layout(1).addWidget(self.divider)
 
+    def update_inventory_dict(self):
+        print("running")
+        item = self.sender().text()
+        slot = int(self.sender().objectName())
+        item_dict = self.find_item(item)
 
-        # self.all_items = []
-        # for inventory_slot in self.inventory_list:
-        #     item_string = inventory_slot.text().lower()
-        #     if item_string == "":
-        #         item_string = inventory_slot.objectName()
-        #     self.all_items.append(self.find_item(item_string))
+        if item_dict == {}:
+            try:
+                self.CHARACTER_DOC["inventory"].pop(slot)
+            except:
+                pass
+        else:
+            try:
+                self.CHARACTER_DOC["inventory"][slot] = item_dict
+            except:
+                self.CHARACTER_DOC["inventory"].append(item_dict)
 
-        # print(self.all_items)
+        priority = {'melee': 0, 'ranged': 1, 'armor': 2, 'elixirs': 3}
+        sorted_list = sorted(self.CHARACTER_DOC["inventory"], key=lambda x: priority.get(x.get('Category', ''), len(priority)))
+        self.CHARACTER_DOC["inventory"] = sorted_list
 
-        # priority = {'melee': 0, 'ranged': 1, 'armor': 2, 'elixirs': 3}
-        # self.sorted_list = sorted(self.all_items, key=lambda x: priority.get(x.get('Category', ''), len(priority)))
-        # for slot,item in enumerate(self.sorted_list):
-        #     self.update_item(slot+1, item)
-
-    def update_item(self, slot, item):
-        print(f"Updating item {slot} {item['Name']}")
-        # self.inventory_icon = self.isheet.findChild(QToolButton, f"icon{slot}")
-        # self.inventory_quality = self.isheet.findChild(QPushButton, f"quality{slot}")
-        # self.inventory_roll = self.isheet.findChild(QPushButton, f"roll{slot}")
-        # self.inventory_slot = self.isheet.findChild(QLineEdit, f"item{slot}")
-
-        # self.inventory_icon_label = self.isheet.findChild(QLabel, f"icon_label{slot}")
-        # self.inventory_quality_label = self.isheet.findChild(QLabel, f"quality_label{slot}")
-        # self.inventory_slot_label = self.isheet.findChild(QLabel, f"inventory_label{slot}")
-
-        # self.inventory_slot.setText(item["Name"])
-        # self.inventory_slot_label.setText(item["Category"])
-
-        # self.inventory_roll.setText(item["Roll"][1])
-        
-        # if "Quality" in item:
-        #     self.inventory_quality.setText(",".join(item["Quality"]))
-        #     self.inventory_quality_label.setText("Quality")
-        # else:
-        #     self.inventory_quality.setText("")
-        #     self.inventory_quality_label.setText("")
+        self.update_sheet()
 
     def find_item(self,item_string):
         print(f"Searching for {item_string}")
@@ -447,22 +421,6 @@ class CharacterSheet():
                 self.STR_mod.setText(str(self.CHARACTER_DOC["modifiers"]["STRONG"]))
                 self.VIG_mod.setText(str(self.CHARACTER_DOC["modifiers"]["VIGILANT"]))
 
-                self.inventory1.setText(str(self.CHARACTER_DOC["inventory"]["inventory1"]))
-                self.inventory2.setText(str(self.CHARACTER_DOC["inventory"]["inventory2"]))
-                self.inventory3.setText(str(self.CHARACTER_DOC["inventory"]["inventory3"]))
-                self.inventory4.setText(str(self.CHARACTER_DOC["inventory"]["inventory4"]))
-                self.inventory5.setText(str(self.CHARACTER_DOC["inventory"]["inventory5"]))
-                self.inventory6.setText(str(self.CHARACTER_DOC["inventory"]["inventory6"]))
-                self.inventory7.setText(str(self.CHARACTER_DOC["inventory"]["inventory7"]))
-                self.inventory8.setText(str(self.CHARACTER_DOC["inventory"]["inventory8"]))
-                self.inventory9.setText(str(self.CHARACTER_DOC["inventory"]["inventory9"]))
-                self.inventory10.setText(str(self.CHARACTER_DOC["inventory"]["inventory10"]))
-                self.inventory11.setText(str(self.CHARACTER_DOC["inventory"]["inventory11"]))
-                self.inventory12.setText(str(self.CHARACTER_DOC["inventory"]["inventory12"]))
-                self.inventory13.setText(str(self.CHARACTER_DOC["inventory"]["inventory13"]))
-                self.inventory14.setText(str(self.CHARACTER_DOC["inventory"]["inventory14"]))
-                self.inventory15.setText(str(self.CHARACTER_DOC["inventory"]["inventory15"]))
-
                 self.ability1.setText(str(self.CHARACTER_DOC["abilities"]["ability1"][0]))
                 self.ability2.setText(str(self.CHARACTER_DOC["abilities"]["ability2"][0]))
                 self.ability3.setText(str(self.CHARACTER_DOC["abilities"]["ability3"][0]))
@@ -540,6 +498,9 @@ class CharacterSheet():
 
         self.ability_list = [self.ability1, self.ability2, self.ability3, self.ability4, self.ability5, self.ability6, self.ability7, self.ability8, self.ability9, self.ability10, self.ability11, self.ability12]
 
+    def set_combat_log(self, clog):
+        self.combat_log = clog
+
     def set_inv_vars(self, isheet):
         print("Setting inv vars")
         self.isheet = isheet
@@ -551,28 +512,6 @@ class CharacterSheet():
 
         self.experience_unspent = self.isheet.unspent_experience.get_widget()
 
-        self.inventory1 = self.isheet.findChild(QWidget, "item1")
-        self.inventory2 = self.isheet.findChild(QWidget, "item2")
-        self.inventory3 = self.isheet.findChild(QWidget, "item3")
-        self.inventory4 = self.isheet.findChild(QWidget, "item4")
-        self.inventory5 = self.isheet.findChild(QWidget, "item5")
-        self.inventory6 = self.isheet.findChild(QWidget, "item6")
-        self.inventory7 = self.isheet.findChild(QWidget, "item7")
-        self.inventory8 = self.isheet.findChild(QWidget, "item8")
-        self.inventory9 = self.isheet.findChild(QWidget, "item9")
-        self.inventory10 = self.isheet.findChild(QWidget, "item10")
-        self.inventory11 = self.isheet.findChild(QWidget, "item11")
-        self.inventory12 = self.isheet.findChild(QWidget, "item12")
-        self.inventory13 = self.isheet.findChild(QWidget, "item13")
-        self.inventory14 = self.isheet.findChild(QWidget, "item14")
-        self.inventory15 = self.isheet.findChild(QWidget, "item15")
-
-        self.inventory_list = [self.inventory1, self.inventory2, self.inventory3, self.inventory4, self.inventory5, self.inventory6, self.inventory7, self.inventory8, self.inventory9, self.inventory10, self.inventory11, self.inventory12, self.inventory13, self.inventory14, self.inventory15]
-
     def get_character(self):
         return self.character_name.get_widget().currentText()
-
-
-
-
     

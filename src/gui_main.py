@@ -26,7 +26,7 @@ class MainWindow(QWidget):
         self.character_inventory_gui = InventoryGUI(self.character_sheet)
 
         # 3 Main GUIS
-        combat_log_gui = CombatLogGUI(self.character_sheet_gui)
+        combat_log_gui = CombatLogGUI(self.character_sheet, self.character_sheet_gui)
 
         # Simple styling
         combat_log_gui.setFixedWidth(300)

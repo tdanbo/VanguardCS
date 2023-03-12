@@ -12,12 +12,13 @@ from class_sheet import CharacterSheet
 
 import functools
 
-from gui_functions import character_stats
 from gui_functions import custom_rolls
 
 from gui_abilities import AbilityGUI
 
 import math
+
+from gui_functions.class_roll import DiceRoll
 
 class CharacterSheetGUI(QWidget):
     def __init__(self, csheet):
@@ -247,13 +248,8 @@ class CharacterSheetGUI(QWidget):
             self.stat_button = Widget(
                 widget_type=QPushButton(),
                 parent_layout = self.stat_layout.inner_layout(number),
-                text="10",
-                signal=functools.partial(
-                    character_stats.adjust_stat,
-                    self,
-                    stat,
-                    adjust="add"
-                ),
+                signal=self.roll_dice,
+                property=("roll",stat),
                 objectname=stat,
                 class_group=self.widget_group,
                 height=cons.WSIZE*2,
@@ -273,12 +269,6 @@ class CharacterSheetGUI(QWidget):
                 parent_layout=self.stat_sub_layout.inner_layout(0),
                 text=stat,
                 objectname=f"{stat}_label",
-                signal=functools.partial(
-                    custom_rolls.modify_stat,
-                    self,
-                    self.character_sheet,
-                    stat
-                ),
                 class_group=self.widget_group,
                 height=cons.WSIZE,
                 stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_DARK}; font-size: 10px; font-weight: bold; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;"
@@ -290,12 +280,6 @@ class CharacterSheetGUI(QWidget):
                 parent_layout=self.stat_sub_layout.inner_layout(0),
                 text="0",
                 objectname=f"{stat}_mod",
-                signal=functools.partial(
-                    custom_rolls.modify_stat,
-                    self,
-                    self.character_sheet,
-                    stat
-                ),
                 class_group=self.widget_group,
                 height=cons.WSIZE,
                 stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_DARK}; font-size: 10px; font-weight: bold; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;"
@@ -453,3 +437,20 @@ class CharacterSheetGUI(QWidget):
         slot = self.sender().objectName().split("_")[0]
         rank = self.sender().objectName().split("_")[1]
         self.character_sheet.set_rank(slot, rank)
+
+    def roll_dice(self):
+        print("rolling dice")
+        self.character = self.character_sheet.character_name
+        self.combat_log = self.character_sheet.combat_log
+        self.roll_type = self.sender().property("roll")
+
+        self.modifier = 0        
+
+        if self.roll_type in cons.STATS:
+            self.check = int(self.sender().text())
+            self.dice = "1d20"
+        else:
+            self.check = 0
+            self.dice = self.sender().text()
+
+        rolling_dice = DiceRoll(self.combat_log,self.character,self.roll_type.capitalize(),self.dice, check = self.check).roll()

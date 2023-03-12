@@ -10,34 +10,6 @@ from gui_inventory import InventoryGUI
 This area of code handles the functions of the dice roller.
 '''
 
-def modify_stat(self, character_sheet, stat, adjust="add"):
-
-    mod_widget = self.findChild(QPushButton, f"{stat}_mod")
-    base_mod = int(mod_widget.text())
-
-
-    if adjust == "add":
-        base_mod += 1
-        mod_widget.setHidden(False)
-
-    if adjust == "subtract":
-        base_mod -= 1
-        mod_widget.setHidden(False)
-
-    if base_mod > 0:
-        mod_widget.setText(f"+{base_mod}")
-
-    if base_mod < 0:
-        mod_widget.setText(f"{base_mod}")
-
-    if base_mod == 0:
-        mod_widget.setText(f"{base_mod}")
-        mod_widget.setHidden(True)
-
-    print(base_mod)
-
-    character_sheet.update_sheet()
-
 def add_dice(self, dice, adjust="add"):
     print(dice)
     if "_count" in dice:
@@ -64,19 +36,11 @@ def add_dice(self, dice, adjust="add"):
             count_widget.setText("")
             count_widget.setHidden(True)
 
-    roll_button(self, shown=False)        
-    for objectname in ["d4","d6","d8","d10","d12","d20","MOD"]:
-        widget = self.findChild(QPushButton, objectname)
-        counter = self.findChild(QPushButton, f"{objectname}_count")
-        if counter.text() == "":
-            pass
-            #widget.setStyleSheet(style.DICE_TRAY)
-        else:
-            #widget.setStyleSheet(style.DICE_TRAY1)
-            roll_button(self, shown=True)
+    if count_widget.text() == "":
+        roll_button(self, shown=False)
+    else:
+        roll_button(self, shown=True)
             
-
-
 def roll_button(self, shown=False):
     title_widgets = self.log_dice.get_title()
     title_widgets[1].setHidden(shown)

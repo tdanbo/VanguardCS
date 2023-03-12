@@ -20,22 +20,6 @@ def check_prepare_roll(self,stat):
     char_name = self.findChild(QComboBox, "name").currentText()
     make_roll(char_name, stats[stat], single = {"type":"Check","roll":roll})
 
-def custom_prepare_roll(self,char_name,action):
-    rolls = []
-    for dice in ["d4","d6","d8","d10","d12","d20"]:
-        counter = self.findChild(QPushButton, f"{dice}_count").text()
-        if counter != "":
-            rolls.append(f"{counter}{dice}")
-
-    modifier = self.findChild(QPushButton, "MOD_count").text()
-
-    roll = "_".join(rolls)+"+"+modifier
-
-    print(roll)
-
-    make_roll(char_name,"Roll", single = {"type":action,"roll":roll})
-    custom_rolls.clear_rolls(self)
-
 def inventory_prepare_double_roll(self,slot):
     name = self.findChild(QLineEdit, f"inventory{slot}").text()
     

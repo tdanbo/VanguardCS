@@ -153,11 +153,18 @@ class NewCharacter(QWidget):
             new_character["rank"] = "Player"
             new_character["experience"] = "0"
             new_character["experience unspent"] = "40"
-
+            new_character["corruption permanent"] = "0"
+            new_character["corruption temporary"] = "40"
+            new_character["toughness current"] = "0"
+            
             for stat in cons.STATS:
                 stat_value = self.findChild(QPushButton,stat).text()
                 new_character["stats"][stat] = stat_value
+                new_character["stats"][stat + " mod"] = ""
 
+            new_character["inventory"] = []
+            new_character["abilities"] = []
+            
             self.isheet.character_name.get_widget().addItem(self.character_name)
             self.isheet.character_name.get_widget().setCurrentText(self.character_name)
 

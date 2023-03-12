@@ -11,12 +11,15 @@ import os
 from template.section import Section
 from template.widget import Widget
 
+from gui_functions.class_roll import DiceRoll
 
 class InventoryItem(QWidget):
-    def __init__(self, count, item_dict):
+    def __init__(self, combat_log, character_sheet, count, item_dict):
         super().__init__()
-        print(f"Making Widget")
-        print(f"item_dict: {item_dict}")
+
+        self.character_sheet = character_sheet
+        self.combat_log = combat_log
+
         self.master_layout = QHBoxLayout()
         self.widget_group = []
         self.section_group = []
@@ -27,6 +30,8 @@ class InventoryItem(QWidget):
             bg_color = cons.PRIMARY
         else:
             bg_color = cons.PRIMARY_DARKER             
+
+        print(item_dict)
 
         self.item_section = Section(
             outer_layout=QHBoxLayout(),
@@ -41,14 +46,16 @@ class InventoryItem(QWidget):
         self.item = Widget(
             widget_type=QLineEdit(),
             parent_layout=self.item_section.inner_layout(2),
-            objectname="item",
+            objectname=f"{count}",
             class_group=self.widget_group,
             stylesheet=f"font-size: 13px; font-weight: bold;",
             height=cons.WSIZE,
+            signal=self
         )
 
         # CREATING EMPTY OR POPULATED ITEM WIDGET
         if item_dict == {}:
+            print("passing")
             pass # Setting up empty item
         else:
             print("item_dict", item_dict)
@@ -120,6 +127,7 @@ class InventoryItem(QWidget):
             class_group=self.widget_group,
             align="right",
             height=cons.WSIZE,
+            
         )
 
         self.item_dice = Widget(
@@ -130,9 +138,25 @@ class InventoryItem(QWidget):
             class_group=self.widget_group,
             stylesheet=f"padding-left: 5px; padding-right: 5px; background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_COLOR}; font-size: 11px; font-weight: bold; border: 1px solid {cons.BORDER}; border-radius: 6px;",
             height=cons.WSIZE,
+            signal=self.roll_dice,
+            property=("roll",dice_type)
         )
 
         self.quality_section.inner_layout(1).setAlignment(Qt.AlignLeft)
         self.item_section.inner_layout(1).setAlignment(Qt.AlignLeft)
         self.item_section.inner_layout(2).setAlignment(Qt.AlignRight)
         self.item_label.get_widget().setAlignment(Qt.AlignRight | Qt.AlignVCenter)
+        
+    def roll_dice(self):
+        print("rolling dice")
+        self.character = self.character_sheet.character_name
+        self.roll_type = self.sender().property("roll") 
+
+        if self.roll_type in cons.STATS:
+            self.check = int(self.sender().text())
+            self.dice = "1d20"
+        else:
+            self.check = 0
+            self.dice = self.sender().text()
+
+        rolling_dice = DiceRoll(self.combat_log,self.character,self.roll_type.capitalize(), self.dice, check = self.check).roll()
