@@ -74,18 +74,6 @@ class CharacterSheetGUI(QWidget):
             class_group = self.section_group,
         )
 
-        self.corruption_layout = Section(
-            outer_layout = QHBoxLayout(),
-            inner_layout = ("VBox", 3),
-            parent_layout = self.character_basic.inner_layout(1),
-            group = True,
-            title = "CORRUPTION",
-            spacing = 3,
-            class_group=self.section_group
-        )
-
-        self.corruption_layout.get_title()[1].setAlignment(Qt.AlignCenter)
-
         self.hp_layout = Section(
             outer_layout = QHBoxLayout(),
             inner_layout = ("VBox", 3),
@@ -97,6 +85,18 @@ class CharacterSheetGUI(QWidget):
         )
 
         self.hp_layout.get_title()[1].setAlignment(Qt.AlignCenter)
+
+        self.corruption_layout = Section(
+            outer_layout = QHBoxLayout(),
+            inner_layout = ("VBox", 3),
+            parent_layout = self.character_basic.inner_layout(1),
+            group = True,
+            title = "CORRUPTION",
+            spacing = 3,
+            class_group=self.section_group
+        )
+
+        self.corruption_layout.get_title()[1].setAlignment(Qt.AlignCenter)
 
         for power in range(1, 13):
             #layout_number = math.ceil(power / 2)
@@ -255,18 +255,10 @@ class CharacterSheetGUI(QWidget):
                 height=cons.WSIZE*2,
                 stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_COLOR}; font-size: 20px; font-weight: bold; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-top-right-radius: 6px;"
             )
-            self.stat_sub_layout = Section(
-                outer_layout = QHBoxLayout(),
-                inner_layout = ("HBox", 1),
-                parent_layout = self.stat_layout.inner_layout(number),
-                spacing=0,
-                class_group = self.section_group
-                
-            )
 
             self.stat_button = Widget(
                 widget_type=QPushButton(),
-                parent_layout=self.stat_sub_layout.inner_layout(0),
+                parent_layout=self.stat_layout.inner_layout(number),
                 text=stat,
                 objectname=f"{stat}_label",
                 class_group=self.widget_group,
@@ -274,17 +266,6 @@ class CharacterSheetGUI(QWidget):
                 stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_DARK}; font-size: 10px; font-weight: bold; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;"
 
             )
-
-            self.stat_modifier = Widget(
-                widget_type=QPushButton(),
-                parent_layout=self.stat_sub_layout.inner_layout(0),
-                text="0",
-                objectname=f"{stat}_mod",
-                class_group=self.widget_group,
-                height=cons.WSIZE,
-                stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_DARK}; font-size: 10px; font-weight: bold; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;"
-
-            )   
 
         self.toughness_current= Widget(
             widget_type=QPushButton(),

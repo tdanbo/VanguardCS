@@ -14,6 +14,8 @@ import random
 import json
 import copy
 
+import re
+
 from gui_windows.gui_inventory_item import InventoryItem
 from gui_functions.class_roll import DiceRoll
 
@@ -28,6 +30,7 @@ class CharacterSheet(QWidget):
         self.set_icon()      
 
         self.update_inventory()
+        self.update_equip()
         self.update_abilities()
 
         self.set_stats()
@@ -74,6 +77,14 @@ class CharacterSheet(QWidget):
 
         }  
         return character_sheet_dictionary
+
+    def find_modifier(self, string):
+        match = re.search(r'-?\d+', string)  # search for a sequence of digits with an optional minus sign
+        if match:
+            integer_value = int(match.group())  # extract the matched string and convert it to an integer
+            return integer_value  # outputs: -4
+        else:
+            print("No integer value found.")
 
     def set_rank(self, slot, rank):
         ability_main_widget = self.csheet.findChild(QWidget, f"{slot}_section_title")
@@ -127,9 +138,6 @@ class CharacterSheet(QWidget):
             if item_string == "empty":
                 item_string = ability_slot.text()
             self.all_items.append(self.find_ability(item_string,item_rank))
-
-        print("Abilities")
-        print(len(self.all_items))
 
         priority = {'abilities': 0, 'mystical_powers': 1, 'rituals': 2, 'boons': 3, 'burdens': 4}
         self.sorted_list = sorted(self.all_items, key=lambda x: priority.get(x.get('Category', ''), len(priority)))
@@ -192,8 +200,6 @@ class CharacterSheet(QWidget):
         query = {"character": self.character_name}
         document = self.collection.find_one(query)
 
-        print(self.CHARACTER_DOC)
-
         if document is not None:
             new_values = {"$set": self.CHARACTER_DOC}
             self.collection.update_one(query, new_values)
@@ -217,8 +223,22 @@ class CharacterSheet(QWidget):
         pass
 
     def set_defense(self):
-        self.defense.setText(self.QUI.text())
+        self.DEF.setText(str(self.QUI.text()))
 
+        if self.CHARACTER_DOC["equipment"]["armor"] != {}:
+            for quality in self.CHARACTER_DOC["equipment"]["armor"]["Quality"]:
+                if "Impeding" in quality:
+                    impeding = self.find_modifier(quality)
+                    impeding_negative = -1 * impeding
+                    print(quality)
+                    print(impeding)
+                    self.DEF_mod.setText(f"DEFENSE {str(impeding_negative)}")
+
+            roll = self.CHARACTER_DOC["equipment"]["armor"]["Roll"][1]
+            print(roll)
+            self.isheet.armor.get_widget().setText(roll)
+        else:
+            self.DEF_mod.setText(f"DEFENSE")
 
     def set_toughness(self):
         strong = int(self.STR.text())
@@ -237,25 +257,45 @@ class CharacterSheet(QWidget):
         self.corruption_temporary.setText("0")
         self.corruption_threshold.setText(str(corruption_threshold_math))
 
+    def update_equip(self):
+        func.clear_layout(self.isheet.equipment_layout.inner_layout(1))
+
+        self.mainhand_slot = InventoryItem(self, 2, self.CHARACTER_DOC["equipment"]["armor"], equipment="AR")
+        self.offhand_slot = InventoryItem(self, 3, self.CHARACTER_DOC["equipment"]["main hand"], equipment="MH")
+        self.armor_slot = InventoryItem(self, 4, self.CHARACTER_DOC["equipment"]["off hand"], equipment="OH")
+
+        self.isheet.equipment_layout.inner_layout(1).addWidget(self.mainhand_slot)
+        self.add_divier(self.isheet.equipment_layout.inner_layout(1))
+        self.isheet.equipment_layout.inner_layout(1).addWidget(self.offhand_slot)
+        self.add_divier(self.isheet.equipment_layout.inner_layout(1))
+        self.isheet.equipment_layout.inner_layout(1).addWidget(self.armor_slot)
+
     def update_inventory(self):
         func.clear_layout(self.isheet.inventory_scroll.inner_layout(1))
+
+        priority = {'melee': 0, 'ranged': 1, 'armor': 2, 'elixirs': 3}
+        sorted_list = sorted(self.CHARACTER_DOC["inventory"], key=lambda x: priority.get(x.get('Category', ''), len(priority)))
+        self.CHARACTER_DOC["inventory"] = sorted_list
+
         for count in range(20,-1,-1):
             try:
                 item_dict = self.CHARACTER_DOC["inventory"][count]
             except:
                 item_dict = {}
             
-            item_widget = InventoryItem(self.combat_log, self, count, item_dict)
+            item_widget = InventoryItem(self, count, item_dict)
             item_widget.item.get_widget().editingFinished.connect(self.update_inventory_dict)
             self.isheet.inventory_scroll.inner_layout(1).addWidget(item_widget)
                 
-            self.divider = QFrame()
-            self.divider.setFixedHeight(1)
-            self.divider.setStyleSheet(f"background-color: {cons.BORDER}")
-            self.isheet.inventory_scroll.inner_layout(1).addWidget(self.divider)
+            self.add_divier(self.isheet.inventory_scroll.inner_layout(1))
 
+    def add_divier(self, layout):
+        self.divider = QFrame()
+        self.divider.setFixedHeight(1)
+        self.divider.setStyleSheet(f"background-color: {cons.BORDER}")
+
+        layout.addWidget(self.divider)
     def update_inventory_dict(self):
-        print("running")
         item = self.sender().text()
         slot = int(self.sender().objectName())
         item_dict = self.find_item(item)
@@ -271,10 +311,6 @@ class CharacterSheet(QWidget):
             except:
                 self.CHARACTER_DOC["inventory"].append(item_dict)
 
-        priority = {'melee': 0, 'ranged': 1, 'armor': 2, 'elixirs': 3}
-        sorted_list = sorted(self.CHARACTER_DOC["inventory"], key=lambda x: priority.get(x.get('Category', ''), len(priority)))
-        self.CHARACTER_DOC["inventory"] = sorted_list
-
         self.update_sheet()
 
     def find_item(self,item_string):
@@ -285,6 +321,9 @@ class CharacterSheet(QWidget):
                     item_dict = self.equipment[category][item]
                     item_dict["Name"] = item
                     item_dict["Category"] = category
+                    item_dict["Equipped"] = {}
+                    item_dict["Equipped"]["1"] = False
+                    item_dict["Equipped"]["2"] = False
                     return item_dict
                 else:
                     pass
@@ -412,6 +451,7 @@ class CharacterSheet(QWidget):
                 self.corruption_permanent.setText(str(self.CHARACTER_DOC["corruption permanent"]))
                 self.corruption_temporary.setText(str(self.CHARACTER_DOC["corruption temporary"]))
 
+                self.DEF_mod.setText(str(self.CHARACTER_DOC["modifiers"]["DEFENSE"]))
                 self.ACC_mod.setText(str(self.CHARACTER_DOC["modifiers"]["ACCURATE"]))
                 self.CUN_mod.setText(str(self.CHARACTER_DOC["modifiers"]["CUNNING"]))
                 self.DIS_mod.setText(str(self.CHARACTER_DOC["modifiers"]["DISCREET"]))
@@ -474,6 +514,7 @@ class CharacterSheet(QWidget):
         self.STR = csheet.findChild(QWidget, "STRONG")
         self.VIG = csheet.findChild(QWidget, "VIGILANT")
         
+        self.DEF_mod = csheet.findChild(QWidget, "DEFENSE_mod")
         self.ACC_mod = csheet.findChild(QWidget, "ACCURATE_mod")
         self.CUN_mod = csheet.findChild(QWidget, "CUNNING_mod")
         self.DIS_mod = csheet.findChild(QWidget, "DISCREET_mod")
@@ -507,7 +548,9 @@ class CharacterSheet(QWidget):
 
         self.character_icon = self.isheet.portrait.get_widget()
     
-        self.defense = self.isheet.defense.get_widget()
+        self.DEF = isheet.defense.get_widget()
+        self.DEF_mod = isheet.defense_mod.get_widget()
+
         self.experience = self.isheet.experience.get_widget()
 
         self.experience_unspent = self.isheet.unspent_experience.get_widget()

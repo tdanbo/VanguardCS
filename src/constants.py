@@ -30,6 +30,8 @@ START_SLOTS = 6
 MAX_SLOTS = 16
 
 STATS = ["ACCURATE", "CUNNING", "DISCREET", "PERSUASIVE", "QUICK", "RESOLUTE", "STRONG", "VIGILANT"]
+ARMOR = ["armor"]
+
 
 ELEMENTS = json.load(open(os.path.join(ROOT, ".creatures", "elements.json"), "r"))
 

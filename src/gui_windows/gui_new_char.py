@@ -164,6 +164,7 @@ class NewCharacter(QWidget):
 
             new_character["inventory"] = []
             new_character["abilities"] = []
+            new_character["equipment"] = {"armor":{},"main hand":{},"off hand":{}}
             
             self.isheet.character_name.get_widget().addItem(self.character_name)
             self.isheet.character_name.get_widget().setCurrentText(self.character_name)

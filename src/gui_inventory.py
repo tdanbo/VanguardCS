@@ -66,7 +66,7 @@ class InventoryGUI(QWidget):
             inner_layout = ("VBox", 1),
             parent_layout = self.master_layout,
             scroll=(True,"bottom"),
-            title="EQUIPMENT",
+            title="BACKPACK",
             group = True,   
             class_group = self.section_group,
             spacing=0,
@@ -150,6 +150,18 @@ class InventoryGUI(QWidget):
         portrait_title = self.portrait_layout.get_title()[0]
         portrait_title.clicked.connect(self.open_new_character)
 
+        self.equipment_layout = Section(
+            outer_layout = QHBoxLayout(),
+            inner_layout = ("VBox", 2),
+            parent_layout = self.master_layout,
+            group = True,
+            title = "EQUIPMENT",
+            class_group = self.section_group,
+            spacing=0,
+            content_margin=(0,0,0,0),
+            height=240	
+        )
+
         self.defense_layout = Section(
             outer_layout = QHBoxLayout(),
             inner_layout = ("VBox", 2),
@@ -163,16 +175,16 @@ class InventoryGUI(QWidget):
         self.defense = Widget(
             widget_type=QPushButton(),
             parent_layout=self.defense_layout.inner_layout(1),
-            objectname = "armor",
+            objectname = "DEFENSE",
             class_group=self.widget_group,
             text = "0",
             stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_COLOR}; font-size: 20px; font-weight: bold; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-top-right-radius: 6px;"
         )
 
-        self.defense_label = Widget(
+        self.defense_mod = Widget(
             widget_type=QPushButton(),
             parent_layout=self.defense_layout.inner_layout(1),
-            objectname = "armmor_label",
+            objectname = "DEFENSE_mod",
             class_group=self.widget_group,
             text = "DEFENSE",
             stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_DARK}; font-size: 10px; font-weight: bold; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;"
@@ -196,16 +208,16 @@ class InventoryGUI(QWidget):
             stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_DARK}; font-size: 10px; font-weight: bold; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;"
         )
 
-        self.combat_section.get_title()[1].setAlignment(Qt.AlignCenter)
+        self.defense_layout.get_title()[1].setAlignment(Qt.AlignCenter)
 
-        self.armor = Widget(
+        self.thaler = Widget(
             widget_type=QPushButton(),
             parent_layout=self.combat_section.inner_layout(1),
-            objectname="armor",
+            objectname="thaler",
             text="0",
             class_group=self.widget_group
         )
-        self.armor_label = Widget(
+        self.thaler_label = Widget(
             widget_type=QLabel(),
             parent_layout=self.combat_section.inner_layout(1),
             objectname="armor_label",
@@ -214,14 +226,14 @@ class InventoryGUI(QWidget):
             class_group=self.widget_group
         )
 
-        self.defense = Widget(
+        self.schellings = Widget(
             widget_type=QPushButton(),
             parent_layout=self.combat_section.inner_layout(2),
             objectname="Schellings",
             text="0",
             class_group=self.widget_group
         )
-        self.defense_label = Widget(
+        self.schellingse_label = Widget(
             widget_type=QLabel(),
             parent_layout=self.combat_section.inner_layout(2),
             objectname="Schellings_label",
@@ -229,7 +241,7 @@ class InventoryGUI(QWidget):
             align=Qt.AlignCenter,
             class_group=self.widget_group
         )
-        self.damage = Widget(
+        self.ortheg = Widget(
             widget_type=QPushButton(),
             parent_layout=self.combat_section.inner_layout(3),
             objectname="damage",
@@ -237,7 +249,7 @@ class InventoryGUI(QWidget):
             class_group=self.widget_group
         )
 
-        self.damage_label = Widget(
+        self.ortheg_label = Widget(
             widget_type=QLabel(),
             parent_layout=self.combat_section.inner_layout(3),
             objectname="damage_label",
