@@ -12,6 +12,7 @@ from template.section import Section
 from template.widget import Widget
 
 from gui_functions.class_roll import DiceRoll
+from gui_functions.class_modify_stat import ModifyStat
 
 class InventoryItem(QWidget):
     def __init__(self, character_sheet, count, item_dict, equipment=""):
@@ -241,6 +242,7 @@ class InventoryItem(QWidget):
 
             self.equip_button.setObjectName("AR_EQUIPPED")
         
+        self.set_impeding()
         self.character_sheet.update_sheet()
 
     def unequip_item(self):
@@ -264,94 +266,37 @@ class InventoryItem(QWidget):
             self.character_sheet.CHARACTER_DOC["equipment"]["armor"] = {}
             self.equip_button.setObjectName("AR")
 
+        self.set_impeding()
         self.character_sheet.update_sheet()
 
-    # def equip_item(self):
-    #     self.equip_button = self.sender()
-    #     self.equip_button_type = self.equip_button.objectName()
+    def set_impeding(self):
+        defense = 0
+        casting = 0
+        speed = 0
+        armor = self.character_sheet.CHARACTER_DOC["equipment"]["armor"]
+        if armor != {}:
+            impeding = [quality for quality in armor["Quality"] if "Impeding" in quality][0]
+            print(impeding)
+            value = ModifyStat(impeding).find_integer()
+            speed -= value
+            defense -= value
+            casting -= value
 
-    #     self.equip_1 = self.item_dict["Equipped"]["1"]
-    #     self.equip_2 = self.item_dict["Equipped"]["2"]
+        mh = self.character_sheet.CHARACTER_DOC["equipment"]["main hand"]
+        if mh != {}:
+            if mh["Name"] in ["Shield","Buckler"]:
+                defense += 1
+            elif mh["Name"] == "Steel Shield":
+                defense += 2
 
-    #     if self.equip_button_type == "2H":
-    #         self.unequip_2hander()
-    #         if self.equip_1 == False:
-    #             self.character_sheet.CHARACTER_DOC["equipment"]["main hand"] = self.item_dict
-    #             self.character_sheet.CHARACTER_DOC["equipment"]["off hand"] = {}
-    #             self.item_dict["Equipped"]["1"] = True
-    #             self.item_dict["Equipped"]["2"] = True
-    #         else:
-    #             self.character_sheet.CHARACTER_DOC["equipment"]["main hand"] = {}
-    #             self.item_dict["Equipped"]["1"] = False
-    #             self.item_dict["Equipped"]["2"] = False
+        oh = self.character_sheet.CHARACTER_DOC["equipment"]["off hand"]
+        if oh != {}:
+            if oh["Name"] in ["Shield","Buckler"]:
+                defense += 1
+            elif oh["Name"] == "Steel Shield":
+                defense += 2
 
-    #     elif self.equip_button_type == "MH":
-    #         self.unequip_main_hand()
-    #         if self.equip_1 == False:
-    #             print(f"equipping {self.item_dict['Name']}")
-    #             self.character_sheet.CHARACTER_DOC["equipment"]["main hand"] = self.item_dict
-    #             self.item_dict["Equipped"]["1"] = True
-    #             self.item_dict["Equipped"]["2"] = False
-    #         else:
-    #             print(f"Un-equipping {self.item_dict['Name']}")
-    #             self.character_sheet.CHARACTER_DOC["equipment"]["main hand"] = {}
-    #             self.item_dict["Equipped"]["1"] = False
 
-    #     elif self.equip_button_type == "OH":
-    #         self.unequip_off_hand()
-    #         if self.equip_2 == False:
-    #             self.character_sheet.CHARACTER_DOC["equipment"]["off hand"] = self.item_dict
-    #             self.item_dict["Equipped"]["1"] = False
-    #             self.item_dict["Equipped"]["2"] = True
-    #         else:
-    #             self.character_sheet.CHARACTER_DOC["equipment"]["off hand"] = {}
-    #             self.item_dict["Equipped"]["2"] = False
-
-    #     elif self.equip_button_type == "AR":
-    #         self.unequip_armor()
-    #         if self.equip_2 == False:
-    #             self.character_sheet.CHARACTER_DOC["equipment"]["armor"] = self.item_dict
-    #             self.item_dict["Equipped"]["1"] = True
-    #             self.item_dict["Equipped"]["2"] = True
-    #         else:
-    #             self.character_sheet.CHARACTER_DOC["equipment"]["armor"] = {}
-    #             self.item_dict["Equipped"]["2"] = False
-    #             self.item_dict["Equipped"]["2"] = False
-
-    #     print(self.item_dict["Equipped"]["1"])
-    #     print(self.item_dict["Equipped"]["2"])
-    #     self.character_sheet.update_sheet()
-
-    # def unequip_main_hand(self):
-    #     print(f"unequipping main hand")
-    #     for item in self.character_sheet.CHARACTER_DOC["inventory"]:
-    #         if item["Category"] in ["melee","ranged"]:
-    #             item["Equipped"]["1"] = False
-    #         else:
-    #             pass
-
-    # def unequip_armor(self):
-    #     print(f"unequipping armor")
-    #     for item in self.character_sheet.CHARACTER_DOC["inventory"]:
-    #         if item["Category"] == "armor":
-    #             item["Equipped"]["1"] = False
-    #             item["Equipped"]["2"] = False
-    #         else:
-    #             pass
-
-    # def unequip_off_hand(self):
-    #     print(f"unequipping off hand")
-    #     for item in self.character_sheet.CHARACTER_DOC["inventory"]:
-    #         if item["Category"] in ["melee","ranged"]:
-    #             item["Equipped"]["2"] = False
-    #         else:
-    #             pass
-
-    # def unequip_2hander(self):
-    #     print(f"unequipping 2hander")
-    #     for item in self.character_sheet.CHARACTER_DOC["inventory"]:
-    #         if item["Category"] in ["melee","ranged"]:
-    #             item["Equipped"]["1"] = False
-    #             item["Equipped"]["2"] = False
-    #         else:
-    #             pass
+        self.character_sheet.CHARACTER_DOC["health"]["DEFENSE mod"] = defense
+        self.character_sheet.CHARACTER_DOC["health"]["CASTING mod"] = casting
+        self.character_sheet.CHARACTER_DOC["health"]["SPEED mod"] = speed

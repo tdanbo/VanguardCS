@@ -19,6 +19,7 @@ from gui_abilities import AbilityGUI
 import math
 
 from gui_functions.class_roll import DiceRoll
+from gui_functions.class_modify_stat import ModifyStat
 
 class CharacterSheetGUI(QWidget):
     def __init__(self, csheet):
@@ -260,116 +261,132 @@ class CharacterSheetGUI(QWidget):
                 widget_type=QPushButton(),
                 parent_layout=self.stat_layout.inner_layout(number),
                 text=stat,
-                objectname=f"{stat}_label",
+                objectname=f"{stat} mod",
                 class_group=self.widget_group,
                 height=cons.WSIZE,
-                stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_DARK}; font-size: 10px; font-weight: bold; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;"
-
+                stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_DARK}; font-size: 10px; font-weight: bold; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;",
+                signal = self.modify_stat
             )
 
         self.toughness_current= Widget(
             widget_type=QPushButton(),
             parent_layout=self.hp_layout.inner_layout(1),
             signal=self.open_addsub,
-            objectname = "toughness_current",
+            objectname = "TOUGHNESS",
             class_group=self.widget_group,
             stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_COLOR}; font-size: 20px; font-weight: bold; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-top-right-radius: 6px;"
 
         )
 
         self.toughness_current_label= Widget(
-            widget_type=QLabel(),
+            widget_type=QPushButton(),
             parent_layout=self.hp_layout.inner_layout(1),
-            signal=self.open_addsub,
-            objectname = "toughness_current",
-            text = "CURRENT",
+            objectname = "TOUGHNESS_mod",
+            text = "TOUGHNESS",
             class_group=self.widget_group,
-            align=Qt.AlignCenter,
+            signal=self.modify_stat,
             stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_DARK}; font-size: 10px; font-weight: bold; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;"
 
         )
-        self.toughness_max = Widget(
+
+        self.toughness_max= Widget(
             widget_type=QPushButton(),
             parent_layout=self.hp_layout.inner_layout(2),
-            objectname = "toughness_max",
-            class_group=self.widget_group,
-            stylesheet=f"color: {cons.FONT_DARK}; font-size: 20px;"
-        )
-
-        self.toughness_max_label = Widget(
-            widget_type=QLabel(),
-            parent_layout=self.hp_layout.inner_layout(2),
-            objectname = "toughness_max",
-            class_group=self.widget_group,
-            text = "MAXIMUM",
-            align=Qt.AlignCenter
-        )
-
-        self.toughness_threshold = Widget(
-            widget_type=QPushButton(),
-            parent_layout=self.hp_layout.inner_layout(3),
-            objectname = "toughness_threshold",
-            class_group=self.widget_group,
-            stylesheet=f"color: {cons.FONT_DARK}; font-size: 20px;"
-        )
-
-        self.toughness_threshold_label = Widget(
-            widget_type=QLabel(),
-            parent_layout=self.hp_layout.inner_layout(3),
-            text = "THRESHOLD",
-            class_group=self.widget_group,
-            align=Qt.AlignCenter
-        )
-
-        self.corruption_threshold = Widget(
-            widget_type=QPushButton(),
-            parent_layout=self.corruption_layout.inner_layout(1),
-            signal=lambda: CharacterSheet(self).update_sheet(),
-            text = "",
-            class_group=self.widget_group,
-            stylesheet=f"color: {cons.FONT_DARK}; font-size: 20px;"
-        )
-
-        self.corruption_permanent = Widget(
-            widget_type=QPushButton(),
-            parent_layout=self.corruption_layout.inner_layout(2),
-            objectname = "toughness_permanenet",
-            class_group=self.widget_group,
-            stylesheet=f"color: {cons.FONT_DARK}; font-size: 20px;"
-        )
-
-        self.corruption_temporary= Widget(
-            widget_type=QPushButton(),
-            parent_layout=self.corruption_layout.inner_layout(3),
             signal=self.open_addsub,
-            objectname = "corruption_current",
+            objectname = "MAXIMUM",
             class_group=self.widget_group,
             stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_COLOR}; font-size: 20px; font-weight: bold; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-top-right-radius: 6px;"
 
         )
 
-        self.corruption_threshold_label = Widget(
-            widget_type=QLabel(),
-            parent_layout=self.corruption_layout.inner_layout(1),
-            text = "THRESHOLD",
+        self.toughness_max_mod= Widget(
+            widget_type=QPushButton(),
+            parent_layout=self.hp_layout.inner_layout(2),
+            objectname = "MAXIMUM_mod",
+            text = "MAXIMUM",
             class_group=self.widget_group,
-            align=Qt.AlignCenter
+            signal=self.modify_stat,
+            stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_DARK}; font-size: 10px; font-weight: bold; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;"
+
         )
 
-        self.corruption_permanent_label = Widget(
-            widget_type=QLabel(),
+        self.toughness_threshold= Widget(
+            widget_type=QPushButton(),
+            parent_layout=self.hp_layout.inner_layout(3),
+            signal=self.open_addsub,
+            objectname = "PAIN",
+            class_group=self.widget_group,
+            stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_COLOR}; font-size: 20px; font-weight: bold; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-top-right-radius: 6px;"
+
+        )
+
+        self.toughness_threshold_mod= Widget(
+            widget_type=QPushButton(),
+            parent_layout=self.hp_layout.inner_layout(3),
+            objectname = "PAIN_mod",
+            text = "THRESHOLD",
+            class_group=self.widget_group,
+            signal=self.modify_stat,
+            stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_DARK}; font-size: 10px; font-weight: bold; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;"
+
+        )
+
+        self.corruption= Widget(
+            widget_type=QPushButton(),
+            parent_layout=self.corruption_layout.inner_layout(1),
+            signal=self.open_addsub,
+            objectname = "CORRUPTION",
+            class_group=self.widget_group,
+            stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_COLOR}; font-size: 20px; font-weight: bold; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-top-right-radius: 6px;"
+        )
+
+        self.corruption_mod = Widget(
+            widget_type=QPushButton(),
+            parent_layout=self.corruption_layout.inner_layout(1),
+            class_group=self.widget_group,
+            text = "CORRUPTION",
+            objectname = "CORRUPTION_mod",
+            signal = self.modify_stat,
+            stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_DARK}; font-size: 10px; font-weight: bold; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;"
+
+        )
+
+        self.corruption_permanent= Widget(
+            widget_type=QPushButton(),
+            parent_layout=self.corruption_layout.inner_layout(2),
+            signal=self.open_addsub,
+            objectname = "PERMANENT",
+            class_group=self.widget_group,
+            stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_COLOR}; font-size: 20px; font-weight: bold; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-top-right-radius: 6px;"
+        )
+
+        self.corruption_permanent_mod = Widget(
+            widget_type=QPushButton(),
             parent_layout=self.corruption_layout.inner_layout(2),
             class_group=self.widget_group,
             text = "PERMANENT",
-            align=Qt.AlignCenter
+            objectname = "PERMANENT_mod",
+            signal = self.modify_stat,
+            stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_DARK}; font-size: 10px; font-weight: bold; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;"
+
         )
 
-        self.corruption_temporary_label = Widget(
-            widget_type=QLabel(),
+        self.corruption_threshold= Widget(
+            widget_type=QPushButton(),
+            parent_layout=self.corruption_layout.inner_layout(3),
+            signal=self.open_addsub,
+            objectname = "THRESHOLD",
+            class_group=self.widget_group,
+            stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_COLOR}; font-size: 20px; font-weight: bold; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-top-right-radius: 6px;"
+        )
+
+        self.corruption_threshold_mod = Widget(
+            widget_type=QPushButton(),
             parent_layout=self.corruption_layout.inner_layout(3),
             class_group=self.widget_group,
-            text = "TEMPORARY",
-            align=Qt.AlignCenter,
+            text = "THRESHOLD",
+            objectname = "THRESHOLD_mod",
+            signal = self.modify_stat,
             stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_DARK}; font-size: 10px; font-weight: bold; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;"
 
         )
@@ -387,8 +404,9 @@ class CharacterSheetGUI(QWidget):
     def mousePressEvent(self, event): #this is a very specific event used to subtract values when right clicking on a widget
         if event.button() == Qt.RightButton:
             widget = self.childAt(event.pos())
-            if widget.objectName() in [stat+"_label" for stat in cons.STATS]+[stat+"_mod" for stat in cons.STATS]:
-                custom_rolls.modify_stat(self, self.character_sheet, widget.objectName().split("_")[0], adjust="subtract")
+            if widget.objectName() in [stat+" mod" for stat in cons.STATS]:
+                string = widget.text()
+                ModifyStat(string).subtract_one(self.character_sheet, widget)
 
     def open_abilities(self):
         print("opening abilities")
@@ -419,13 +437,16 @@ class CharacterSheetGUI(QWidget):
         rank = self.sender().objectName().split("_")[1]
         self.character_sheet.set_rank(slot, rank)
 
+    def modify_stat(self):
+        widget = self.sender()
+        string = widget.text()
+        ModifyStat(string).add_one(self.character_sheet, widget)
+
     def roll_dice(self):
         print("rolling dice")
         self.character = self.character_sheet.character_name
         self.combat_log = self.character_sheet.combat_log
-        self.roll_type = self.sender().property("roll")
-
-        self.modifier = 0        
+        self.roll_type = self.sender().property("roll")   
 
         if self.roll_type in cons.STATS:
             self.check = int(self.sender().text())

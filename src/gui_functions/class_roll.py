@@ -72,7 +72,7 @@ class DiceRoll:
         self.save_to_database()
 
     def check_roll(self):
-        if self.result >= self.check:
+        if self.result <= self.check:
             self.entry["Result Message"] = "Success"
         else:
             self.entry["Result Message"] = "Failed"

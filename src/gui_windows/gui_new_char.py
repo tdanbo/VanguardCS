@@ -15,7 +15,7 @@ from template.widget import Widget
 import constants as cons
 
 import pymongo
-
+import math
 
 class NewCharacter(QWidget):
     def __init__(self, isheet, csheet):
@@ -134,8 +134,6 @@ class NewCharacter(QWidget):
 
             self.state.clear()
 
-
-
     def create_character(self):
         self.character_name = self.name.get_widget().text()
 
@@ -160,7 +158,19 @@ class NewCharacter(QWidget):
             for stat in cons.STATS:
                 stat_value = self.findChild(QPushButton,stat).text()
                 new_character["stats"][stat] = stat_value
-                new_character["stats"][stat + " mod"] = ""
+                new_character["stats"][stat + " mod"] = stat
+
+            new_character["health"] = {}
+
+            strong = int(new_character["stats"]["STRONG"])
+            toughness = 10 if strong < 10 else strong
+
+            new_character["health"]["TOUGHNESS"] = str(toughness)
+            new_character["health"]["CORRUPTION"] = "0"  
+            new_character["health"]["PERMANENT CORRUPTION"] = "0"
+            new_character["health"]["DEFENSE mod"] = 0
+            new_character["health"]["CASTING mod"] = 0
+            new_character["health"]["SPEED mod"] = 0
 
             new_character["inventory"] = []
             new_character["abilities"] = []

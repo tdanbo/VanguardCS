@@ -16,9 +16,11 @@ from gui_functions import character_xp
 from gui_functions import custom_rolls
 from gui_functions import roll
 from gui_functions import character_reset
+from gui_functions.class_roll import DiceRoll
 
 from gui_windows.gui_new_char import NewCharacter
 from gui_windows.gui_inventory_item import InventoryItem
+
 class InventoryGUI(QWidget):
     def __init__(self, csheet):
         super().__init__()
@@ -167,7 +169,7 @@ class InventoryGUI(QWidget):
             inner_layout = ("VBox", 2),
             parent_layout = self.master_layout,
             group = True,
-            title = "DEFENSE",
+            title = "ACTIONS",
             spacing = 3,
             class_group = self.section_group,
         )
@@ -178,33 +180,37 @@ class InventoryGUI(QWidget):
             objectname = "DEFENSE",
             class_group=self.widget_group,
             text = "0",
-            stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_COLOR}; font-size: 20px; font-weight: bold; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-top-right-radius: 6px;"
+            stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_COLOR}; font-size: 20px; font-weight: bold; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-top-right-radius: 6px;",
+            signal=self.roll_dice,
+            property=("roll", "DEFENSE")
         )
 
         self.defense_mod = Widget(
             widget_type=QPushButton(),
             parent_layout=self.defense_layout.inner_layout(1),
-            objectname = "DEFENSE_mod",
+            objectname = "DEFENSE mod",
             class_group=self.widget_group,
             text = "DEFENSE",
             stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_DARK}; font-size: 10px; font-weight: bold; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;"
         )
 
-        self.armor = Widget(
+        self.casting = Widget(
             widget_type=QPushButton(),
             parent_layout=self.defense_layout.inner_layout(2),
-            objectname = "defense",
+            objectname = "CASTING",
             class_group=self.widget_group,
             text = "0",
-            stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_COLOR}; font-size: 20px; font-weight: bold; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-top-right-radius: 6px;"
+            stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_COLOR}; font-size: 20px; font-weight: bold; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-top-right-radius: 6px;",
+            signal=self.roll_dice,
+            property=("roll", "CASTING")
         )
 
-        self.armor_label = Widget(
+        self.casting_label = Widget(
             widget_type=QPushButton(),
             parent_layout=self.defense_layout.inner_layout(2),
-            objectname = "defense_label",
+            objectname = "CASTING mod",
             class_group=self.widget_group,
-            text = "ARMOR",
+            text = "CASTING",
             stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_DARK}; font-size: 10px; font-weight: bold; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;"
         )
 
@@ -396,3 +402,18 @@ class InventoryGUI(QWidget):
         self.collection = self.db["characters"]
         character_list = self.collection.distinct("character")
         self.character_name.get_widget().addItems(character_list)
+
+    def roll_dice(self):
+        print("rolling dice")
+        self.character = self.character_sheet.character_name
+        self.combat_log = self.character_sheet.combat_log
+        self.roll_type = self.sender().property("roll")   
+
+        if self.roll_type in ["CASTING","DEFENSE"]:
+            self.check = int(self.sender().text())
+            self.dice = "1d20"
+        else:
+            self.check = 0
+            self.dice = self.sender().text()
+
+        rolling_dice = DiceRoll(self.combat_log,self.character,self.roll_type.capitalize(),self.dice, check = self.check).roll()

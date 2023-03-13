@@ -18,6 +18,7 @@ import re
 
 from gui_windows.gui_inventory_item import InventoryItem
 from gui_functions.class_roll import DiceRoll
+from gui_functions.class_modify_stat import ModifyStat
 
 class CharacterSheet(QWidget):
     def __init__(self):
@@ -34,49 +35,11 @@ class CharacterSheet(QWidget):
         self.update_abilities()
 
         self.set_stats()
-        self.set_toughness()
-        self.set_corruption()
-        self.set_defense()
-
-        # updated_character_sheet = self.update_dictionary()
-        self.update_database()
+        self.modify_stats()
         
-    def update_dictionary(self):
-        print("Updating Character Sheet Dictionary")    
-        character_sheet_dictionary = {
-            "experience": self.experience.text(),
-            "experience unspent": self.experience_unspent.text(),
-            "modifiers": {
-                "ACCURATE": self.ACC_mod.text(),
-                "CUNNING": self.CUN_mod.text(),
-                "DISCREET": self.DIS_mod.text(),
-                "PERSUASIVE": self.PER_mod.text(),
-                "QUICK": self.QUI_mod.text(),
-                "RESOLUTE": self.RES_mod.text(),
-                "STRONG": self.STR_mod.text(),
-                "VIGILANT": self.VIG_mod.text()
-            },
-            "inventory": {},
-            "abilities": {
-                "ability1": [self.ability1.text(), self.ability1.property("Rank")],
-                "ability2": [self.ability2.text(), self.ability2.property("Rank")],
-                "ability3": [self.ability3.text(), self.ability3.property("Rank")],
-                "ability4": [self.ability4.text(), self.ability4.property("Rank")],
-                "ability5": [self.ability5.text(), self.ability5.property("Rank")],
-                "ability6": [self.ability6.text(), self.ability6.property("Rank")],
-                "ability7": [self.ability7.text(), self.ability7.property("Rank")],
-                "ability8": [self.ability8.text(), self.ability8.property("Rank")],
-                "ability9": [self.ability9.text(), self.ability9.property("Rank")],
-                "ability10": [self.ability10.text(), self.ability10.property("Rank")],
-                "ability11": [self.ability11.text(), self.ability11.property("Rank")],
-                "ability12": [self.ability12.text(), self.ability12.property("Rank")]
-            },
-            "toughness current": self.toughness_current.text(),
-            "corruption temporary": self.corruption_temporary.text(),
-            "corruption permanent": self.corruption_permanent.text(),
+        self.set_health() # This will set static toughness, corruption, and defense stats
 
-        }  
-        return character_sheet_dictionary
+        self.update_database()
 
     def find_modifier(self, string):
         match = re.search(r'-?\d+', string)  # search for a sequence of digits with an optional minus sign
@@ -209,53 +172,77 @@ class CharacterSheet(QWidget):
     # ITERATE OVER ITEM JSON TO FIND ITEM
 
     def set_stats(self):
-        for widget in [(self.ACC, self.ACC_mod), (self.CUN, self.CUN_mod), (self.DIS, self.DIS_mod), (self.PER, self.PER_mod), (self.QUI, self.QUI_mod), (self.RES, self.RES_mod), (self.STR, self.STR_mod), (self.VIG, self.VIG_mod)]:
-            stat = int(self.CHARACTER_DOC["stats"][widget[0].objectName()])
-            modifier = int(widget[1].text())
-            modified_stat = stat + modifier
+        print("setting stats")
+        self.ACC.setText(str(self.CHARACTER_DOC["stats"]["ACCURATE"]))
+        self.CUN.setText(str(self.CHARACTER_DOC["stats"]["CUNNING"]))
+        self.DIS.setText(str(self.CHARACTER_DOC["stats"]["DISCREET"]))
+        self.PER.setText(str(self.CHARACTER_DOC["stats"]["PERSUASIVE"]))
+        self.QUI.setText(str(self.CHARACTER_DOC["stats"]["QUICK"]))
+        self.RES.setText(str(self.CHARACTER_DOC["stats"]["RESOLUTE"]))
+        self.STR.setText(str(self.CHARACTER_DOC["stats"]["STRONG"]))
+        self.VIG.setText(str(self.CHARACTER_DOC["stats"]["VIGILANT"]))
 
-            widget[0].setText(str(modified_stat))
-            if modifier == 0:
-                widget[1].setHidden(True)
-            else:
-                widget[1].setHidden(False)
+        self.TOU.setText(str(self.CHARACTER_DOC["health"]["TOUGHNESS"]))
+        self.COR.setText(str(self.CHARACTER_DOC["health"]["CORRUPTION"]))
+        self.PERC.setText(str(self.CHARACTER_DOC["health"]["PERMANENT CORRUPTION"]))
 
-        pass
-
-    def set_defense(self):
-        self.DEF.setText(str(self.QUI.text()))
-
-        if self.CHARACTER_DOC["equipment"]["armor"] != {}:
-            for quality in self.CHARACTER_DOC["equipment"]["armor"]["Quality"]:
-                if "Impeding" in quality:
-                    impeding = self.find_modifier(quality)
-                    impeding_negative = -1 * impeding
-                    print(quality)
-                    print(impeding)
-                    self.DEF_mod.setText(f"DEFENSE {str(impeding_negative)}")
-
-            roll = self.CHARACTER_DOC["equipment"]["armor"]["Roll"][1]
-            print(roll)
-            self.isheet.armor.get_widget().setText(roll)
+        self.ACC_mod.setText(str(self.CHARACTER_DOC["stats"]["ACCURATE mod"]))
+        self.CUN_mod.setText(str(self.CHARACTER_DOC["stats"]["CUNNING mod"]))
+        self.DIS_mod.setText(str(self.CHARACTER_DOC["stats"]["DISCREET mod"]))
+        self.PER_mod.setText(str(self.CHARACTER_DOC["stats"]["PERSUASIVE mod"]))
+        self.QUI_mod.setText(str(self.CHARACTER_DOC["stats"]["QUICK mod"]))
+        self.RES_mod.setText(str(self.CHARACTER_DOC["stats"]["RESOLUTE mod"]))
+        self.STR_mod.setText(str(self.CHARACTER_DOC["stats"]["STRONG mod"]))
+        self.VIG_mod.setText(str(self.CHARACTER_DOC["stats"]["VIGILANT mod"]))
+        
+        if self.CHARACTER_DOC["health"]["DEFENSE mod"] != 0:
+            self.DEF_mod.setText("DEFENSE "+str(self.CHARACTER_DOC["health"]["DEFENSE mod"]))
         else:
-            self.DEF_mod.setText(f"DEFENSE")
+            self.DEF_mod.setText("DEFENSE")
 
-    def set_toughness(self):
+        if self.CHARACTER_DOC["health"]["CASTING mod"] != 0:
+            self.CAS_mod.setText("CASTING "+str(self.CHARACTER_DOC["health"]["CASTING mod"]))
+        else:
+            self.CAS_mod.setText("CASTING")
+
+    def modify_stats(self):
+        for widget in [
+            (self.ACC, self.ACC_mod), 
+            (self.CUN, self.CUN_mod), 
+            (self.DIS, self.DIS_mod), 
+            (self.PER, self.PER_mod), 
+            (self.QUI, self.QUI_mod), 
+            (self.RES, self.RES_mod), 
+            (self.STR, self.STR_mod), 
+            (self.VIG, self.VIG_mod),
+            ]:
+            modifier_string = widget[1].text()
+            modifier_int = ModifyStat(modifier_string).find_integer()
+
+            stat = int(self.CHARACTER_DOC["stats"][widget[0].objectName()])
+            modified_stat = stat + modifier_int
+            widget[0].setText(str(modified_stat))
+
+    def set_health(self):
         strong = int(self.STR.text())
-        toughness_threshold_math = math.ceil(strong/2)
-        toughness_math = 10 if strong < 10 else strong
+        max_toughness = 10 if strong < 10 else strong
 
-        self.toughness_max.setText(str(toughness_math))
-        self.toughness_current.setText(str(toughness_math))
-        self.toughness_threshold.setText(str(toughness_threshold_math))
+        pain_threshold = math.ceil(strong/2)
 
+        self.MAX.setText(str(max_toughness))
+        self.PAI.setText(str(pain_threshold))
 
-    def set_corruption(self):
-        corruption_threshold_math = math.ceil(int(self.RES.text())/2)
+        corruption_threshold = math.ceil(int(self.RES.text())/2)
+        self.THR.setText(f"{corruption_threshold} / {self.RES.text()}")
 
-        self.corruption_permanent.setText("0")
-        self.corruption_temporary.setText("0")
-        self.corruption_threshold.setText(str(corruption_threshold_math))
+        defense = int(self.QUI.text()) + self.CHARACTER_DOC["health"]["DEFENSE mod"]
+        casting = int(self.RES.text()) + self.CHARACTER_DOC["health"]["CASTING mod"]
+        quick = int(self.QUI.text()) + self.CHARACTER_DOC["health"]["SPEED mod"]
+
+        self.DEF.setText(str(defense))
+        self.CAS.setText(str(casting))
+        self.QUI.setText(str(quick))
+
 
     def update_equip(self):
         func.clear_layout(self.isheet.equipment_layout.inner_layout(1))
@@ -432,78 +419,85 @@ class CharacterSheet(QWidget):
 
         query = {"character": self.character_name}
         self.CHARACTER_DOC = self.collection.find_one(query)
-        if self.CHARACTER_DOC != None:
-            self.experience.setText(str(self.CHARACTER_DOC["experience"]))
-            self.experience_unspent.setText(str(self.CHARACTER_DOC["experience unspent"]))
 
-            self.ACC.setText(str(self.CHARACTER_DOC["stats"]["ACCURATE"]))
-            self.CUN.setText(str(self.CHARACTER_DOC["stats"]["CUNNING"]))
-            self.DIS.setText(str(self.CHARACTER_DOC["stats"]["DISCREET"]))
-            self.PER.setText(str(self.CHARACTER_DOC["stats"]["PERSUASIVE"]))
-            self.QUI.setText(str(self.CHARACTER_DOC["stats"]["QUICK"]))
-            self.RES.setText(str(self.CHARACTER_DOC["stats"]["RESOLUTE"]))
-            self.STR.setText(str(self.CHARACTER_DOC["stats"]["STRONG"]))
-            self.VIG.setText(str(self.CHARACTER_DOC["stats"]["VIGILANT"]))
+        # if self.CHARACTER_DOC != None:
+        #     self.experience.setText(str(self.CHARACTER_DOC["experience"]))
+        #     self.experience_unspent.setText(str(self.CHARACTER_DOC["experience unspent"]))
 
-            try:
-                self.toughness_current.setText(str(self.CHARACTER_DOC["toughness current"]))
+        #     self.ACC.setText(str(self.CHARACTER_DOC["stats"]["ACCURATE"]))
+        #     self.CUN.setText(str(self.CHARACTER_DOC["stats"]["CUNNING"]))
+        #     self.DIS.setText(str(self.CHARACTER_DOC["stats"]["DISCREET"]))
+        #     self.PER.setText(str(self.CHARACTER_DOC["stats"]["PERSUASIVE"]))
+        #     self.QUI.setText(str(self.CHARACTER_DOC["stats"]["QUICK"]))
+        #     self.RES.setText(str(self.CHARACTER_DOC["stats"]["RESOLUTE"]))
+        #     self.STR.setText(str(self.CHARACTER_DOC["stats"]["STRONG"]))
+        #     self.VIG.setText(str(self.CHARACTER_DOC["stats"]["VIGILANT"]))
 
-                self.corruption_permanent.setText(str(self.CHARACTER_DOC["corruption permanent"]))
-                self.corruption_temporary.setText(str(self.CHARACTER_DOC["corruption temporary"]))
+        #     try:
+        #         self.toughness_current.setText(str(self.CHARACTER_DOC["toughness current"]))
 
-                self.DEF_mod.setText(str(self.CHARACTER_DOC["modifiers"]["DEFENSE"]))
-                self.ACC_mod.setText(str(self.CHARACTER_DOC["modifiers"]["ACCURATE"]))
-                self.CUN_mod.setText(str(self.CHARACTER_DOC["modifiers"]["CUNNING"]))
-                self.DIS_mod.setText(str(self.CHARACTER_DOC["modifiers"]["DISCREET"]))
-                self.PER_mod.setText(str(self.CHARACTER_DOC["modifiers"]["PERSUASIVE"]))
-                self.QUI_mod.setText(str(self.CHARACTER_DOC["modifiers"]["QUICK"]))
-                self.RES_mod.setText(str(self.CHARACTER_DOC["modifiers"]["RESOLUTE"]))
-                self.STR_mod.setText(str(self.CHARACTER_DOC["modifiers"]["STRONG"]))
-                self.VIG_mod.setText(str(self.CHARACTER_DOC["modifiers"]["VIGILANT"]))
+        #         self.corruption_permanent.setText(str(self.CHARACTER_DOC["corruption permanent"]))
+        #         self.corruption_temporary.setText(str(self.CHARACTER_DOC["corruption temporary"]))
 
-                self.ability1.setText(str(self.CHARACTER_DOC["abilities"]["ability1"][0]))
-                self.ability2.setText(str(self.CHARACTER_DOC["abilities"]["ability2"][0]))
-                self.ability3.setText(str(self.CHARACTER_DOC["abilities"]["ability3"][0]))
-                self.ability4.setText(str(self.CHARACTER_DOC["abilities"]["ability4"][0]))
-                self.ability5.setText(str(self.CHARACTER_DOC["abilities"]["ability5"][0]))
-                self.ability6.setText(str(self.CHARACTER_DOC["abilities"]["ability6"][0]))
-                self.ability7.setText(str(self.CHARACTER_DOC["abilities"]["ability7"][0]))
-                self.ability8.setText(str(self.CHARACTER_DOC["abilities"]["ability8"][0]))
-                self.ability9.setText(str(self.CHARACTER_DOC["abilities"]["ability9"][0]))
-                self.ability10.setText(str(self.CHARACTER_DOC["abilities"]["ability10"][0]))
-                self.ability11.setText(str(self.CHARACTER_DOC["abilities"]["ability11"][0]))
-                self.ability12.setText(str(self.CHARACTER_DOC["abilities"]["ability12"][0]))
+        #         self.DEF_mod.setText(str(self.CHARACTER_DOC["modifiers"]["DEFENSE"]))
+        #         self.ACC_mod.setText(str(self.CHARACTER_DOC["modifiers"]["ACCURATE"]))
+        #         self.CUN_mod.setText(str(self.CHARACTER_DOC["modifiers"]["CUNNING"]))
+        #         self.DIS_mod.setText(str(self.CHARACTER_DOC["modifiers"]["DISCREET"]))
+        #         self.PER_mod.setText(str(self.CHARACTER_DOC["modifiers"]["PERSUASIVE"]))
+        #         self.QUI_mod.setText(str(self.CHARACTER_DOC["modifiers"]["QUICK"]))
+        #         self.RES_mod.setText(str(self.CHARACTER_DOC["modifiers"]["RESOLUTE"]))
+        #         self.STR_mod.setText(str(self.CHARACTER_DOC["modifiers"]["STRONG"]))
+        #         self.VIG_mod.setText(str(self.CHARACTER_DOC["modifiers"]["VIGILANT"]))
 
-                self.ability1.setProperty("Rank",str(self.CHARACTER_DOC["abilities"]["ability1"][1]))
-                self.ability2.setProperty("Rank",str(self.CHARACTER_DOC["abilities"]["ability2"][1]))
-                self.ability3.setProperty("Rank",str(self.CHARACTER_DOC["abilities"]["ability3"][1]))
-                self.ability4.setProperty("Rank",str(self.CHARACTER_DOC["abilities"]["ability4"][1]))
-                self.ability5.setProperty("Rank",str(self.CHARACTER_DOC["abilities"]["ability5"][1]))
-                self.ability6.setProperty("Rank",str(self.CHARACTER_DOC["abilities"]["ability6"][1]))
-                self.ability7.setProperty("Rank",str(self.CHARACTER_DOC["abilities"]["ability7"][1]))
-                self.ability8.setProperty("Rank",str(self.CHARACTER_DOC["abilities"]["ability8"][1]))
-                self.ability9.setProperty("Rank",str(self.CHARACTER_DOC["abilities"]["ability9"][1]))
-                self.ability10.setProperty("Rank",str(self.CHARACTER_DOC["abilities"]["ability10"][1]))
-                self.ability11.setProperty("Rank",str(self.CHARACTER_DOC["abilities"]["ability11"][1]))
-                self.ability12.setProperty("Rank",str(self.CHARACTER_DOC["abilities"]["ability12"][1]))
+        #         self.ability1.setText(str(self.CHARACTER_DOC["abilities"]["ability1"][0]))
+        #         self.ability2.setText(str(self.CHARACTER_DOC["abilities"]["ability2"][0]))
+        #         self.ability3.setText(str(self.CHARACTER_DOC["abilities"]["ability3"][0]))
+        #         self.ability4.setText(str(self.CHARACTER_DOC["abilities"]["ability4"][0]))
+        #         self.ability5.setText(str(self.CHARACTER_DOC["abilities"]["ability5"][0]))
+        #         self.ability6.setText(str(self.CHARACTER_DOC["abilities"]["ability6"][0]))
+        #         self.ability7.setText(str(self.CHARACTER_DOC["abilities"]["ability7"][0]))
+        #         self.ability8.setText(str(self.CHARACTER_DOC["abilities"]["ability8"][0]))
+        #         self.ability9.setText(str(self.CHARACTER_DOC["abilities"]["ability9"][0]))
+        #         self.ability10.setText(str(self.CHARACTER_DOC["abilities"]["ability10"][0]))
+        #         self.ability11.setText(str(self.CHARACTER_DOC["abilities"]["ability11"][0]))
+        #         self.ability12.setText(str(self.CHARACTER_DOC["abilities"]["ability12"][0]))
 
-            except:
-                print("No modifiers or inventory")
-                print("Likely new character")
+        #         self.ability1.setProperty("Rank",str(self.CHARACTER_DOC["abilities"]["ability1"][1]))
+        #         self.ability2.setProperty("Rank",str(self.CHARACTER_DOC["abilities"]["ability2"][1]))
+        #         self.ability3.setProperty("Rank",str(self.CHARACTER_DOC["abilities"]["ability3"][1]))
+        #         self.ability4.setProperty("Rank",str(self.CHARACTER_DOC["abilities"]["ability4"][1]))
+        #         self.ability5.setProperty("Rank",str(self.CHARACTER_DOC["abilities"]["ability5"][1]))
+        #         self.ability6.setProperty("Rank",str(self.CHARACTER_DOC["abilities"]["ability6"][1]))
+        #         self.ability7.setProperty("Rank",str(self.CHARACTER_DOC["abilities"]["ability7"][1]))
+        #         self.ability8.setProperty("Rank",str(self.CHARACTER_DOC["abilities"]["ability8"][1]))
+        #         self.ability9.setProperty("Rank",str(self.CHARACTER_DOC["abilities"]["ability9"][1]))
+        #         self.ability10.setProperty("Rank",str(self.CHARACTER_DOC["abilities"]["ability10"][1]))
+        #         self.ability11.setProperty("Rank",str(self.CHARACTER_DOC["abilities"]["ability11"][1]))
+        #         self.ability12.setProperty("Rank",str(self.CHARACTER_DOC["abilities"]["ability12"][1]))
 
-            self.update_sheet()
+        #     except:
+        #         print("No modifiers or inventory")
+        #         print("Likely new character")
+
+        self.update_sheet()
 
     def set_sheet_vars(self, csheet):
         print("Setting sheet vars")
         self.csheet = csheet        
+        
+        self.TOU = csheet.findChild(QWidget, "TOUGHNESS")
+        self.TOU_mod = csheet.findChild(QWidget, "TOUGHNESS_mod")
+        self.MAX = csheet.findChild(QWidget, "MAXIMUM")
+        self.MAX_mod = csheet.findChild(QWidget, "MAXIMUM_mod")
+        self.PAI = csheet.findChild(QWidget, "PAIN")
+        self.PAI_mod = csheet.findChild(QWidget, "PAIN_mod")
 
-        self.toughness_current = csheet.toughness_current.get_widget()
-        self.toughness_max = csheet.toughness_max.get_widget()
-        self.toughness_threshold = csheet.toughness_threshold.get_widget()
-
-        self.corruption_permanent = csheet.corruption_permanent.get_widget()
-        self.corruption_temporary = csheet.corruption_temporary.get_widget()
-        self.corruption_threshold = csheet.corruption_threshold.get_widget()
+        self.COR = csheet.findChild(QWidget, "CORRUPTION")
+        self.COR_mod = csheet.findChild(QWidget, "CORRUPTION_mod")
+        self.PERC = csheet.findChild(QWidget, "PERMANENT")
+        self.PERC_mod = csheet.findChild(QWidget, "PERMANENT_mod")
+        self.THR = csheet.findChild(QWidget, "THRESHOLD")
+        self.THR_mod = csheet.findChild(QWidget, "THRESHOLD_mod")
 
         self.ACC = csheet.findChild(QWidget, "ACCURATE")
         self.CUN = csheet.findChild(QWidget, "CUNNING")
@@ -514,15 +508,15 @@ class CharacterSheet(QWidget):
         self.STR = csheet.findChild(QWidget, "STRONG")
         self.VIG = csheet.findChild(QWidget, "VIGILANT")
         
-        self.DEF_mod = csheet.findChild(QWidget, "DEFENSE_mod")
-        self.ACC_mod = csheet.findChild(QWidget, "ACCURATE_mod")
-        self.CUN_mod = csheet.findChild(QWidget, "CUNNING_mod")
-        self.DIS_mod = csheet.findChild(QWidget, "DISCREET_mod")
-        self.PER_mod = csheet.findChild(QWidget, "PERSUASIVE_mod")
-        self.QUI_mod = csheet.findChild(QWidget, "QUICK_mod")
-        self.RES_mod = csheet.findChild(QWidget, "RESOLUTE_mod")
-        self.STR_mod = csheet.findChild(QWidget, "STRONG_mod")
-        self.VIG_mod = csheet.findChild(QWidget, "VIGILANT_mod")
+        self.DEF_mod = csheet.findChild(QWidget, "DEFENSE mod")
+        self.ACC_mod = csheet.findChild(QWidget, "ACCURATE mod")
+        self.CUN_mod = csheet.findChild(QWidget, "CUNNING mod")
+        self.DIS_mod = csheet.findChild(QWidget, "DISCREET mod")
+        self.PER_mod = csheet.findChild(QWidget, "PERSUASIVE mod")
+        self.QUI_mod = csheet.findChild(QWidget, "QUICK mod")
+        self.RES_mod = csheet.findChild(QWidget, "RESOLUTE mod")
+        self.STR_mod = csheet.findChild(QWidget, "STRONG mod")
+        self.VIG_mod = csheet.findChild(QWidget, "VIGILANT mod")
 
         self.ability1 = csheet.findChild(QWidget, "ability1_section_title")
         self.ability2 = csheet.findChild(QWidget, "ability2_section_title")
@@ -547,9 +541,12 @@ class CharacterSheet(QWidget):
         self.isheet = isheet
 
         self.character_icon = self.isheet.portrait.get_widget()
-    
-        self.DEF = isheet.defense.get_widget()
-        self.DEF_mod = isheet.defense_mod.get_widget()
+
+        self.DEF = isheet.findChild(QWidget, "DEFENSE")
+        self.DEF_mod = isheet.findChild(QWidget, "DEFENSE mod")
+
+        self.CAS = isheet.findChild(QWidget, "CASTING")
+        self.CAS_mod = isheet.findChild(QWidget, "CASTING mod")
 
         self.experience = self.isheet.experience.get_widget()
 
