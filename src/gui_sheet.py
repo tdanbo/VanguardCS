@@ -34,6 +34,29 @@ class CharacterSheetGUI(QWidget):
         self.section_group = []
         self.widget_group = []
 
+        self.character_basic = Section(
+            outer_layout = QVBoxLayout(),
+            inner_layout = ("HBox", 1),
+            parent_layout = self.master_layout,
+            spacing=10,
+            class_group = self.section_group,
+        )
+
+        self.ability_layout = Section(
+            outer_layout = QVBoxLayout(),
+            inner_layout = ("VBox", 1),
+            parent_layout = self.master_layout,
+            title = "ABILITIES & POWERS",
+            group = True,
+            scroll=(True,"top"),
+            icon = ("plus.png", cons.WSIZE, cons.ICON_COLOR),
+            spacing=5,
+            class_group=self.section_group
+        )
+        
+        self.ability_layout.get_title()[0].clicked.connect(self.open_abilities)
+        self.ability_layout.get_title()[1].setAlignment(Qt.AlignCenter)
+
         self.top_layout = Section(
             outer_layout = QHBoxLayout(),
             inner_layout = ("HBox", 2),
@@ -53,29 +76,6 @@ class CharacterSheetGUI(QWidget):
         )
 
         self.stat_layout.get_title()[1].setAlignment(Qt.AlignCenter)
-
-        self.ability_layout = Section(
-            outer_layout = QVBoxLayout(),
-            inner_layout = ("VBox", 1),
-            parent_layout = self.master_layout,
-            title = "ABILITIES & POWERS",
-            group = True,
-            scroll=(True,"top"),
-            icon = ("plus.png", cons.WSIZE, cons.ICON_COLOR),
-            spacing=5,
-            class_group=self.section_group
-        )
-        
-        self.ability_layout.get_title()[0].clicked.connect(self.open_abilities)
-        self.ability_layout.get_title()[1].setAlignment(Qt.AlignCenter)
-
-        self.character_basic = Section(
-            outer_layout = QVBoxLayout(),
-            inner_layout = ("HBox", 1),
-            parent_layout = self.master_layout,
-            spacing=10,
-            class_group = self.section_group,
-        )
 
         self.hp_layout = Section(
             outer_layout = QHBoxLayout(),
@@ -150,7 +150,6 @@ class CharacterSheetGUI(QWidget):
         self.toughness_max= Widget(
             widget_type=QPushButton(),
             parent_layout=self.hp_layout.inner_layout(2),
-            signal=self.open_addsub,
             objectname = "MAXIMUM",
             class_group=self.widget_group,
             stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_COLOR}; font-size: 20px; font-weight: bold; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-top-right-radius: 6px;"
@@ -171,7 +170,6 @@ class CharacterSheetGUI(QWidget):
         self.toughness_threshold= Widget(
             widget_type=QPushButton(),
             parent_layout=self.hp_layout.inner_layout(3),
-            signal=self.open_addsub,
             objectname = "PAIN",
             class_group=self.widget_group,
             stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_COLOR}; font-size: 20px; font-weight: bold; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-top-right-radius: 6px;"
@@ -232,7 +230,6 @@ class CharacterSheetGUI(QWidget):
         self.corruption_threshold= Widget(
             widget_type=QPushButton(),
             parent_layout=self.corruption_layout.inner_layout(3),
-            signal=self.open_addsub,
             objectname = "THRESHOLD",
             class_group=self.widget_group,
             stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_COLOR}; font-size: 20px; font-weight: bold; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-top-right-radius: 6px;"
@@ -271,11 +268,6 @@ class CharacterSheetGUI(QWidget):
         print("opening abilities")
         self.abilities = AddNewAbility(self, self.character_sheet)
         self.abilities.show()
-
-    def open_addsub(self):
-        sender = self.sender()
-        self.addsub = AddSubGUI(self, sender)
-        self.addsub.show()
 
     def modify_stat(self):
         widget = self.sender()

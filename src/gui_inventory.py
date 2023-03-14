@@ -52,14 +52,7 @@ class InventoryGUI(QWidget):
             spacing=3,
         )
 
-        self.combat_section = Section(
-            outer_layout = QHBoxLayout(),
-            inner_layout = ("VBox", 3),
-            parent_layout = self.master_layout,
-            title="Currency",
-            group = True,   
-            class_group = self.section_group	
-        )
+
 
         self.inventory_scroll = Section(
             outer_layout = QVBoxLayout(),
@@ -160,57 +153,14 @@ class InventoryGUI(QWidget):
             height=240	
         )
 
-        self.defense_layout = Section(
+        self.combat_section = Section(
             outer_layout = QHBoxLayout(),
-            inner_layout = ("VBox", 2),
+            inner_layout = ("VBox", 3),
             parent_layout = self.master_layout,
-            group = True,
-            title = "ACTIONS",
-            spacing = 3,
-            class_group = self.section_group,
+            title="Currency",
+            group = True,   
+            class_group = self.section_group	
         )
-
-        self.defense = Widget(
-            widget_type=QPushButton(),
-            parent_layout=self.defense_layout.inner_layout(1),
-            objectname = "DEFENSE",
-            class_group=self.widget_group,
-            text = "0",
-            stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_COLOR}; font-size: 20px; font-weight: bold; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-top-right-radius: 6px;",
-            signal=self.roll_dice,
-            property=("roll", "DEFENSE")
-        )
-
-        self.defense_mod = Widget(
-            widget_type=QPushButton(),
-            parent_layout=self.defense_layout.inner_layout(1),
-            objectname = "DEFENSE mod",
-            class_group=self.widget_group,
-            text = "DEFENSE",
-            stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_DARK}; font-size: 10px; font-weight: bold; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;"
-        )
-
-        self.casting = Widget(
-            widget_type=QPushButton(),
-            parent_layout=self.defense_layout.inner_layout(2),
-            objectname = "CASTING",
-            class_group=self.widget_group,
-            text = "0",
-            stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_COLOR}; font-size: 20px; font-weight: bold; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-top-right-radius: 6px;",
-            signal=self.roll_dice,
-            property=("roll", "CASTING")
-        )
-
-        self.casting_label = Widget(
-            widget_type=QPushButton(),
-            parent_layout=self.defense_layout.inner_layout(2),
-            objectname = "CASTING mod",
-            class_group=self.widget_group,
-            text = "CASTING",
-            stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_DARK}; font-size: 10px; font-weight: bold; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;"
-        )
-
-        self.defense_layout.get_title()[1].setAlignment(Qt.AlignCenter)
 
         self.thaler = Widget(
             widget_type=QPushButton(),

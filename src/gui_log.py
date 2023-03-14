@@ -32,7 +32,7 @@ class CombatLogGUI(QWidget):
 
         self.modifier_section = Section(
             outer_layout = QHBoxLayout(),
-            inner_layout = ("VBox", 4),
+            inner_layout = ("VBox", 5),
             parent_layout = self.master_layout,
             title="MODIFIERS",
             group = True,
@@ -73,7 +73,7 @@ class CombatLogGUI(QWidget):
             objectname="modifier",
             class_group=self.widget_group,
             size_policy=(QSizePolicy.Expanding, QSizePolicy.Expanding),
-            stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_COLOR}; font-size: 20px; font-weight: bold; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-top-right-radius: 6px;",
+            stylesheet=f"background-color: {cons.PRIMARY_DARKER}; color: {cons.FONT_COLOR}; font-size: 20px; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-top-right-radius: 6px;",
             text="0",
         )
 
@@ -83,27 +83,31 @@ class CombatLogGUI(QWidget):
             icon=(f"Modifier.png","",cons.FONT_COLOR,cons.WSIZE),
             class_group=self.widget_group,
             size_policy=(QSizePolicy.Expanding, QSizePolicy.Expanding),
-            stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_DARK}; font-size: 10px; font-weight: bold; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;",
+            stylesheet=f"background-color: {cons.PRIMARY_DARKER}; color: {cons.FONT_DARK}; font-size: 10px; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;",
         )
 
         #Below is all the widgets used in the character sheet
-        for number,stat in enumerate(["Defense","Casting","Sneaking"]):
+        for number,stat in enumerate(["ATTACK","DEFENSE","CASTING","SNEAKING"]):
             self.extra_modifier_button = Widget(
                 widget_type=QPushButton(),
                 parent_layout = self.modifier_section.inner_layout(number+2),
-                objectname=stat,
+                objectname=f"{stat} mod",
                 class_group=self.widget_group,
                 size_policy=(QSizePolicy.Expanding, QSizePolicy.Expanding),
-                stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_COLOR}; font-size: 20px; font-weight: bold; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-top-right-radius: 6px;"
+                stylesheet=f"background-color: {cons.PRIMARY_DARKER}; color: {cons.FONT_COLOR}; font-size: 20px; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-top-right-radius: 6px;"
             )
 
             self.extra_modifier_label = Widget(
                 widget_type=QToolButton(),
                 parent_layout=self.modifier_section.inner_layout(number+2),
-                icon=(f"{stat}.png","",cons.FONT_COLOR,cons.WSIZE),
+                icon=(f"{stat.capitalize()}.png","",cons.FONT_COLOR,cons.WSIZE),
                 class_group=self.widget_group,
                 size_policy=(QSizePolicy.Expanding, QSizePolicy.Expanding),
-                stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_DARK}; font-size: 10px; font-weight: bold; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;",
+                stylesheet=f"background-color: {cons.PRIMARY_DARKER}; color: {cons.FONT_DARK}; font-size: 10px; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;",
+                checkable=True,
+                checked=False,
+                objectname=f"{stat} button",
+                signal=self.check_modifier,
             )
 
 
@@ -216,7 +220,6 @@ class CombatLogGUI(QWidget):
         self.modifier_button.get_widget().setText(str(current_value))       
 
     def roll_dice(self):
-
         self.character = self.character_sheet.character_name
         rolls = []
         for dice in ["d4","d6","d8","d10","d12","d20"]:
@@ -229,3 +232,32 @@ class CombatLogGUI(QWidget):
         print(rolls)
         roll = "_".join(rolls)
         rolling_dice = DiceRoll(self, self.character, "Custom", roll, check = 0).roll()
+
+    def check_modifier(self):
+        current_mod = self.sender()
+        current_mod_name = current_mod.objectName()
+        current_button_name = current_mod_name.replace("button","mod")
+        current_button = self.findChild(QWidget, current_button_name)
+        print(current_button)
+
+        for button in ["ATTACK button","DEFENSE button","CASTING button","SNEAKING button"]:
+            if button != current_mod_name:
+                mod_widget = self.findChild(QWidget, button)
+                mod_widget.setChecked(False)
+                stylesheet=f"background-color: {cons.PRIMARY_DARKER}; color: {cons.FONT_COLOR}; font-size: 20px; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;"
+                mod_widget.setStyleSheet(stylesheet)
+
+        for mod in ["ATTACK mod","DEFENSE mod","CASTING mod","SNEAKING mod"]:
+            if mod != current_button_name:
+                mod_widget = self.findChild(QWidget, mod)
+                mod_widget.setChecked(False)
+                stylesheet=f"background-color: {cons.PRIMARY_DARKER}; color: {cons.FONT_COLOR}; font-size: 20px; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-top-right-radius: 6px;"
+                mod_widget.setStyleSheet(stylesheet)
+
+
+        if current_mod.isChecked():
+            current_button.setStyleSheet(f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_COLOR}; font-size: 20px; font-weight: bold; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-top-right-radius: 6px;")
+            current_mod.setStyleSheet(f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_COLOR}; font-size: 10px; font-weight: bold; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;")
+        else:
+            current_button.setStyleSheet(f"background-color: {cons.PRIMARY_DARKER}; color: {cons.FONT_COLOR}; font-size: 20px; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-top-right-radius: 6px;")
+            current_mod.setStyleSheet(f"background-color: {cons.PRIMARY_DARKER}; color: {cons.FONT_COLOR}; font-size: 20px; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;")

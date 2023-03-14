@@ -135,15 +135,25 @@ class CharacterSheet(QWidget):
         self.STR_mod.setText(str(self.CHARACTER_DOC["stats"]["STRONG mod"]))
         self.VIG_mod.setText(str(self.CHARACTER_DOC["stats"]["VIGILANT mod"]))
         
-        if self.CHARACTER_DOC["DEFENSE mod"] != 0:
-            self.DEF_mod.setText("DEFENSE "+str(self.CHARACTER_DOC["DEFENSE mod"]))
+        if self.CHARACTER_DOC["DEFENSE mod"] > 0:
+            self.DEF_mod.setText(f"+{self.CHARACTER_DOC['DEFENSE mod']}")
         else:
-            self.DEF_mod.setText("DEFENSE")
+            self.DEF_mod.setText(f"{self.CHARACTER_DOC['DEFENSE mod']}")
 
-        if self.CHARACTER_DOC["CASTING mod"] != 0:
-            self.CAS_mod.setText("CASTING "+str(self.CHARACTER_DOC["CASTING mod"]))
+        if self.CHARACTER_DOC["CASTING mod"] > 0:
+            self.CAS_mod.setText(f"+{self.CHARACTER_DOC['CASTING mod']}")
         else:
-            self.CAS_mod.setText("CASTING")
+            self.CAS_mod.setText(f"{self.CHARACTER_DOC['CASTING mod']}")
+
+        if self.CHARACTER_DOC["SNEAKING mod"] > 0:
+            self.SNE_mod.setText(f"+{self.CHARACTER_DOC['SNEAKING mod']}")
+        else:
+            self.SNE_mod.setText(f"{self.CHARACTER_DOC['SNEAKING mod']}")
+
+        if self.CHARACTER_DOC["ATTACK mod"] > 0:
+            self.ATK_mod.setText(f"+{self.CHARACTER_DOC['ATTACK mod']}")
+        else:
+            self.ATK_mod.setText(f"{self.CHARACTER_DOC['ATTACK mod']}")
 
     def modify_stats(self):
         for widget in [
@@ -174,15 +184,6 @@ class CharacterSheet(QWidget):
 
         corruption_threshold = math.ceil(int(self.RES.text())/2)
         self.THR.setText(f"{corruption_threshold} / {self.RES.text()}")
-
-        defense = int(self.QUI.text()) + self.CHARACTER_DOC["DEFENSE mod"]
-        casting = int(self.RES.text()) + self.CHARACTER_DOC["CASTING mod"]
-        quick = int(self.QUI.text()) + self.CHARACTER_DOC["SPEED mod"]
-
-        self.DEF.setText(str(defense))
-        self.CAS.setText(str(casting))
-        self.QUI.setText(str(quick))
-
 
     def update_equip(self):
         func.clear_layout(self.isheet.equipment_layout.inner_layout(1))
@@ -476,6 +477,12 @@ class CharacterSheet(QWidget):
     def set_combat_log(self, clog):
         self.combat_log = clog
 
+        self.ATK_mod = clog.findChild(QWidget, "ATTACK mod")
+        self.DEF_mod = clog.findChild(QWidget, "DEFENSE mod")
+        self.CAS_mod = clog.findChild(QWidget, "CASTING mod")
+        self.SNE_mod = clog.findChild(QWidget, "SNEAKING mod")
+        self.ATK_mod = clog.findChild(QWidget, "ATTACK mod")
+
     def set_inv_vars(self, isheet):
         print("Setting inv vars")
         self.isheet = isheet
@@ -484,12 +491,6 @@ class CharacterSheet(QWidget):
 
         self.XP = isheet.findChild(QWidget, "experience")
         self.UXP = isheet.findChild(QWidget, "total experience")
-
-        self.DEF = isheet.findChild(QWidget, "DEFENSE")
-        self.DEF_mod = isheet.findChild(QWidget, "DEFENSE mod")
-
-        self.CAS = isheet.findChild(QWidget, "CASTING")
-        self.CAS_mod = isheet.findChild(QWidget, "CASTING mod")
 
         self.experience = self.isheet.experience.get_widget()
 

@@ -274,25 +274,25 @@ class InventoryItem(QWidget):
             impeding = [quality for quality in armor["Quality"] if "Impeding" in quality][0]
             print(impeding)
             value = ModifyStat(impeding).find_integer()
-            speed -= value
-            defense -= value
-            casting -= value
+            speed += value
+            defense += value
+            casting += value
 
         mh = self.character_sheet.CHARACTER_DOC["equipment"]["main hand"]
         if mh != {}:
             if mh["Name"] in ["Shield","Buckler"]:
-                defense += 1
+                defense -= 1
             elif mh["Name"] == "Steel Shield":
-                defense += 2
+                defense -= 2
 
         oh = self.character_sheet.CHARACTER_DOC["equipment"]["off hand"]
         if oh != {}:
             if oh["Name"] in ["Shield","Buckler"]:
-                defense += 1
+                defense -= 1
             elif oh["Name"] == "Steel Shield":
-                defense += 2
+                defense -= 2
 
 
         self.character_sheet.CHARACTER_DOC["DEFENSE mod"] = defense
         self.character_sheet.CHARACTER_DOC["CASTING mod"] = casting
-        self.character_sheet.CHARACTER_DOC["SPEED mod"] = speed
+        self.character_sheet.CHARACTER_DOC["SNEAKING mod"] = speed

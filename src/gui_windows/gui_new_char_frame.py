@@ -156,9 +156,11 @@ class NewCharacter(QWidget):
             new_character["TOUGHNESS"] = str(toughness)
             new_character["CORRUPTION"] = "0"  
             new_character["PERMANENT"] = "0"
+            
             new_character["DEFENSE mod"] = 0
             new_character["CASTING mod"] = 0
-            new_character["SPEED mod"] = 0
+            new_character["SNEAKING mod"] = 0
+            new_character["ATTACK mod"] = 0
 
             new_character["inventory"] = []
             new_character["abilities"] = []

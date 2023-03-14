@@ -3,6 +3,10 @@ import datetime
 import pymongo
 import constants as cons
 
+from PySide2.QtWidgets import *
+from PySide2.QtGui import *
+from PySide2.QtCore import *
+
 class DiceRoll:
     def __init__(self, combat_log, character, roll_type, dice, check=0):
 
@@ -11,9 +15,13 @@ class DiceRoll:
         self.dice = dice
         self.modifier = int(self.modifier_widget.text())
         self.check = check
+        self.roll_type = roll_type
+
+        self.check_active_modifiers()
+
         self.entry  = {
             "Character": character,
-            "Type": roll_type,
+            "Type": self.roll_type,
             "Dice": dice,
             "Modifier": self.modifier,
             "Result": "",
@@ -76,6 +84,53 @@ class DiceRoll:
             self.entry["Result Message"] = "Success"
         else:
             self.entry["Result Message"] = "Failed"
+
+    def check_active_modifiers(self):
+        atk_value = self.combat_log.findChild(QWidget, "ATTACK mod")
+        def_value = self.combat_log.findChild(QWidget, "DEFENSE mod")
+        cas_value = self.combat_log.findChild(QWidget, "CASTING mod")
+        sne_value = self.combat_log.findChild(QWidget, "SNEAKING mod")
+
+        atk_mod = self.combat_log.findChild(QWidget, "ATTACK button")
+        def_mod = self.combat_log.findChild(QWidget, "DEFENSE button")
+        cas_mod = self.combat_log.findChild(QWidget, "CASTING button")
+        sne_mod = self.combat_log.findChild(QWidget, "SNEAKING button")
+
+        stylesheet_mod = f"background-color: {cons.PRIMARY_DARKER}; color: {cons.FONT_COLOR}; font-size: 20px; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-top-right-radius: 6px;"
+        stylesheet_button  = f"background-color: {cons.PRIMARY_DARKER}; color: {cons.FONT_COLOR}; font-size: 20px; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;"
+
+        if atk_mod.isChecked():
+            self.modifier += int(atk_value.text())
+            atk_mod.setChecked(False)
+            self.roll_type = "Attack"
+            atk_mod.setStyleSheet(stylesheet_button)
+            atk_value.setStyleSheet(stylesheet_mod)
+            return
+        
+        if def_mod.isChecked():
+            self.modifier += int(def_value.text())
+            def_mod.setChecked(False)
+            self.roll_type = "Defense"
+            def_mod.setStyleSheet(stylesheet_button)
+            def_value.setStyleSheet(stylesheet_mod)
+            return
+        
+        if cas_mod.isChecked():
+            self.modifier += int(cas_value.text())
+            cas_mod.setChecked(False)
+            self.roll_type = "Casting"
+            cas_mod.setStyleSheet(stylesheet_button)
+            cas_value.setStyleSheet(stylesheet_mod)
+            return
+        
+        if sne_mod.isChecked():
+            self.modifier += int(sne_value.text())
+            sne_mod.setChecked(False)
+            self.roll_type = "Sneaking"
+            sne_mod.setStyleSheet(stylesheet_button)
+            sne_value.setStyleSheet(stylesheet_mod)
+            return
+
 
     def set_time(self):
         self.entry["Time"] = datetime.datetime.now().strftime("%H:%M:%S")
