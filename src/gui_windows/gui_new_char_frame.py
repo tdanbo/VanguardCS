@@ -4,18 +4,11 @@ from PySide2.QtCore import *
 
 import constants as cons
 
-import json
-import functions as func
-import os
-
-from class_sheet import CharacterSheet
-
 from template.section import Section
 from template.widget import Widget
 import constants as cons
 
 import pymongo
-import math
 
 class NewCharacter(QWidget):
     def __init__(self, isheet, csheet):
@@ -149,28 +142,23 @@ class NewCharacter(QWidget):
             new_character = {"character":"","rank":"","experience unspent":"","stats":{}}
             new_character["character"] = self.character_name
             new_character["rank"] = "Player"
-            new_character["experience"] = "0"
-            new_character["experience unspent"] = "40"
-            new_character["corruption permanent"] = "0"
-            new_character["corruption temporary"] = "40"
-            new_character["toughness current"] = "0"
+            new_character["character experience"] = 0
+            new_character["total experience"] = 50
             
             for stat in cons.STATS:
                 stat_value = self.findChild(QPushButton,stat).text()
                 new_character["stats"][stat] = stat_value
                 new_character["stats"][stat + " mod"] = stat
 
-            new_character["health"] = {}
-
             strong = int(new_character["stats"]["STRONG"])
             toughness = 10 if strong < 10 else strong
 
-            new_character["health"]["TOUGHNESS"] = str(toughness)
-            new_character["health"]["CORRUPTION"] = "0"  
-            new_character["health"]["PERMANENT CORRUPTION"] = "0"
-            new_character["health"]["DEFENSE mod"] = 0
-            new_character["health"]["CASTING mod"] = 0
-            new_character["health"]["SPEED mod"] = 0
+            new_character["TOUGHNESS"] = str(toughness)
+            new_character["CORRUPTION"] = "0"  
+            new_character["PERMANENT"] = "0"
+            new_character["DEFENSE mod"] = 0
+            new_character["CASTING mod"] = 0
+            new_character["SPEED mod"] = 0
 
             new_character["inventory"] = []
             new_character["abilities"] = []

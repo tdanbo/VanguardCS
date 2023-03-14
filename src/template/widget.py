@@ -35,6 +35,7 @@ class Widget:
         checked=False,
         property=("", ""),
         class_group=[],
+        hidden = False
     ):
         self.class_group = class_group
         self.text = text
@@ -71,6 +72,9 @@ class Widget:
 
         self.all_widgets.append(self)
         self.class_group.append(self)
+
+        if hidden == True:
+            self.widget.setHidden(True)
 
     def setup_combobox(self, widget, text):
         widget.setSizeAdjustPolicy(QComboBox.AdjustToMinimumContentsLength)

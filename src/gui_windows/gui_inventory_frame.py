@@ -4,10 +4,6 @@ from PySide2.QtCore import *
 
 import constants as cons
 
-import json
-import functions as func
-import os
-
 from template.section import Section
 from template.widget import Widget
 
@@ -297,6 +293,6 @@ class InventoryItem(QWidget):
                 defense += 2
 
 
-        self.character_sheet.CHARACTER_DOC["health"]["DEFENSE mod"] = defense
-        self.character_sheet.CHARACTER_DOC["health"]["CASTING mod"] = casting
-        self.character_sheet.CHARACTER_DOC["health"]["SPEED mod"] = speed
+        self.character_sheet.CHARACTER_DOC["DEFENSE mod"] = defense
+        self.character_sheet.CHARACTER_DOC["CASTING mod"] = casting
+        self.character_sheet.CHARACTER_DOC["SPEED mod"] = speed

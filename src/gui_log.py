@@ -10,10 +10,8 @@ import functions as func
 import functools
 
 from gui_functions import custom_rolls
-from gui_functions import custom_log
-from gui_functions import roll
 
-from gui_windows.gui_combat_entry import CombatEntry
+from gui_windows.gui_combat_frame import CombatEntry
 from gui_functions.class_roll import DiceRoll
 
 import constants as cons
@@ -33,12 +31,14 @@ class CombatLogGUI(QWidget):
         #Setting up layouts/sections
 
         self.modifier_section = Section(
-            outer_layout = QVBoxLayout(),
-            inner_layout = ("VBox", 2),
+            outer_layout = QHBoxLayout(),
+            inner_layout = ("VBox", 4),
             parent_layout = self.master_layout,
-            title="MODIFIER",
+            title="MODIFIERS",
             group = True,
             class_group = self.section_group,
+            height=109,
+            spacing=3
         )
 
         self.log_scroll = Section(
@@ -72,10 +72,41 @@ class CombatLogGUI(QWidget):
             signal=lambda: self.adjust_modifier("add"),
             objectname="modifier",
             class_group=self.widget_group,
-            height=cons.WSIZE*2,
-            stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_COLOR}; font-size: 20px; font-weight: bold; border: 1px solid {cons.BORDER}; border-radius: 6px;",
+            size_policy=(QSizePolicy.Expanding, QSizePolicy.Expanding),
+            stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_COLOR}; font-size: 20px; font-weight: bold; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-top-right-radius: 6px;",
             text="0",
         )
+
+        self.modifier_label = Widget(
+            widget_type=QToolButton(),
+            parent_layout=self.modifier_section.inner_layout(1),
+            icon=(f"Modifier.png","",cons.FONT_COLOR,cons.WSIZE),
+            class_group=self.widget_group,
+            size_policy=(QSizePolicy.Expanding, QSizePolicy.Expanding),
+            stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_DARK}; font-size: 10px; font-weight: bold; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;",
+        )
+
+        #Below is all the widgets used in the character sheet
+        for number,stat in enumerate(["Defense","Casting","Sneaking"]):
+            self.extra_modifier_button = Widget(
+                widget_type=QPushButton(),
+                parent_layout = self.modifier_section.inner_layout(number+2),
+                objectname=stat,
+                class_group=self.widget_group,
+                size_policy=(QSizePolicy.Expanding, QSizePolicy.Expanding),
+                stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_COLOR}; font-size: 20px; font-weight: bold; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-top-right-radius: 6px;"
+            )
+
+            self.extra_modifier_label = Widget(
+                widget_type=QToolButton(),
+                parent_layout=self.modifier_section.inner_layout(number+2),
+                icon=(f"{stat}.png","",cons.FONT_COLOR,cons.WSIZE),
+                class_group=self.widget_group,
+                size_policy=(QSizePolicy.Expanding, QSizePolicy.Expanding),
+                stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_DARK}; font-size: 10px; font-weight: bold; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;",
+            )
+
+
 
         self.roll_button = Widget(
             widget_type=QPushButton(),

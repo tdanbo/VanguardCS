@@ -16,15 +16,14 @@ import copy
 
 import re
 
-from gui_windows.gui_inventory_item import InventoryItem
-from gui_functions.class_roll import DiceRoll
+from gui_windows.gui_inventory_frame import InventoryItem
+from gui_windows.gui_ability_frame import AbilityItem
 from gui_functions.class_modify_stat import ModifyStat
 
 class CharacterSheet(QWidget):
     def __init__(self):
         super().__init__()
         self.equipment = self.get_equipment()
-        self.abilities = self.get_abilities()
 
     def update_sheet(self):
         print("Updating Character Sheet - Saving to DB")
@@ -39,7 +38,25 @@ class CharacterSheet(QWidget):
         
         self.set_health() # This will set static toughness, corruption, and defense stats
 
+        self.update_experience()
+
         self.update_database()
+
+    def update_experience(self):
+        earned_experience = 0
+        for ability in self.CHARACTER_DOC["abilities"]:
+            if ability["Rank"] == "Novice":
+                earned_experience += 10
+            elif ability["Rank"] == "Adept":
+                earned_experience += 30
+            elif ability["Rank"] == "Master":
+                earned_experience += 60
+
+        total_experience = self.CHARACTER_DOC["total experience"]        
+        self.CHARACTER_DOC["character experience"] = earned_experience
+
+        self.XP.setText(str(earned_experience))
+        self.UXP.setText(str(total_experience-earned_experience))
 
     def find_modifier(self, string):
         match = re.search(r'-?\d+', string)  # search for a sequence of digits with an optional minus sign
@@ -54,19 +71,6 @@ class CharacterSheet(QWidget):
         ability_main_widget.setProperty("Rank", rank)
         self.update_sheet()
 
-    def get_abilities(self):
-        all_abilities = {}
-        client = pymongo.MongoClient(cons.CONNECT)
-        # get a list of collection names
-        db = client["abilities"]
-        collection_names = db.list_collection_names()
-        for name in collection_names:
-            # get a collection object
-            collection = db[name]
-            document = collection.find_one()
-            all_abilities[name] = document
-        return all_abilities
-
     def get_equipment(self):
         all_equipment = {}
         client = pymongo.MongoClient(cons.CONNECT)
@@ -80,80 +84,16 @@ class CharacterSheet(QWidget):
             all_equipment[name] = document
         return all_equipment
 
-    def find_ability(self,item_string,item_rank):
-        for category in self.abilities:
-            if item_string in self.abilities[category]:
-                print(f"found {item_string}")
-                item_dict = self.abilities[category][item_string]
-                item_dict["Name"] = item_string
-                item_dict["Rank"] = item_rank
-                item_dict["Category"] = category
-                return item_dict
-            else:
-                pass
-        return {"Name":"empty","Category":"","Novice":"","Adept":"","Master":"","Description":"","Rank":"Novice"}
-
     def update_abilities(self):
-        self.all_items = []
-        for ability_slot in self.ability_list:
-            item_string = ability_slot.text()
-            item_rank = ability_slot.property("Rank")
-            if item_string == "empty":
-                item_string = ability_slot.text()
-            self.all_items.append(self.find_ability(item_string,item_rank))
-
+        func.clear_layout(self.csheet.ability_layout.inner_layout(1))
         priority = {'abilities': 0, 'mystical_powers': 1, 'rituals': 2, 'boons': 3, 'burdens': 4}
-        self.sorted_list = sorted(self.all_items, key=lambda x: priority.get(x.get('Category', ''), len(priority)))
+        self.sorted_list = sorted(self.CHARACTER_DOC["abilities"], key=lambda x: priority.get(x.get('Category', ''), len(priority)))
         for slot,item in enumerate(self.sorted_list):
-            self.update_ability(slot+1, item)
-
-    def update_ability(self, slot, item):
-        ability_slot = f"ability{slot}"
-
-        ability_rank = item["Rank"]
-        ability_text = item[ability_rank]
-
-        if ability_text == "":
-            ability_text = item["Description"]
-
-        add_ability_button = self.csheet.findChild(QWidget, f"{ability_slot}")
-
-        slot_section = self.csheet.findChild(QWidget, f"{ability_slot}_section")
-        slot_section_icon = slot_section.get_title()[0]
-        slot_section_label =  slot_section.get_title()[1]
-
-        func.set_icon(slot_section_icon, f'{item["Category"]}.png',cons.ICON_COLOR)
-        slot_section_label.setText(item["Name"])
-
-        slot_main_label = self.csheet.findChild(QWidget, f"{ability_slot}_label")
-        slot_main_label.setText(ability_text)
-
-        slot_section.setHidden(False)
-
-        if item["Name"] == "empty":
-            add_ability_button.setHidden(False)
-            slot_section.setHidden(True)
-        else:
-            add_ability_button.setHidden(True)
-            slot_section.setHidden(False)
-
-        # Reset all colors
-        novice = self.csheet.findChild(QPushButton, f"{ability_slot}_Novice")
-        adept = self.csheet.findChild(QPushButton, f"{ability_slot}_Adept")
-        master = self.csheet.findChild(QPushButton, f"{ability_slot}_Master")
-
-        level_list = [novice, adept, master]
-        #[level_widget.setStyleSheet(tstyle.LEVEL_BUTTONS_DISABLED) for level_widget in level_list]
-
-        active_rank = self.csheet.findChild(QPushButton, f"{ability_slot}_{ability_rank}")
-        #active_rank.setStyleSheet(tstyle.LEVEL_BUTTONS)
-
-    def find_ability_category(self):
-        for category in self.abilities:
-            if self.ability_name in self.abilities[category]:
-                return category
-            else:
-                return ""
+            ability = AbilityItem(self,item,slot=slot)
+            self.csheet.ability_layout.inner_layout(1).addWidget(ability)
+        filler_widget = QWidget()
+        filler_widget.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        self.csheet.ability_layout.inner_layout(1).addWidget(filler_widget)
 
     def update_database(self):
         self.client = pymongo.MongoClient(cons.CONNECT)
@@ -182,9 +122,9 @@ class CharacterSheet(QWidget):
         self.STR.setText(str(self.CHARACTER_DOC["stats"]["STRONG"]))
         self.VIG.setText(str(self.CHARACTER_DOC["stats"]["VIGILANT"]))
 
-        self.TOU.setText(str(self.CHARACTER_DOC["health"]["TOUGHNESS"]))
-        self.COR.setText(str(self.CHARACTER_DOC["health"]["CORRUPTION"]))
-        self.PERC.setText(str(self.CHARACTER_DOC["health"]["PERMANENT CORRUPTION"]))
+        self.TOU.setText(str(self.CHARACTER_DOC["TOUGHNESS"]))
+        self.COR.setText(str(self.CHARACTER_DOC["CORRUPTION"]))
+        self.PERC.setText(str(self.CHARACTER_DOC["PERMANENT"]))
 
         self.ACC_mod.setText(str(self.CHARACTER_DOC["stats"]["ACCURATE mod"]))
         self.CUN_mod.setText(str(self.CHARACTER_DOC["stats"]["CUNNING mod"]))
@@ -195,13 +135,13 @@ class CharacterSheet(QWidget):
         self.STR_mod.setText(str(self.CHARACTER_DOC["stats"]["STRONG mod"]))
         self.VIG_mod.setText(str(self.CHARACTER_DOC["stats"]["VIGILANT mod"]))
         
-        if self.CHARACTER_DOC["health"]["DEFENSE mod"] != 0:
-            self.DEF_mod.setText("DEFENSE "+str(self.CHARACTER_DOC["health"]["DEFENSE mod"]))
+        if self.CHARACTER_DOC["DEFENSE mod"] != 0:
+            self.DEF_mod.setText("DEFENSE "+str(self.CHARACTER_DOC["DEFENSE mod"]))
         else:
             self.DEF_mod.setText("DEFENSE")
 
-        if self.CHARACTER_DOC["health"]["CASTING mod"] != 0:
-            self.CAS_mod.setText("CASTING "+str(self.CHARACTER_DOC["health"]["CASTING mod"]))
+        if self.CHARACTER_DOC["CASTING mod"] != 0:
+            self.CAS_mod.setText("CASTING "+str(self.CHARACTER_DOC["CASTING mod"]))
         else:
             self.CAS_mod.setText("CASTING")
 
@@ -235,9 +175,9 @@ class CharacterSheet(QWidget):
         corruption_threshold = math.ceil(int(self.RES.text())/2)
         self.THR.setText(f"{corruption_threshold} / {self.RES.text()}")
 
-        defense = int(self.QUI.text()) + self.CHARACTER_DOC["health"]["DEFENSE mod"]
-        casting = int(self.RES.text()) + self.CHARACTER_DOC["health"]["CASTING mod"]
-        quick = int(self.QUI.text()) + self.CHARACTER_DOC["health"]["SPEED mod"]
+        defense = int(self.QUI.text()) + self.CHARACTER_DOC["DEFENSE mod"]
+        casting = int(self.RES.text()) + self.CHARACTER_DOC["CASTING mod"]
+        quick = int(self.QUI.text()) + self.CHARACTER_DOC["SPEED mod"]
 
         self.DEF.setText(str(defense))
         self.CAS.setText(str(casting))
@@ -280,8 +220,8 @@ class CharacterSheet(QWidget):
         self.divider = QFrame()
         self.divider.setFixedHeight(1)
         self.divider.setStyleSheet(f"background-color: {cons.BORDER}")
-
         layout.addWidget(self.divider)
+
     def update_inventory_dict(self):
         item = self.sender().text()
         slot = int(self.sender().objectName())
@@ -541,6 +481,9 @@ class CharacterSheet(QWidget):
         self.isheet = isheet
 
         self.character_icon = self.isheet.portrait.get_widget()
+
+        self.XP = isheet.findChild(QWidget, "experience")
+        self.UXP = isheet.findChild(QWidget, "total experience")
 
         self.DEF = isheet.findChild(QWidget, "DEFENSE")
         self.DEF_mod = isheet.findChild(QWidget, "DEFENSE mod")

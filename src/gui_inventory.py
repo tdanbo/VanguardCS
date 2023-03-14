@@ -10,16 +10,14 @@ import functions as func
 import functools
 import pymongo
 
-from class_sheet import CharacterSheet
 
 from gui_functions import character_xp
 from gui_functions import custom_rolls
-from gui_functions import roll
-from gui_functions import character_reset
+
 from gui_functions.class_roll import DiceRoll
 
-from gui_windows.gui_new_char import NewCharacter
-from gui_windows.gui_inventory_item import InventoryItem
+from gui_windows.gui_new_char_frame import NewCharacter
+from gui_windows.gui_add_sub import AddSub
 
 class InventoryGUI(QWidget):
     def __init__(self, csheet):
@@ -109,11 +107,10 @@ class InventoryGUI(QWidget):
         )
 
         self.experience= Widget(
-            widget_type=QLineEdit(),
+            widget_type=QPushButton(),
             parent_layout=self.experience_section.inner_layout(1),
             objectname="experience",
             class_group=self.widget_group,
-            align="center",
             stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_COLOR}; font-size: 16px; font-weight: bold; border: 1px solid {cons.BORDER}"
 
         )
@@ -121,7 +118,7 @@ class InventoryGUI(QWidget):
         self.experience_label = Widget(
             widget_type=QPushButton(),
             parent_layout=self.experience_section.inner_layout(1),
-            objectname = "experience_label",
+            objectname = "",
             class_group=self.widget_group,
             text = "XP",
             height=cons.WSIZE,
@@ -129,12 +126,11 @@ class InventoryGUI(QWidget):
         )
 
         self.unspent_experience= Widget(
-            widget_type=QLineEdit(),
+            widget_type=QPushButton(),
             parent_layout=self.experience_section.inner_layout(2),
-            objectname="unspent_experience",
-            signal = lambda: character_xp.adjust_xp(self,adjust="add"),
+            objectname="total experience",
+            signal = self.add_sub,
             class_group=self.widget_group,
-            align="center",
             stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_COLOR}; font-size: 16px; font-weight: bold; border: 1px solid {cons.BORDER}"
 
         )
@@ -298,7 +294,6 @@ class InventoryGUI(QWidget):
             width = cons.WSIZE*1.50,
             height = cons.WSIZE*1.5,
             objectname=f"icon{descriptor}{count}",
-            signal=functools.partial(roll.inventory_prepare_double_roll, self,count),
             class_group=self.widget_group
         )
 
@@ -359,7 +354,6 @@ class InventoryGUI(QWidget):
             parent_layout=self.slot_layot.inner_layout(5),
             height = cons.WSIZE,
             objectname=f"roll{count}",
-            signal = functools.partial(roll.inventory_prepare_roll, self, "roll", count),
             class_group=self.widget_group,
             stylesheet=f"font-weight: bold; color: {cons.FONT_COLOR}; background-color: {cons.PRIMARY_LIGHTER}; border: 1px solid {cons.BORDER}; border-radius: 6px;"
 
@@ -417,3 +411,8 @@ class InventoryGUI(QWidget):
             self.dice = self.sender().text()
 
         rolling_dice = DiceRoll(self.combat_log,self.character,self.roll_type.capitalize(),self.dice, check = self.check).roll()
+
+    def add_sub(self):
+        doc_string = self.sender().objectName()
+        add_sub_gui = AddSub(self.character_sheet, self.sender(), doc_item = doc_string)
+        add_sub_gui.show()

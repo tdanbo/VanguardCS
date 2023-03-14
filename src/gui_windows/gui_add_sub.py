@@ -2,82 +2,93 @@ from PySide2.QtWidgets import *
 from PySide2.QtGui import *
 from PySide2.QtCore import *
 
-import stylesheet as style
-import constants as cons
-
-import json
-import functions as func
-import os
-
-from character_sheet import CharacterSheet
-
 from template.section import Section
 from template.widget import Widget
 
+import constants as cons
 
 
-class AddSubGUI(QWidget):
-    def __init__(self, csheet, sender_widget):
+class AddSub(QWidget):
+    def __init__(self, character_sheet, widget, doc_item = ""):
         super().__init__(None, Qt.WindowStaysOnTopHint)
 
-        self.csheet = csheet
+        self.widget = widget
+        self.doc_item = doc_item
+        self.character_sheet = character_sheet
 
-        self.addsub_main_layout = Section(
-            outer_layout = QVBoxLayout(),
-            inner_layout = ("VBox", 1),
-        )
+        self.master_layout = QVBoxLayout()
+        self.section_group = []
+        self.widget_group = []
 
         self.addsub_widget_layout = Section(
             outer_layout = QVBoxLayout(),
             inner_layout = ("HBox", 2),
-            parent_layout = self.addsub_main_layout.inner_layout(1),
-            title="Adjust HP",
-            icon = ("hp.png",cons.WSIZE*1.5,cons.ICON_COLOR),
-            group=(True,None,None),
+            parent_layout = self.master_layout,
+            class_group=self.section_group,
+            spacing=5,
         )
 
         self.integer_line = Widget(
             widget_type=QLineEdit(),
-            stylesheet=style.QADDSUB,
-            text="",
+            parent_layout=self.addsub_widget_layout.inner_layout(1),
             align="center",
             objectname = "adjuster",
             size_policy = (QSizePolicy.Expanding , QSizePolicy.Expanding),
-            height=cons.WSIZE*1.50,
+            height = cons.WSIZE*1.5,
+            class_group = self.widget_group,
+            validator="numbers",
+            stylesheet= f"font-size: 15px; font-weight: bold; color: {cons.FONT_COLOR}; background-color: {cons.PRIMARY_LIGHTER}; border: 1px solid {cons.BORDER}; border-radius: 6px;"
+
         )
 
         self.minus_widget = Widget(
-            widget_type=QPushButton(),
-            stylesheet=style.BUTTONS,
-            text="-",
+            widget_type=QToolButton(),
+            parent_layout=self.addsub_widget_layout.inner_layout(2),
             objectname = "minus",
             size_policy = (QSizePolicy.Expanding , QSizePolicy.Expanding),
+            class_group = self.widget_group,
+            icon=("minus.png",cons.WSIZE,cons.BORDER),
+            height = cons.WSIZE*1.5,
+            signal=self.send_value,
+            stylesheet= f"font-size: 15px; font-weight: bold; color: {cons.FONT_COLOR}; background-color: {cons.PRIMARY_LIGHTER}; border: 1px solid {cons.BORDER}; border-radius: 6px;"
+
         )
 
         self.plus_widget = Widget(
-            widget_type=QPushButton(),
-            stylesheet=style.BUTTONS,
-            text="+",
+            widget_type=QToolButton(),
+            parent_layout=self.addsub_widget_layout.inner_layout(2),
             objectname = "plus",
+            class_group = self.widget_group,
+            icon=("plus.png",cons.WSIZE,cons.BORDER),
             size_policy = (QSizePolicy.Expanding , QSizePolicy.Expanding),
+            height = cons.WSIZE*1.5,
+            signal=self.send_value,
+            stylesheet= f"font-size: 15px; font-weight: bold; color: {cons.FONT_COLOR}; background-color: {cons.PRIMARY_LIGHTER}; border: 1px solid {cons.BORDER}; border-radius: 6px;"
+
         )
 
-        self.minus_widget.get_widget().clicked.connect(self.send_value)
-        self.plus_widget.get_widget().clicked.connect(self.send_value)
-
-
-
-        self.addsub_widget_layout.inner_layout(1).addWidget(self.integer_line.get_widget())
-        self.addsub_widget_layout.inner_layout(2).addWidget(self.minus_widget.get_widget())
-        self.addsub_widget_layout.inner_layout(2).addWidget(self.plus_widget.get_widget())
-
-        self.addsub_main_layout.outer_layout().addLayout(self.addsub_widget_layout.outer_layout())
-
         self.setWindowTitle("Set Value")
-        self.setLayout(self.addsub_main_layout.outer_layout())
-        self.setStyleSheet(style.BASE_STYLE)
-        self.setFixedHeight(125)
+
+        for widget in self.widget_group:
+            widget.connect_to_parent()
+            widget.set_signal()
+
+        for section in self.section_group:
+            section.connect_to_parent()
+
+        self.setStyleSheet(f"color: {cons.FONT_DARK}; background-color: {cons.DARK}; border-style: outset;")
+        self.setLayout(self.master_layout)
 
     def send_value(self):
+        current_value = int(self.character_sheet.CHARACTER_DOC[self.doc_item])
+        value = int(self.integer_line.get_widget().text())
+    
         state = self.sender().objectName()
-        CharacterSheet(self.csheet).adjust_hp(state, self.integer_line.get_widget().text())
+        if state == "plus":
+            new_value = current_value + value
+        else:
+            new_value = current_value - value
+        
+        self.character_sheet.CHARACTER_DOC[self.doc_item] = new_value
+        self.character_sheet.update_sheet()
+        self.close()

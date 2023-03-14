@@ -14,12 +14,14 @@ import functools
 
 from gui_functions import custom_rolls
 
-from gui_abilities import AbilityGUI
+from gui_abilities import AddNewAbility
 
 import math
 
 from gui_functions.class_roll import DiceRoll
 from gui_functions.class_modify_stat import ModifyStat
+
+from gui_windows.gui_add_sub import AddSub
 
 class CharacterSheetGUI(QWidget):
     def __init__(self, csheet):
@@ -65,7 +67,7 @@ class CharacterSheetGUI(QWidget):
         )
         
         self.ability_layout.get_title()[0].clicked.connect(self.open_abilities)
-
+        self.ability_layout.get_title()[1].setAlignment(Qt.AlignCenter)
 
         self.character_basic = Section(
             outer_layout = QVBoxLayout(),
@@ -99,150 +101,6 @@ class CharacterSheetGUI(QWidget):
 
         self.corruption_layout.get_title()[1].setAlignment(Qt.AlignCenter)
 
-        for power in range(1, 13):
-            #layout_number = math.ceil(power / 2)
-            layout_number = 1
-            # Below is all the code for the power section
-            self.master_power_section = Section(
-                outer_layout = QHBoxLayout(),
-                inner_layout = ("VBox", 1),
-                parent_layout = self.ability_layout.inner_layout(layout_number),
-                spacing = 3,
-                class_group=self.section_group
-            )
-
-            self.add_power_button = Widget(
-                widget_type=QWidget(),
-                parent_layout = self.master_power_section.inner_layout(1),
-                class_group=self.widget_group,
-                objectname=f"ability{power}",
-                enabled=False,
-            )
-            
-            self.power_section = Section(
-                outer_layout = QVBoxLayout(),
-                inner_layout = ("HBox", 3),
-                parent_layout = self.master_power_section.inner_layout(1),
-                title="empty",
-                group = True,
-                spacing = 10,
-                class_group=self.section_group,
-                objectname=f"ability{power}_section",
-                icon = ("plus.png",cons.WSIZE,cons.ICON_COLOR),
-                hidden=True,
-            )
-            title_layout = self.power_section.get_title()[2]
-            self.power_section.get_title()[1].setAlignment(Qt.AlignCenter)
-            
-            self.rank_label = Widget(
-                widget_type=QLabel(),
-                parent_layout = self.power_section.inner_layout(1),
-                text="Novice",
-                class_group=self.widget_group,
-                align="top",
-                width=35
-            )
-
-            self.novice_rank = Widget(
-                widget_type=QLabel(),
-                parent_layout = self.power_section.inner_layout(1),
-                text="",
-                objectname=f"ability{power}_label",
-                class_group=self.widget_group
-            )
-
-            self.novice_rank.get_widget().setWordWrap(True)
-
-            self.rank_label = Widget(
-                widget_type=QLabel(),
-                parent_layout = self.power_section.inner_layout(2),
-                text="Adept",
-                class_group=self.widget_group,
-                align="top",
-                width=35
-            )
-
-            self.adept_box = Widget(
-                widget_type=QLabel(),
-                parent_layout = self.power_section.inner_layout(2),
-                class_group=self.widget_group,
-                objectname=f"ability{power}",
-                enabled=False,
-                text = "<b>Passive</b>. The character makes two separate knife-attacks at the same target with every combat action. If the character also has Twin Attack, this ability only affects one of the attacks, for a total of three attacks (two with the main hand and one with the other)."
-            )
-
-            self.adept_box.get_widget().setWordWrap(True)
-
-            self.rank_label = Widget(
-                widget_type=QLabel(),
-                parent_layout = self.power_section.inner_layout(3),
-                text="Master",
-                class_group=self.widget_group,
-                align="top",
-                width=35
-            )
-
-            self.master_box = Widget(
-                widget_type=QLabel(),
-                parent_layout = self.power_section.inner_layout(3),
-                class_group=self.widget_group,
-                objectname=f"ability{power}",
-                enabled=False,
-                text = "<b>Passive</b>. The character makes two separate knife-attacks at the same target with every combat action. If the character also has Twin Attack, this ability only affects one of the attacks, for a total of three attacks (two with the main hand and one with the other)."
-
-            )
-
-            self.master_box.get_widget().setWordWrap(True)
-
-            self.novice = Widget(
-                widget_type=QPushButton(),
-                text="N",
-                width=cons.WSIZE,
-                height=cons.WSIZE,
-                objectname=f"ability{power}_Novice"
-            )
-
-            self.adept = Widget(
-                widget_type=QPushButton(),
-                text="A",
-                width=cons.WSIZE,
-                height=cons.WSIZE,
-                objectname=f"ability{power}_Adept"
-            )
-
-            self.master = Widget(
-                widget_type=QPushButton(),
-                text="M",
-                width=cons.WSIZE,
-                height=cons.WSIZE,
-                objectname=f"ability{power}_Master"
-            )
-
-            self.delete = Widget(
-                widget_type=QToolButton(),
-                parent_layout = title_layout,
-                class_group=self.widget_group,
-                width=cons.WSIZE,
-                height=cons.WSIZE,
-                icon = ("delete.png",cons.WSIZE,cons.ICON_COLOR),
-                objectname=f"ability{power}_delete",
-                signal=self.delete_ability
-            )
-
-
-            title_layout.insertWidget(1, self.novice.widget)
-            title_layout.insertWidget(2, self.adept.widget)
-            title_layout.insertWidget(3, self.master.widget)
-
-            self.master.get_widget().clicked.connect(self.change_rank)
-            self.adept.get_widget().clicked.connect(self.change_rank)
-            self.novice.get_widget().clicked.connect(self.change_rank)
-
-
-        self.ability_layout.get_title()[1].setAlignment(Qt.AlignCenter)
-
-
-        []
 
         #Below is all the widgets used in the character sheet
         for number,stat in enumerate(cons.STATS):
@@ -271,7 +129,7 @@ class CharacterSheetGUI(QWidget):
         self.toughness_current= Widget(
             widget_type=QPushButton(),
             parent_layout=self.hp_layout.inner_layout(1),
-            signal=self.open_addsub,
+            signal=self.add_sub,
             objectname = "TOUGHNESS",
             class_group=self.widget_group,
             stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_COLOR}; font-size: 20px; font-weight: bold; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-top-right-radius: 6px;"
@@ -334,7 +192,7 @@ class CharacterSheetGUI(QWidget):
         self.corruption= Widget(
             widget_type=QPushButton(),
             parent_layout=self.corruption_layout.inner_layout(1),
-            signal=self.open_addsub,
+            signal=self.add_sub,
             objectname = "CORRUPTION",
             class_group=self.widget_group,
             stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_COLOR}; font-size: 20px; font-weight: bold; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-top-right-radius: 6px;"
@@ -354,7 +212,7 @@ class CharacterSheetGUI(QWidget):
         self.corruption_permanent= Widget(
             widget_type=QPushButton(),
             parent_layout=self.corruption_layout.inner_layout(2),
-            signal=self.open_addsub,
+            signal=self.add_sub,
             objectname = "PERMANENT",
             class_group=self.widget_group,
             stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_COLOR}; font-size: 20px; font-weight: bold; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-top-right-radius: 6px;"
@@ -397,6 +255,7 @@ class CharacterSheetGUI(QWidget):
 
         for section in self.section_group:
             section.connect_to_parent()
+
         self.setLayout(self.master_layout)       
 
         self.character_sheet.set_sheet_vars(self)
@@ -410,32 +269,13 @@ class CharacterSheetGUI(QWidget):
 
     def open_abilities(self):
         print("opening abilities")
-        slot = f"ability{self.get_free_ability_slot()}"
-        self.abilities = AbilityGUI(self, self.character_sheet, slot)
+        self.abilities = AddNewAbility(self, self.character_sheet)
         self.abilities.show()
-
-    def delete_ability(self):
-        sender_object = self.sender().objectName()
-        sender_object.split("_")[0]
-        self.findChild(QWidget, f"{sender_object.split('_')[0]}_section_title").setText("empty")
-        self.character_sheet.update_sheet()
-
-    def get_free_ability_slot(self):
-        for slot in range(1, 13):
-            ability_slot = self.findChild(QWidget, f"ability{slot}_section_title").text()
-            if ability_slot == "empty":
-                return slot
 
     def open_addsub(self):
         sender = self.sender()
         self.addsub = AddSubGUI(self, sender)
         self.addsub.show()
-
-    def change_rank(self):
-        print("changing rank")
-        slot = self.sender().objectName().split("_")[0]
-        rank = self.sender().objectName().split("_")[1]
-        self.character_sheet.set_rank(slot, rank)
 
     def modify_stat(self):
         widget = self.sender()
@@ -456,3 +296,8 @@ class CharacterSheetGUI(QWidget):
             self.dice = self.sender().text()
 
         rolling_dice = DiceRoll(self.combat_log,self.character,self.roll_type.capitalize(),self.dice, check = self.check).roll()
+
+    def add_sub(self):
+        doc_string = self.sender().objectName()
+        add_sub_gui = AddSub(self.character_sheet, self.sender(), doc_item = doc_string)
+        add_sub_gui.show()

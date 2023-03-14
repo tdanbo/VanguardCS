@@ -12,18 +12,18 @@ import sys
 import pymongo
 
 
+from gui_windows.gui_ability_frame import AbilityItem
 
 from template.section import Section
 from template.widget import Widget
 
-class AbilityGUI(QWidget):
-    def __init__(self, gui_sheet, csheet,slot):
+class AddNewAbility(QWidget):
+    def __init__(self, gui_sheet, csheet):
         super().__init__(None, Qt.WindowStaysOnTopHint)
         self.all_abilities = self.get_abilities()
 
         self.gui_sheet = gui_sheet
         self.character_sheet = csheet
-        self.ability_slot = slot
 
         self.master_layout = QVBoxLayout()
         self.master_layout.setSpacing(5)
@@ -76,7 +76,7 @@ class AbilityGUI(QWidget):
             inner_layout = ("VBox", 1),
             parent_layout = self.master_layout,
             scroll=(True,"top"),
-            spacing = 5,
+            spacing = 10,
             class_group=self.section_group, 
         )
 
@@ -89,128 +89,21 @@ class AbilityGUI(QWidget):
             section.connect_to_parent()
 
         self.setLayout(self.master_layout)     
-
+        self.setStyleSheet(f"border-style: outset; color: {cons.FONT_DARK}; background-color: {cons.DARK};")
         self.setWindowTitle("Select Feat")
 
     def add_abilities(self):
         self.category = self.sender().objectName()
         self.clear_layout(self.feats_scroll.inner_layout(1))
 
-        self.ability_section_group = []
-        self.ability_widget_group = []
-
         for item in self.all_abilities[self.category]:
             if item != "_id":
-                print(item)
-                item_json = self.all_abilities[self.category][item]
+                ability_dict = self.all_abilities[self.category][item]
+                ability_dict["Rank"] = "Novice"
+                ability = AbilityItem(self.character_sheet,ability_dict, select=True)
+                self.feats_scroll.inner_layout(1).addWidget(ability)
 
-                self.ability_section = Section(
-                    outer_layout = QVBoxLayout(),
-                    inner_layout = ("VBox", 2),
-                    parent_layout = self.feats_scroll.inner_layout(1),
-                    spacing = 0,
-                    class_group=self.ability_section_group
-                )
-                    
-                self.single_feat_layout = Section(
-                    outer_layout = QVBoxLayout(),
-                    inner_layout = ("VBox", 2),
-                    parent_layout = self.ability_section.inner_layout(1),
-                    spacing = 0,
-                    class_group=self.ability_section_group,
-                    group=True,
-                    title=item_json["Name"],
-                    height=200,
-                    icon = (f"{self.category}.png",cons.WSIZE,cons.ICON_COLOR),
-                    
-                )
 
-                self.feat_label = Widget(
-                    widget_type=QPlainTextEdit(),
-                    parent_layout=self.single_feat_layout.inner_layout(1),
-                    text = item_json["Description"],
-                    size_policy = (QSizePolicy.Expanding , QSizePolicy.Expanding),
-                    class_group=self.ability_widget_group,
-                    objectname=f'{item_json["Name"]}_label'
-                    )
-
-                self.select_feat = Widget(
-                    widget_type=QPushButton(),
-                    parent_layout=self.ability_section.inner_layout(2),
-                    text = "Select",
-                    height = cons.WSIZE,
-                    objectname=item_json["Name"],
-                    signal=self.confirm_feat,
-                    class_group=self.ability_widget_group
-                    )
-
-                # Adding Novice, Adept, Master
-                if item_json["Novice"] != "":
-                    self.feat_label.get_widget().setPlainText(item_json["Novice"])
-
-                    title_layout = self.single_feat_layout.get_title()[2]
-
-                    self.novice = Widget(
-                        widget_type=QPushButton(),
-                        text="N",
-                        width=cons.WSIZE,
-                        height=cons.WSIZE,
-                        signal=self.set_level,
-                        objectname=f"{item_json['Name']}_Novice",
-                        parent_layout=title_layout,
-                        class_group=self.ability_widget_group
-                    )
-
-                    self.adept = Widget(
-                        widget_type=QPushButton(),
-                        text="A",
-                        width=cons.WSIZE,
-                        height=cons.WSIZE,
-                        signal=self.set_level,
-                        objectname=f"{item_json['Name']}_Adept",
-                        parent_layout=title_layout,
-                        class_group=self.ability_widget_group,
-                    )
-
-                    self.master = Widget(
-                        widget_type=QPushButton(),
-                        text="M",
-                        width=cons.WSIZE,
-                        height=cons.WSIZE,
-                        signal=self.set_level,
-                        objectname=f"{item_json['Name']}_Master",
-                        parent_layout=title_layout,
-                        class_group=self.ability_widget_group,
-                    )
-
-        for widget in self.ability_widget_group:
-            widget.connect_to_parent()
-            widget.set_signal()
-
-        for section in self.ability_section_group:
-            section.connect_to_parent()
-
-    def set_level(self):
-        print("set level")
-        # Getting the label
-        item_name = self.sender().objectName().split("_")[0]
-        level = self.sender().objectName().split("_")[1]
-
-        label = self.findChild(QPlainTextEdit, f"{item_name}_label")
-
-        # Reset all colors
-        novice = self.findChild(QPushButton, f"{item_name}_Novice")
-        adept = self.findChild(QPushButton, f"{item_name}_Adept")
-        master = self.findChild(QPushButton, f"{item_name}_Master")
-
-        level_list = [novice, adept, master]
-        #[level_widget.setStyleSheet(tstyle.LEVEL_BUTTONS_DISABLED) for level_widget in level_list]
-
-        #[level_widget.setStyleSheet(tstyle.LEVEL_BUTTONS) if level in level_widget.objectName() else None for level_widget in level_list]
-
-        # Set new text
-        text = self.all_abilities[self.category][item_name][level]
-        label.setPlainText(text)
 
     def get_abilities(self):
         all_equipment = {}
@@ -224,16 +117,6 @@ class AbilityGUI(QWidget):
             document = collection.find_one()
             all_equipment[name] = document
         return all_equipment
-
-    def confirm_feat(self):
-        print("confirming ability")
-        selected_ability = self.sender().objectName()
-        slot_section = self.gui_sheet.findChild(QWidget, f"{self.ability_slot}_section")
-        slot_section_label =  slot_section.get_title()[1]
-        slot_section_label.setText(selected_ability)
-        slot_section_label.setProperty("Rank", "Novice")
-        self.hide()
-        self.character_sheet.update_sheet()
                 
     def clear_layout(self,layout):
         for item in range(layout.count()):
@@ -241,7 +124,7 @@ class AbilityGUI(QWidget):
 
 def run_gui(name, version):
     app = QApplication(sys.argv)
-    w = AbilityGUI("","")
+    w = AddNewAbility("","")
     w.show()
     app.exec_()
 

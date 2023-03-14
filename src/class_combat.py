@@ -13,7 +13,7 @@ import json
 import threading
 import template.functions as func
 
-from gui_windows.gui_combat_entry import CombatEntry
+from gui_windows.gui_combat_frame import CombatEntry
 
 class CombatLog:
     def __init__(
