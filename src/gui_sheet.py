@@ -111,7 +111,7 @@ class CharacterSheetGUI(QWidget):
                 property=("roll",stat),
                 objectname=stat,
                 class_group=self.widget_group,
-                height=cons.WSIZE*2,
+                height=cons.WSIZE*1.5,
                 stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_COLOR}; font-size: 20px; font-weight: bold; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-top-right-radius: 6px;"
             )
 
@@ -132,8 +132,8 @@ class CharacterSheetGUI(QWidget):
             signal=self.add_sub,
             objectname = "TOUGHNESS",
             class_group=self.widget_group,
+            height=cons.WSIZE*1.5,
             stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_COLOR}; font-size: 20px; font-weight: bold; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-top-right-radius: 6px;"
-
         )
 
         self.toughness_current_label= Widget(
@@ -143,8 +143,8 @@ class CharacterSheetGUI(QWidget):
             text = "TOUGHNESS",
             class_group=self.widget_group,
             signal=self.modify_stat,
+            height=cons.WSIZE,
             stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_DARK}; font-size: 10px; font-weight: bold; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;"
-
         )
 
         self.toughness_max= Widget(
@@ -152,6 +152,7 @@ class CharacterSheetGUI(QWidget):
             parent_layout=self.hp_layout.inner_layout(2),
             objectname = "MAXIMUM",
             class_group=self.widget_group,
+            height=cons.WSIZE*1.5,
             stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_COLOR}; font-size: 20px; font-weight: bold; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-top-right-radius: 6px;"
 
         )
@@ -163,6 +164,7 @@ class CharacterSheetGUI(QWidget):
             text = "MAXIMUM",
             class_group=self.widget_group,
             signal=self.modify_stat,
+            height=cons.WSIZE,
             stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_DARK}; font-size: 10px; font-weight: bold; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;"
 
         )
@@ -172,6 +174,7 @@ class CharacterSheetGUI(QWidget):
             parent_layout=self.hp_layout.inner_layout(3),
             objectname = "PAIN",
             class_group=self.widget_group,
+            height=cons.WSIZE*1.5,
             stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_COLOR}; font-size: 20px; font-weight: bold; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-top-right-radius: 6px;"
 
         )
@@ -183,6 +186,7 @@ class CharacterSheetGUI(QWidget):
             text = "THRESHOLD",
             class_group=self.widget_group,
             signal=self.modify_stat,
+            height=cons.WSIZE,
             stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_DARK}; font-size: 10px; font-weight: bold; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;"
 
         )
@@ -193,6 +197,7 @@ class CharacterSheetGUI(QWidget):
             signal=self.add_sub,
             objectname = "CORRUPTION",
             class_group=self.widget_group,
+            height=cons.WSIZE*1.5,
             stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_COLOR}; font-size: 20px; font-weight: bold; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-top-right-radius: 6px;"
         )
 
@@ -203,6 +208,7 @@ class CharacterSheetGUI(QWidget):
             text = "CORRUPTION",
             objectname = "CORRUPTION_mod",
             signal = self.modify_stat,
+            height=cons.WSIZE,
             stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_DARK}; font-size: 10px; font-weight: bold; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;"
 
         )
@@ -213,6 +219,7 @@ class CharacterSheetGUI(QWidget):
             signal=self.add_sub,
             objectname = "PERMANENT",
             class_group=self.widget_group,
+            height=cons.WSIZE*1.5,
             stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_COLOR}; font-size: 20px; font-weight: bold; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-top-right-radius: 6px;"
         )
 
@@ -223,6 +230,7 @@ class CharacterSheetGUI(QWidget):
             text = "PERMANENT",
             objectname = "PERMANENT_mod",
             signal = self.modify_stat,
+            height=cons.WSIZE,
             stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_DARK}; font-size: 10px; font-weight: bold; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;"
 
         )
@@ -232,6 +240,7 @@ class CharacterSheetGUI(QWidget):
             parent_layout=self.corruption_layout.inner_layout(3),
             objectname = "THRESHOLD",
             class_group=self.widget_group,
+            height=cons.WSIZE*1.5,
             stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_COLOR}; font-size: 20px; font-weight: bold; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-top-right-radius: 6px;"
         )
 
@@ -242,6 +251,7 @@ class CharacterSheetGUI(QWidget):
             text = "THRESHOLD",
             objectname = "THRESHOLD_mod",
             signal = self.modify_stat,
+            height=cons.WSIZE,
             stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_DARK}; font-size: 10px; font-weight: bold; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;"
 
         )

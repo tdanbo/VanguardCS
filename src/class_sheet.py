@@ -155,6 +155,8 @@ class CharacterSheet(QWidget):
         else:
             self.ATK_mod.setText(f"{self.CHARACTER_DOC['ATTACK mod']}")
 
+        self.modifier.setText("0")
+
     def modify_stats(self):
         for widget in [
             (self.ACC, self.ACC_mod), 
@@ -477,12 +479,6 @@ class CharacterSheet(QWidget):
     def set_combat_log(self, clog):
         self.combat_log = clog
 
-        self.ATK_mod = clog.findChild(QWidget, "ATTACK mod")
-        self.DEF_mod = clog.findChild(QWidget, "DEFENSE mod")
-        self.CAS_mod = clog.findChild(QWidget, "CASTING mod")
-        self.SNE_mod = clog.findChild(QWidget, "SNEAKING mod")
-        self.ATK_mod = clog.findChild(QWidget, "ATTACK mod")
-
     def set_inv_vars(self, isheet):
         print("Setting inv vars")
         self.isheet = isheet
@@ -491,6 +487,14 @@ class CharacterSheet(QWidget):
 
         self.XP = isheet.findChild(QWidget, "experience")
         self.UXP = isheet.findChild(QWidget, "total experience")
+
+        self.ATK_mod = isheet.findChild(QWidget, "ATTACK mod")
+        self.DEF_mod = isheet.findChild(QWidget, "DEFENSE mod")
+        self.CAS_mod = isheet.findChild(QWidget, "CASTING mod")
+        self.SNE_mod = isheet.findChild(QWidget, "SNEAKING mod")
+        self.ATK_mod = isheet.findChild(QWidget, "ATTACK mod")
+
+        self.modifier = isheet.findChild(QWidget, "modifier")
 
         self.experience = self.isheet.experience.get_widget()
 

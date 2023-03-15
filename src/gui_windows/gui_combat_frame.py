@@ -60,6 +60,8 @@ class CombatEntry(QWidget):
             width=cons.WSIZE*4,
         )
 
+        self.portrait.get_widget().setAlignment(Qt.AlignCenter)
+
         self.item = Widget(
             widget_type=QPushButton(),
             parent_layout=self.item_section.inner_layout(3),

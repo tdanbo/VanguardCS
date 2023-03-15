@@ -15,9 +15,6 @@ import re
 class AbilityItem(QWidget):
     def __init__(self, character_sheet, ability_dict, select = False, slot = None):
         super().__init__()
-        print("testing")
-
-        print(ability_dict)
         self.select = select
 
         self.character_sheet = character_sheet
@@ -27,7 +24,6 @@ class AbilityItem(QWidget):
         self.unspent_xp = self.character_sheet.UXP
 
         self.slot = slot
-        print(self.slot)
         # an empty widget was used to push the content together. might need to introduce.
 
         self.master_layout = QVBoxLayout()
@@ -304,7 +300,6 @@ class AbilityItem(QWidget):
             self.set_rank_master.get_widget().setStyleSheet(f"background-color: {cons.FONT_COLOR}; color: {cons.PRIMARY_LIGHTER}; font-size: 11px; font-weight: bold; border: 1px solid {cons.BORDER}; border-radius: 6px;")
 
     def change_rank(self):
-        print("change rank")
         rank = self.sender().objectName()
         if rank == "ability_novice":
             self.ability_dict["Rank"] = "Novice"
@@ -318,7 +313,6 @@ class AbilityItem(QWidget):
         self.character_sheet.update_sheet()
 
     def build_dice_section(self, string, layout):
-        print(string)
 
         matches = re.findall(r'\b\d*[dD]\d+\+?\d*\b', string)
         if not matches:
@@ -333,7 +327,6 @@ class AbilityItem(QWidget):
 
             )
             for dice in matches:
-                print(dice)
                 self.ability_dice = Widget(
                     widget_type=QToolButton(),
                     parent_layout=self.dice_section.inner_layout(1),
@@ -349,13 +342,11 @@ class AbilityItem(QWidget):
             self.dice_section.inner_layout(1).setAlignment(Qt.AlignRight)
 
     def select_ability(self):
-        print(self.ability_dict)
         self.ability_dict["Rank"] = "Novice"
         self.character_sheet.CHARACTER_DOC["abilities"].append(self.ability_dict)
         self.character_sheet.update_sheet()
 
     def roll_dice(self):
-        print("rolling dice")
         self.character = self.character_sheet.character_name
         self.combat_log = self.character_sheet.combat_log
         self.roll_type = self.sender().property("roll")   
@@ -370,9 +361,6 @@ class AbilityItem(QWidget):
         rolling_dice = DiceRoll(self.combat_log,self.character,self.roll_type.capitalize(),self.dice, check = self.check).roll()
 
 def get_abilities(category, name):
-    print(category)
-    print(name)
-
     all_equipment = {}
     client = pymongo.MongoClient(cons.CONNECT)
     # get a list of collection names

@@ -10,6 +10,8 @@ from template.widget import Widget
 from gui_functions.class_roll import DiceRoll
 from gui_functions.class_modify_stat import ModifyStat
 
+from gui_windows.gui_add_sub import AddSub
+
 class InventoryItem(QWidget):
     def __init__(self, character_sheet, count, item_dict, equipment=""):
         super().__init__()
@@ -72,18 +74,13 @@ class InventoryItem(QWidget):
         self.item_dict = item_dict
         self.name = self.item_dict["Name"]
         self.category = self.item_dict["Category"]
-        item_type = "Weapon" #item_dict["Type"] SET UP TYPES
-        qualities = self.item_dict["Quality"]
-        dice_type = self.item_dict["Roll"][0]
-        dice = self.item_dict["Roll"][1]
-        self.equipped = self.item_dict["Equipped"]
+        self.item_type = self.item_dict["Type"]
 
-        if "Impeding" in self.item_dict:
-            impeding = f" {self.item_dict['Impeding']}"
-        else:
-            impeding = ""
+        if "Equipped" in self.item_dict:
+            self.equipped = self.item_dict["Equipped"]
 
-        color_type = {"melee": "#925833", "ranged": "#925833", "armor": "#495c60", "elixirs": "#926f2b"}
+
+        color_type = {"melee": "#925833", "ranged": "#925833", "armor": "#495c60", "elixirs": "#926f2b", "ammunition": "#925833", "treasure": "#926f2b", "misc": "#926f2b"}
         self.type_bg_color = color_type[self.category]
 
         self.item.widget.setText(self.name)
@@ -124,30 +121,36 @@ class InventoryItem(QWidget):
 
         self.item_section.inner_layout(1).setSpacing(1)
 
-        self.quality_section = Section(
-            outer_layout=QVBoxLayout(),
-            inner_layout=("HBox", 1),
-            parent_layout=self.item_section.inner_layout(2),
-            class_group=self.section_group,
-            spacing=2,
-        )
+        # If item has qualities
 
-        for count, quality in enumerate(qualities):
-            self.item_quality = Widget(
-                widget_type=QToolButton(),
-                parent_layout=self.quality_section.inner_layout(1),
-                objectname=quality,
-                class_group=self.widget_group,
-                icon=(f"{quality}.png", cons.WSIZE / 2, cons.FONT_COLOR),
-                stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_DARK}; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-radius: 6px;",
-                height=cons.WSIZE,
-                width=cons.WSIZE,
+        if "Quality" in self.item_dict:
+            qualities = self.item_dict["Quality"]
+            self.quality_section = Section(
+                outer_layout=QVBoxLayout(),
+                inner_layout=("HBox", 1),
+                parent_layout=self.item_section.inner_layout(2),
+                class_group=self.section_group,
+                spacing=2,
             )
+
+            for count, quality in enumerate(qualities):
+                self.item_quality = Widget(
+                    widget_type=QToolButton(),
+                    parent_layout=self.quality_section.inner_layout(1),
+                    objectname=quality,
+                    class_group=self.widget_group,
+                    icon=(f"{quality}.png", cons.WSIZE / 2, cons.FONT_COLOR),
+                    stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_DARK}; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-radius: 6px;",
+                    height=cons.WSIZE,
+                    width=cons.WSIZE,
+                )
+
+            self.quality_section.inner_layout(1).setAlignment(Qt.AlignLeft)
 
         self.item_label = Widget(
             widget_type=QLabel(),
             parent_layout=self.item_section.inner_layout(3),
-            text=item_type + impeding,
+            text=self.item_type,
             objectname="item",
             class_group=self.widget_group,
             align="right",
@@ -155,22 +158,45 @@ class InventoryItem(QWidget):
             
         )
 
-        self.item_dice = Widget(
-            widget_type=QToolButton(),
-            parent_layout=self.item_section.inner_layout(3),
-            text=dice,
-            objectname="item",
-            class_group=self.widget_group,
-            stylesheet=f"padding-left: 5px; padding-right: 5px; background-color: {cons.PRIMARY_LIGHTER}; color: {self.type_bg_color}; font-size: 11px; font-weight: bold; border: 1px solid {cons.BORDER}; border-radius: 6px;",
-            height=cons.WSIZE,
-            signal=self.roll_dice,
-            property=("roll",dice_type)
-        )
+        # If item has a roll
 
-        self.quality_section.inner_layout(1).setAlignment(Qt.AlignLeft)
+        if "Roll" in self.item_dict:
+            dice_type = self.item_dict["Roll"][0]
+            dice = self.item_dict["Roll"][1]
+
+            self.item_dice = Widget(
+                widget_type=QToolButton(),
+                parent_layout=self.item_section.inner_layout(3),
+                text=dice,
+                objectname="item",
+                class_group=self.widget_group,
+                stylesheet=f"padding-left: 5px; padding-right: 5px; background-color: {cons.PRIMARY_LIGHTER}; color: {self.type_bg_color}; font-size: 11px; font-weight: bold; border: 1px solid {cons.BORDER}; border-radius: 6px;",
+                height=cons.WSIZE,
+                signal=self.roll_dice,
+                property=("roll",dice_type)
+            )
+
+        elif "Quantity" in self.item_dict:
+            quantity = self.item_dict["Quantity"]
+
+            self.quantity = Widget(
+                widget_type=QToolButton(),
+                parent_layout=self.item_section.inner_layout(3),
+                text=str(quantity),
+                objectname="quantity",
+                class_group=self.widget_group,
+                stylesheet=f"padding-left: 5px; padding-right: 5px; background-color: {cons.PRIMARY_LIGHTER}; color: {self.type_bg_color}; font-size: 11px; font-weight: bold; border: 1px solid {cons.BORDER}; border-radius: 6px;",
+                height=cons.WSIZE,
+                signal=self.add_sub,
+            )
+
         self.item_section.inner_layout(1).setAlignment(Qt.AlignLeft)
         self.item_section.inner_layout(2).setAlignment(Qt.AlignRight)
         self.item_label.get_widget().setAlignment(Qt.AlignRight | Qt.AlignVCenter)
+
+    def add_sub(self):
+        add_sub_gui = AddSub(self.character_sheet, self.sender(), doc_item = self.count, item=True)
+        add_sub_gui.show()
 
     def roll_dice(self):
         self.character = self.character_sheet.character_name
@@ -183,7 +209,12 @@ class InventoryItem(QWidget):
             self.check = 0
             self.dice = self.sender().text()
 
-        rolling_dice = DiceRoll(self.combat_log,self.character,self.roll_type.capitalize(), self.dice, check = self.check).roll()
+        if self.item_type == "Ranged Weapon":
+            needs_ammo = True
+        else:
+            needs_ammo = False
+
+        rolling_dice = DiceRoll(self.combat_log,self.character,self.roll_type.capitalize(), self.dice, check = self.check, sheet=self.character_sheet, ammo=needs_ammo).roll()
 
     def prepare_equip_item(self):
         self.equip_button = self.sender()

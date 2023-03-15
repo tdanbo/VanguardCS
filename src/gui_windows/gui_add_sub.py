@@ -9,11 +9,12 @@ import constants as cons
 
 
 class AddSub(QWidget):
-    def __init__(self, character_sheet, widget, doc_item = ""):
+    def __init__(self, character_sheet, widget, doc_item = "", item = False):
         super().__init__(None, Qt.WindowStaysOnTopHint)
 
         self.widget = widget
         self.doc_item = doc_item
+        self.item = item
         self.character_sheet = character_sheet
 
         self.master_layout = QVBoxLayout()
@@ -80,7 +81,11 @@ class AddSub(QWidget):
         self.setLayout(self.master_layout)
 
     def send_value(self):
-        current_value = int(self.character_sheet.CHARACTER_DOC[self.doc_item])
+        if self.item == True:
+            current_value = int(self.character_sheet.CHARACTER_DOC["inventory"][self.doc_item]["Quantity"])
+        else:
+            current_value = int(self.character_sheet.CHARACTER_DOC[self.doc_item])
+
         value = int(self.integer_line.get_widget().text())
     
         state = self.sender().objectName()
@@ -89,6 +94,10 @@ class AddSub(QWidget):
         else:
             new_value = current_value - value
         
-        self.character_sheet.CHARACTER_DOC[self.doc_item] = new_value
+        if self.item == True:
+            self.character_sheet.CHARACTER_DOC["inventory"][self.doc_item]["Quantity"] = new_value
+        else:   
+            self.character_sheet.CHARACTER_DOC[self.doc_item] = new_value
+    
         self.character_sheet.update_sheet()
         self.close()

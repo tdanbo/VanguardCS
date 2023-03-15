@@ -8,16 +8,21 @@ from PySide2.QtGui import *
 from PySide2.QtCore import *
 
 class DiceRoll:
-    def __init__(self, combat_log, character, roll_type, dice, check=0):
+    def __init__(self, combat_log, character, roll_type, dice, check=0, sheet=None, ammo=False):
 
+        self.character_sheet = sheet
         self.combat_log = combat_log
         self.modifier_widget = self.combat_log.modifier_button.get_widget()
         self.dice = dice
         self.modifier = int(self.modifier_widget.text())
         self.check = check
         self.roll_type = roll_type
+        self.ammo = ammo
 
         self.check_active_modifiers()
+
+        print(roll_type)
+        print(roll_type)
 
         self.entry  = {
             "Character": character,
@@ -33,6 +38,13 @@ class DiceRoll:
         self.modifier_widget.setText("0")
 
     def roll(self):
+        if self.ammo == True:
+            if self.subtract_ammo() == True:
+                pass
+            else:
+                print("No ammo")
+                return
+
         dice_roll = 0
         breakdowns = []
 
@@ -78,6 +90,15 @@ class DiceRoll:
         self.set_time()
 
         self.save_to_database()
+
+    def subtract_ammo(self):
+        has_ammo = False
+        for item in self.character_sheet.CHARACTER_DOC["equipment"]:
+            if self.character_sheet.CHARACTER_DOC["equipment"][item]["Type"] == "Arrow":
+                self.character_sheet.CHARACTER_DOC["equipment"][item]["Quantity"] -= 1
+                self.character_sheet.update_sheet()
+                has_ammo = True
+        return has_ammo
 
     def check_roll(self):
         if self.result <= self.check:
