@@ -12,7 +12,7 @@ class DiceRoll:
 
         self.character_sheet = sheet
         self.combat_log = combat_log
-        self.modifier_widget = self.combat_log.modifier_button.get_widget()
+        self.modifier_widget = self.character_sheet.modifier
         self.dice = dice
         self.modifier = int(self.modifier_widget.text())
         self.check = check
@@ -107,16 +107,16 @@ class DiceRoll:
             self.entry["Result Message"] = "Failed"
 
     def check_active_modifiers(self):
-        atk_value = self.combat_log.findChild(QWidget, "ATTACK mod")
-        def_value = self.combat_log.findChild(QWidget, "DEFENSE mod")
-        cas_value = self.combat_log.findChild(QWidget, "CASTING mod")
-        sne_value = self.combat_log.findChild(QWidget, "SNEAKING mod")
+        atk_value = self.character_sheet.ATK_mod
+        def_value = self.character_sheet.DEF_mod
+        cas_value = self.character_sheet.CAS_mod
+        sne_value = self.character_sheet.SNE_mod
 
-        atk_mod = self.combat_log.findChild(QWidget, "ATTACK button")
-        def_mod = self.combat_log.findChild(QWidget, "DEFENSE button")
-        cas_mod = self.combat_log.findChild(QWidget, "CASTING button")
-        sne_mod = self.combat_log.findChild(QWidget, "SNEAKING button")
-
+        atk_mod = self.character_sheet.ATK
+        def_mod = self.character_sheet.DEF
+        cas_mod = self.character_sheet.CAS
+        sne_mod = self.character_sheet.SNE
+        
         stylesheet_mod = f"background-color: {cons.PRIMARY_DARKER}; color: {cons.FONT_COLOR}; font-size: 20px; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-top-right-radius: 6px;"
         stylesheet_button  = f"background-color: {cons.PRIMARY_DARKER}; color: {cons.FONT_COLOR}; font-size: 20px; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;"
 

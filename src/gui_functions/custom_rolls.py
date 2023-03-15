@@ -24,18 +24,13 @@ def add_dice(self, dice, adjust="add"):
 
     if adjust == "add":
         count_widget.setText(str(current_value + 1))
-        count_widget.setHidden(False)
     else:
         if current_value > 0:
             count_widget.setText(str(current_value - 1))
             if count_widget.text() == "0":
-                count_widget.setText("")
-                count_widget.setHidden(True)
-                
+                count_widget.setText("")                
         else:
             count_widget.setText("")
-            count_widget.setHidden(True)
-
     if count_widget.text() == "":
         roll_button(self, shown=False)
     else:
@@ -48,9 +43,7 @@ def roll_button(self, shown=False):
     self.roll_button.get_widget().setHidden(not shown)
 
 def clear_rolls(self):
-    for objectname in ["d4","d6","d8","d10","d12","d20","MOD"]:
-        widget = self.findChild(QPushButton, objectname)
+    for objectname in ["d4","d6","d8","d10","d12","d20"]:
         counter = self.findChild(QPushButton, f"{objectname}_count")
         counter.setText("")
-        counter.setHidden(True)
     roll_button(self, shown=False)

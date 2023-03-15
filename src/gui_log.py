@@ -63,7 +63,7 @@ class CombatLogGUI(QWidget):
             objectname="roll",
             signal= lambda: self.roll_dice(),
             class_group = self.widget_group,
-            stylesheet=f"background-color: {cons.FONT_COLOR}; color: {cons.FONT_COLOR}; font-weight: bold;"
+            stylesheet=f"background-color: {cons.FONT_COLOR}; color: {cons.PRIMARY_LIGHTER}; font-weight: bold;"
         )   
 
         self.roll_button.get_widget().setHidden(True)
@@ -76,25 +76,9 @@ class CombatLogGUI(QWidget):
                 outer_layout = QHBoxLayout(),
                 inner_layout = ("VBox", 1),
                 parent_layout = self.log_dice.inner_layout(0),
-                spacing=0,
+                spacing=3,
                 class_group = self.section_group                
             )
-
-            self.dice_w = Widget(
-                widget_type=QPushButton(),
-                parent_layout=self.dice_layout.inner_layout(0),
-                objectname=die_type[0],
-                text = die_type[0],
-                #icon = (f"{die_type[0]}.png","",cons.FONT_COLOR,100),
-                signal=functools.partial(
-                    custom_rolls.add_dice,
-                    self,
-                    die_type[0]
-                ),
-                class_group=self.widget_group,
-                stylesheet=f"font-weight: bold; color: {cons.FONT_COLOR}; background-color: {cons.PRIMARY_LIGHTER}; border: 1px solid {cons.BORDER}; border-radius: 6px;",
-                size_policy=(QSizePolicy.Expanding, QSizePolicy.Expanding)
-            )  
 
             self.dice_count = Widget(
                 widget_type=QPushButton(),
@@ -108,13 +92,28 @@ class CombatLogGUI(QWidget):
                 ),
                 class_group=self.widget_group,
                 size_policy=(QSizePolicy.Expanding, QSizePolicy.Expanding),
-                stylesheet=f"font-weight: bold; color: {cons.FONT_COLOR}; background-color: {cons.PRIMARY_LIGHTER}; border: 1px solid {cons.BORDER}; border-radius: 6px;"
+                stylesheet=f"font-weight: bold; color: {cons.FONT_COLOR}; background-color: {cons.PRIMARY_LIGHTER}; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-top-right-radius: 6px;"
 
-            )      
+            )  
+
+            self.dice_w = Widget(
+                widget_type=QPushButton(),
+                parent_layout=self.dice_layout.inner_layout(0),
+                objectname=die_type[0],
+                text = die_type[0],
+                #icon = (f"{die_type[0]}.png","",cons.FONT_COLOR,100),
+                signal=functools.partial(
+                    custom_rolls.add_dice,
+                    self,
+                    die_type[0]
+                ),
+                class_group=self.widget_group,
+                stylesheet=f"font-weight: bold; color: {cons.FONT_COLOR}; background-color: {cons.PRIMARY_LIGHTER}; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;",
+                size_policy=(QSizePolicy.Expanding, QSizePolicy.Expanding)
+            )     
 
             self.dice_count.get_widget().setMinimumWidth(cons.WSIZE*1.5)
             self.dice_w.get_widget().setMinimumWidth(cons.WSIZE*1.5)
-            self.dice_count.get_widget().setHidden(True)
 
         self.combet_log_slots = []
         for count in range (21): # Make all static entries in the combatlog
@@ -161,8 +160,11 @@ class CombatLogGUI(QWidget):
             if counter.text() != "":
                 rolls.append(f"{counter.text()}{dice}")
                 counter.setText("")
-                counter.setHidden(True)
 
         print(rolls)
         roll = "_".join(rolls)
-        rolling_dice = DiceRoll(self, self.character, "Custom", roll, check = 0).roll()
+        rolling_dice = DiceRoll(self, self.character, "Custom", roll, check = 0, sheet=self.character_sheet).roll()
+
+        self.roll_button.get_widget().setHidden(True)
+        title_widgets = self.log_dice.get_title()
+        title_widgets[1].setHidden(False)

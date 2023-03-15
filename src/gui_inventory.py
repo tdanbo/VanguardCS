@@ -38,13 +38,15 @@ class InventoryGUI(QWidget):
             parent_layout = self.master_layout,
             group = True,
             title = "Test",
-            icon = ("plus.png",cons.WSIZE/2,cons.ICON_COLOR),
+            icon = ("plus.png",cons.WSIZE/2,cons.FONT_COLOR),
             class_group = self.section_group,
             spacing=3
         )
 
         self.portrait_layout.get_title()[1].setText("")
-        
+        self.portrait_layout.get_title()[0].setStyleSheet(f"background-color: {cons.PRIMARY_LIGHTER}; border: 1px solid {cons.BORDER};")
+
+
         self.name_layout = Section(
             outer_layout = QVBoxLayout(),
             inner_layout = ("HBox", 2),
@@ -88,7 +90,8 @@ class InventoryGUI(QWidget):
             text=[""],
             class_group=self.widget_group,
             signal=lambda: self.character_sheet.load_character(self,self.character_name.get_widget().currentText()),
-            stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; border: 1px solid {cons.BORDER};",
+            height=cons.WSIZE,
+            stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; border: 1px solid {cons.BORDER}; font-size: 14px; font-weight: bold; color: {cons.FONT_COLOR};",
 
         )
 

@@ -488,6 +488,12 @@ class CharacterSheet(QWidget):
         self.XP = isheet.findChild(QWidget, "experience")
         self.UXP = isheet.findChild(QWidget, "total experience")
 
+        self.ATK = isheet.findChild(QWidget, "ATTACK button")
+        self.DEF = isheet.findChild(QWidget, "DEFENSE button")
+        self.CAS = isheet.findChild(QWidget, "CASTING button")
+        self.SNE = isheet.findChild(QWidget, "SNEAKING button")
+        self.ATK = isheet.findChild(QWidget, "ATTACK button")
+
         self.ATK_mod = isheet.findChild(QWidget, "ATTACK mod")
         self.DEF_mod = isheet.findChild(QWidget, "DEFENSE mod")
         self.CAS_mod = isheet.findChild(QWidget, "CASTING mod")
