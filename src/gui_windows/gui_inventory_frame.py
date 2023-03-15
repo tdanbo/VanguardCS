@@ -160,20 +160,29 @@ class InventoryItem(QWidget):
 
         # If item has a roll
 
+        self.roll_section = Section(
+            outer_layout=QVBoxLayout(),
+            inner_layout=("HBox", 1),
+            parent_layout=self.item_section.inner_layout(3),
+            class_group=self.section_group,
+            spacing=2,
+        )
+
+
         if "Roll" in self.item_dict:
             dice_type = self.item_dict["Roll"][0]
             dice = self.item_dict["Roll"][1]
 
             self.item_dice = Widget(
                 widget_type=QToolButton(),
-                parent_layout=self.item_section.inner_layout(3),
+                parent_layout=self.roll_section.inner_layout(1),
                 text=dice,
                 objectname="item",
                 class_group=self.widget_group,
                 stylesheet=f"padding-left: 5px; padding-right: 5px; background-color: {cons.PRIMARY_LIGHTER}; color: {self.type_bg_color}; font-size: 11px; font-weight: bold; border: 1px solid {cons.BORDER}; border-radius: 6px;",
                 height=cons.WSIZE,
                 signal=self.roll_dice,
-                property=("roll",dice_type)
+                property=("roll",dice_type),
             )
 
         elif "Quantity" in self.item_dict:
@@ -181,7 +190,7 @@ class InventoryItem(QWidget):
 
             self.quantity = Widget(
                 widget_type=QToolButton(),
-                parent_layout=self.item_section.inner_layout(3),
+                parent_layout=self.roll_section.inner_layout(1),
                 text=str(quantity),
                 objectname="quantity",
                 class_group=self.widget_group,
@@ -189,6 +198,8 @@ class InventoryItem(QWidget):
                 height=cons.WSIZE,
                 signal=self.add_sub,
             )
+
+        self.roll_section.inner_layout(1).setAlignment(Qt.AlignRight)
 
         self.item_section.inner_layout(1).setAlignment(Qt.AlignLeft)
         self.item_section.inner_layout(2).setAlignment(Qt.AlignRight)
@@ -214,7 +225,7 @@ class InventoryItem(QWidget):
         else:
             needs_ammo = False
 
-        rolling_dice = DiceRoll(self.combat_log,self.character,self.roll_type.capitalize(), self.dice, check = self.check, sheet=self.character_sheet, ammo=needs_ammo).roll()
+        rolling_dice = DiceRoll(self.sender(),self.combat_log,self.character,self.roll_type.capitalize(), self.dice, check = self.check, sheet=self.character_sheet, ammo=needs_ammo).roll()
 
     def prepare_equip_item(self):
         self.equip_button = self.sender()

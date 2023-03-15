@@ -297,7 +297,7 @@ class CharacterSheetGUI(QWidget):
             self.check = 0
             self.dice = self.sender().text()
 
-        rolling_dice = DiceRoll(self.combat_log,self.character,self.roll_type.capitalize(),self.dice, check = self.check).roll()
+        rolling_dice = DiceRoll(self.sender(),self.combat_log,self.character,self.roll_type.capitalize(),self.dice, check = self.check, sheet = self.character_sheet).roll()
 
     def add_sub(self):
         doc_string = self.sender().objectName()

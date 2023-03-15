@@ -8,7 +8,7 @@ from PySide2.QtGui import *
 from PySide2.QtCore import *
 
 class DiceRoll:
-    def __init__(self, combat_log, character, roll_type, dice, check=0, sheet=None, ammo=False):
+    def __init__(self, widget, combat_log, character, roll_type, dice, check=0, sheet=None, ammo=False):
 
         self.character_sheet = sheet
         self.combat_log = combat_log
@@ -18,6 +18,7 @@ class DiceRoll:
         self.check = check
         self.roll_type = roll_type
         self.ammo = ammo
+        self.widget = widget
 
         self.check_active_modifiers()
 
@@ -41,8 +42,12 @@ class DiceRoll:
         if self.ammo == True:
             if self.subtract_ammo() == True:
                 pass
+                # stylesheet=f"padding-left: 5px; padding-right: 5px; background-color: {cons.PRIMARY_LIGHTER}; color: {cons.PRIMARY_DARKER}; font-size: 11px; font-weight: bold; border: 1px solid {cons.BORDER}; border-radius: 6px;"
+                # self.widget.setStyleSheet(stylesheet)
             else:
                 print("No ammo")
+                stylesheet=f"padding-left: 5px; padding-right: 5px; background-color: {cons.PRIMARY_LIGHTER}; color: {cons.PRIMARY_DARKER}; font-size: 11px; font-weight: bold; border: 1px solid {cons.BORDER}; border-radius: 6px;"
+                self.widget.setStyleSheet(stylesheet)
                 return
 
         dice_roll = 0
@@ -93,11 +98,15 @@ class DiceRoll:
 
     def subtract_ammo(self):
         has_ammo = False
-        for item in self.character_sheet.CHARACTER_DOC["equipment"]:
-            if self.character_sheet.CHARACTER_DOC["equipment"][item]["Type"] == "Arrow":
-                self.character_sheet.CHARACTER_DOC["equipment"][item]["Quantity"] -= 1
-                self.character_sheet.update_sheet()
-                has_ammo = True
+        for value, item in self.character_sheet.CHARACTER_DOC["equipment"].items():
+            if item != {}:
+                if self.character_sheet.CHARACTER_DOC["equipment"][value]["Type"] == "Arrow":
+                    if self.character_sheet.CHARACTER_DOC["equipment"][value]["Quantity"] > 0:
+                        self.character_sheet.CHARACTER_DOC["equipment"][value]["Quantity"] -= 1
+                        self.character_sheet.update_sheet()
+                        has_ammo = True
+                    else:
+                        has_ammo = False
         return has_ammo
 
     def check_roll(self):

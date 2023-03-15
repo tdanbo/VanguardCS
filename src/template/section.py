@@ -163,3 +163,6 @@ class Section(QWidget):
 
     def get_title(self):
         return (self.title_icon, self.title_label, self.title_layout)
+    
+    def get_scroll(self):
+        return self.scroll_area_widget

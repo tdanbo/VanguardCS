@@ -56,6 +56,9 @@ class InventoryGUI(QWidget):
             spacing=3,
         )
 
+        scroll_style = f"QScrollBar {{background-color: {cons.PRIMARY_LIGHTER}; width: 6px;}}"\
+                       f"QScrollBar::handle:vertical {{background-color: {cons.BORDER}; width: 6px; min-height: 20px; border: none; outline: none;}}"\
+
         self.inventory_scroll = Section(
             outer_layout = QVBoxLayout(),
             inner_layout = ("VBox", 1),
@@ -65,8 +68,11 @@ class InventoryGUI(QWidget):
             group = True,   
             class_group = self.section_group,
             spacing=0,
-            content_margin=(0,0,0,0),	
+            content_margin=(0,0,0,0),
+            stylesheet=scroll_style	
         )
+
+
 
         self.inventory_scroll.get_title()[1].setAlignment(Qt.AlignCenter)
 
@@ -190,13 +196,13 @@ class InventoryGUI(QWidget):
                 objectname=f"{stat} mod",
                 class_group=self.widget_group,
                 size_policy=(QSizePolicy.Expanding, QSizePolicy.Expanding),
-                stylesheet=f"background-color: {cons.PRIMARY_DARKER}; color: {cons.FONT_COLOR}; font-size: 20px; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-top-right-radius: 6px;"
+                stylesheet=f"background-color: {cons.PRIMARY_DARKER}; color: {cons.FONT_COLOR}; font-size: 15px; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-top-right-radius: 6px;"
             )
 
             self.extra_modifier_label = Widget(
                 widget_type=QToolButton(),
                 parent_layout=self.active_section.inner_layout(number+1),
-                icon=(f"{stat.capitalize()}.png","",cons.FONT_COLOR,cons.WSIZE),
+                icon=(f"{stat.capitalize()}.png","",cons.FONT_DARK,cons.WSIZE),
                 class_group=self.widget_group,
                 size_policy=(QSizePolicy.Expanding, QSizePolicy.Expanding),
                 stylesheet=f"background-color: {cons.PRIMARY_DARKER}; color: {cons.FONT_DARK}; font-size: 10px; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;",
@@ -225,14 +231,14 @@ class InventoryGUI(QWidget):
             signal=lambda: self.adjust_modifier("add"),
             objectname="modifier",
             class_group=self.widget_group,
-            stylesheet=f"background-color: {cons.PRIMARY_DARKER}; color: {cons.FONT_COLOR}; font-size: 20px; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-top-right-radius: 6px;",
+            stylesheet=f"background-color: {cons.PRIMARY_DARKER}; color: {cons.FONT_COLOR}; font-size: 15px; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-top-right-radius: 6px;",
             size_policy=(QSizePolicy.Expanding, QSizePolicy.Expanding),
         )
 
         self.modifier_label = Widget(
             widget_type=QToolButton(),
             parent_layout=self.modifier_section.inner_layout(1),
-            icon=(f"Modifier.png","",cons.FONT_COLOR,cons.WSIZE),
+            icon=(f"Modifier.png","",cons.FONT_DARK,cons.WSIZE),
             class_group=self.widget_group,
             size_policy=(QSizePolicy.Expanding, QSizePolicy.Expanding),
             stylesheet=f"background-color: {cons.PRIMARY_DARKER}; color: {cons.FONT_DARK}; font-size: 10px; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;",
@@ -390,7 +396,7 @@ class InventoryGUI(QWidget):
             self.check = 0
             self.dice = self.sender().text()
 
-        rolling_dice = DiceRoll(self.combat_log,self.character,self.roll_type.capitalize(),self.dice, check = self.check).roll()
+        rolling_dice = DiceRoll(self.sender(),self.combat_log,self.character,self.roll_type.capitalize(),self.dice, check = self.check).roll()
 
     def add_sub(self):
         doc_string = self.sender().objectName()
@@ -408,23 +414,23 @@ class InventoryGUI(QWidget):
             if button != current_mod_name:
                 mod_widget = self.findChild(QWidget, button)
                 mod_widget.setChecked(False)
-                stylesheet=f"background-color: {cons.PRIMARY_DARKER}; color: {cons.FONT_COLOR}; font-size: 20px; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;"
+                stylesheet=f"background-color: {cons.PRIMARY_DARKER}; color: {cons.FONT_COLOR}; font-size: 15px; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;"
                 mod_widget.setStyleSheet(stylesheet)
 
         for mod in ["ATTACK mod","DEFENSE mod","CASTING mod","SNEAKING mod"]:
             if mod != current_button_name:
                 mod_widget = self.findChild(QWidget, mod)
                 mod_widget.setChecked(False)
-                stylesheet=f"background-color: {cons.PRIMARY_DARKER}; color: {cons.FONT_COLOR}; font-size: 20px; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-top-right-radius: 6px;"
+                stylesheet=f"background-color: {cons.PRIMARY_DARKER}; color: {cons.FONT_COLOR}; font-size: 15px; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-top-right-radius: 6px;"
                 mod_widget.setStyleSheet(stylesheet)
 
 
         if current_mod.isChecked():
-            current_button.setStyleSheet(f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_COLOR}; font-size: 20px; font-weight: bold; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-top-right-radius: 6px;")
+            current_button.setStyleSheet(f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_COLOR}; font-size: 15px; font-weight: bold; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-top-right-radius: 6px;")
             current_mod.setStyleSheet(f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_COLOR}; font-size: 10px; font-weight: bold; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;")
         else:
-            current_button.setStyleSheet(f"background-color: {cons.PRIMARY_DARKER}; color: {cons.FONT_COLOR}; font-size: 20px; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-top-right-radius: 6px;")
-            current_mod.setStyleSheet(f"background-color: {cons.PRIMARY_DARKER}; color: {cons.FONT_COLOR}; font-size: 20px; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;")
+            current_button.setStyleSheet(f"background-color: {cons.PRIMARY_DARKER}; color: {cons.FONT_COLOR}; font-size: 15px; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-top-right-radius: 6px;")
+            current_mod.setStyleSheet(f"background-color: {cons.PRIMARY_DARKER}; color: {cons.FONT_COLOR}; font-size: 15px; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;")
 
     def adjust_modifier(self, adjust):
         current_value = int(self.modifier_button.get_widget().text())

@@ -6,10 +6,9 @@ from template.section import Section
 from template.widget import Widget
 
 import constants as cons
-
 import functions as func
 
-import sys
+from qt_thread_updater import get_updater
 
 entry_dict = {
     "Character": "Beasttoe",
@@ -41,7 +40,7 @@ class CombatEntry(QWidget):
             parent_layout=self.master_layout,
             class_group=self.section_group,
             group=True,
-            content_margin=(0,0,0,0),
+            content_margin=(0,0,10,0),
             stylesheet=f"background-color: {bg_color};"
         )
 
@@ -105,12 +104,13 @@ class CombatEntry(QWidget):
         for section in self.section_group:
             section.connect_to_parent()
 
-        self.setStyleSheet(f"color: {cons.FONT_DARK}; background-color: {cons.DARK}; border-style: outset;")
-
         self.setFixedWidth(300)
         self.setFixedHeight(cons.WSIZE*2.5)
         self.setLayout(self.master_layout)
         self.master_layout.setContentsMargins(0,0,0,0)
+
+        style_a = f"color: {cons.FONT_DARK}; background-color: {cons.DARK}; border-style: outset;"
+        get_updater().call_latest(self.setStyleSheet, style_a)
 
     def update_widget(self,entry):
         self.character = entry["Character"]
@@ -131,9 +131,6 @@ class CombatEntry(QWidget):
         else:
             type_bg_color = color_type[self.type]   
 
-        self.character_label.get_widget().setStyleSheet(f"background-color: {type_bg_color}")
-        self.result_label.get_widget().setStyleSheet(f"background-color: {cons.PRIMARY_LIGHTER}; color: {type_bg_color}; font-size: 17px; font-weight: bold; border: 1px solid {cons.BORDER}; border-radius: 6px;")
-
         if self.modifier == "0":
             self.item.get_widget().setText(self.type)
         else:
@@ -148,3 +145,9 @@ class CombatEntry(QWidget):
         self.result_message_label.get_widget().setText(self.result_message)
 
         func.set_icon(self.portrait.get_widget(),f"{self.character}.png","")
+
+        style_b = f"background-color: {type_bg_color}"
+        get_updater().call_latest(self.character_label.get_widget().setStyleSheet, style_b)
+
+        style_c = f"background-color: {cons.PRIMARY_LIGHTER}; color: {type_bg_color}; font-size: 17px; font-weight: bold; border: 1px solid {cons.BORDER}; border-radius: 6px;"
+        get_updater().call_latest(self.result_label.get_widget().setStyleSheet, style_c)

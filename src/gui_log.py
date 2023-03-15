@@ -30,6 +30,9 @@ class CombatLogGUI(QWidget):
 
         #Setting up layouts/sections
 
+        scroll_style = f"QScrollBar {{background-color: {cons.PRIMARY_LIGHTER}; width: 6px;}}"\
+                       f"QScrollBar::handle:vertical {{background-color: {cons.BORDER}; width: 6px; min-height: 20px; border: none; outline: none;}}"\
+
         self.log_scroll = Section(
             outer_layout = QVBoxLayout(),
             inner_layout = ("VBox", 1),
@@ -39,6 +42,7 @@ class CombatLogGUI(QWidget):
             group = True,   
             class_group = self.section_group,
             content_margin=(0,0,0,0),	
+            stylesheet=scroll_style,
         )
 
         self.log_scroll.get_title()[1].setAlignment(Qt.AlignCenter)
@@ -108,7 +112,7 @@ class CombatLogGUI(QWidget):
                     die_type[0]
                 ),
                 class_group=self.widget_group,
-                stylesheet=f"font-weight: bold; color: {cons.FONT_COLOR}; background-color: {cons.PRIMARY_LIGHTER}; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;",
+                stylesheet=f"font-weight: bold; color: {cons.FONT_DARK}; background-color: {cons.PRIMARY_LIGHTER}; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;",
                 size_policy=(QSizePolicy.Expanding, QSizePolicy.Expanding)
             )     
 

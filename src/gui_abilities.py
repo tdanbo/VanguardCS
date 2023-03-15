@@ -70,6 +70,8 @@ class AddNewAbility(QWidget):
             class_group = self.widget_group,
         )
 
+        scroll_style = f"QScrollBar {{background-color: {cons.PRIMARY_LIGHTER}; width: 6px;}}"\
+                       f"QScrollBar::handle:vertical {{background-color: {cons.BORDER}; width: 6px; min-height: 20px; border: none; outline: none;}}"\
 
         self.feats_scroll = Section(
             outer_layout = QVBoxLayout(),
@@ -77,7 +79,8 @@ class AddNewAbility(QWidget):
             parent_layout = self.master_layout,
             scroll=(True,"top"),
             spacing = 10,
-            class_group=self.section_group, 
+            class_group=self.section_group,
+            stylesheet=scroll_style
         )
 
 

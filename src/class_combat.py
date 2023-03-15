@@ -53,7 +53,8 @@ class CombatLog:
         combat_log = reversed(self.get_log())
         for count,entry in enumerate(combat_log):
             self.combat_log_gui.combet_log_slots[count].update_widget(entry)
-            # log_gui_entry = CombatEntry(count, entry)
+        scrollbar = self.combat_log_gui.log_scroll.get_scroll().verticalScrollBar()
+        scrollbar.setValue(scrollbar.maximum())
             # layout.addWidget(log_gui_entry)
 
             # self.divider = QFrame()
