@@ -11,18 +11,10 @@ scriptname = os.path.basename(os.getcwd())
 
 data_list = []
 
-# IF YOU RUN PYSBS ENABLE THIS SECTION
-# site_packages = next(p for p in sys.path if 'site-packages' in p)
-# data_list.append((os.path.join(site_packages,"pysbs"),"pysbs"))
-
 # WILL ORGANISE ICONS TO DIST FOLDER
 icon_root = "src\\.icons"
-json_root = "src\\.json"
-file_root = "src\\.files"
-items_root = "src\\.items"
-feats_root = "src\\.feats"
 
-for data_root in [icon_root, json_root, file_root,items_root,feats_root]:
+for data_root in ["src\\.icons", "src\\gui_functions", "src\\gui_windows", "src\\template"]:
     for root, dirs, files in os.walk(data_root, topdown=False):
         for name in files:
             icon_path = os.path.join(root, name)

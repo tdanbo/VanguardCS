@@ -32,9 +32,6 @@ MAX_SLOTS = 16
 STATS = ["ACCURATE", "CUNNING", "DISCREET", "PERSUASIVE", "QUICK", "RESOLUTE", "STRONG", "VIGILANT"]
 ARMOR = ["armor"]
 
-
-ELEMENTS = json.load(open(os.path.join(ROOT, ".creatures", "elements.json"), "r"))
-
 abjuration = ["abjuration 1","abjuration 2","abjuration 3","abjuration 4","abjuration 5"]
 conjuration = ["conjuration 1","conjuration 2","conjuration 3","conjuration 4","conjuration 5"]
 divination = ["divination 1","divination 2","divination 3","divination 4","divination 5"]
