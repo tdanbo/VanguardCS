@@ -5,7 +5,7 @@ import os
 import json
 import constants as cons
 import template.functions as func
-
+import re
 
 class Widget:
     all_widgets = []
@@ -142,9 +142,10 @@ class Widget:
         elif validator == "numbers":
             widget.setValidator(QIntValidator())
         elif validator == "percent":
-            regex = QRegExp("^(0|[1-9]\d{0,2})(\.\d{1,2})?$")
-            validator = QRegExpValidator(regex)
-            widget.setValidator(validator)
+            # regex = QRegExp("^(0|[1-9]\d{0,2})(\.\d{1,2})?$")
+            # validator = QRegExpValidator(regex)
+            # widget.setValidator(validator)
+            print("Percent validator not implemented yet")
         else:
             pass
 

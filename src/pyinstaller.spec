@@ -12,16 +12,15 @@ scriptname = os.path.basename(os.getcwd())
 data_list = []
 
 # WILL ORGANISE ICONS TO DIST FOLDER
-icon_root = "src\\.icons"
 
-for data_root in ["src\\.icons"]:
+for data_root in [".icons"]:
     for root, dirs, files in os.walk(data_root, topdown=False):
         for name in files:
             icon_path = os.path.join(root, name)
             data_list.append((icon_path, os.path.basename(data_root)))
 
 a = Analysis(
-    ["src\\main.py"],
+    ["main.py"],
     pathex=[],
     binaries=[],
     datas=data_list,
@@ -52,7 +51,7 @@ exe = EXE(
     upx_exclude=[],
     runtime_tmpdir=None,
     console=True,
-    icon="src\\.icons\\app_icon.ico",
+    icon=".icons\\app_icon.ico",
     disable_windowed_traceback=False,
     target_arch=None,
     codesign_identity=None,

@@ -1,27 +1,20 @@
 # -*- mode: python ; coding: utf-8 -*-
-import os
-import sys
 
-site_packages = next(p for p in sys.path if "site-packages" in p)
-print(site_packages)
+
 block_cipher = None
 
-# SCRIPTNAME
-scriptname = os.path.basename(os.getcwd())
+print([item for item in os.listdir(".icons")])
 
 data_list = []
 
-# WILL ORGANISE ICONS TO DIST FOLDER
-icon_root = "src\\.icons"
+for file in os.listdir(".icons"):
+    icon_path = os.path.join(".icons", file)
+    data_list.append((icon_path, ".icons"))
 
-for data_root in ["src\\.icons"]:
-    for root, dirs, files in os.walk(data_root, topdown=False):
-        for name in files:
-            icon_path = os.path.join(root, name)
-            data_list.append((icon_path, os.path.basename(data_root)))
+print(data_list)
 
 a = Analysis(
-    ["src\\main.py"],
+    ['main.py'],
     pathex=[],
     binaries=[],
     datas=data_list,
@@ -33,7 +26,7 @@ a = Analysis(
     win_no_prefer_redirects=False,
     win_private_assemblies=False,
     cipher=block_cipher,
-    noarchive=True,
+    noarchive=False,
 )
 pyz = PYZ(a.pure, a.zipped_data, cipher=block_cipher)
 
@@ -44,7 +37,7 @@ exe = EXE(
     a.zipfiles,
     a.datas,
     [],
-    name=scriptname,
+    name='main',
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,
@@ -52,8 +45,8 @@ exe = EXE(
     upx_exclude=[],
     runtime_tmpdir=None,
     console=True,
-    icon="src\\.icons\\app_icon.ico",
     disable_windowed_traceback=False,
+    argv_emulation=False,
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
