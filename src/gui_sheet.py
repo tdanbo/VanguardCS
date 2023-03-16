@@ -7,17 +7,7 @@ from template.widget import Widget
 
 import functions as func
 import constants as cons
-
-from class_sheet import CharacterSheet
-
-import functools
-
-from gui_functions import custom_rolls
-
 from gui_abilities import AddNewAbility
-
-import math
-
 from gui_functions.class_roll import DiceRoll
 from gui_functions.class_modify_stat import ModifyStat
 

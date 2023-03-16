@@ -2,10 +2,6 @@ from PySide6.QtWidgets import *
 from PySide6.QtGui import *
 from PySide6.QtCore import *
 
-from class_sheet import CharacterSheet
-
-from gui_inventory import InventoryGUI
-
 '''
 This area of code handles the functions of the dice roller.
 '''

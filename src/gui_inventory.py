@@ -1,21 +1,12 @@
 from PySide6.QtWidgets import *
 from PySide6.QtGui import *
 from PySide6.QtCore import *
-
 from template.section import Section
 from template.widget import Widget
-
 import constants as cons
-import functions as func
-import functools
 import pymongo
-
-
-from gui_functions import character_xp
 from gui_functions import custom_rolls
-
 from gui_functions.class_roll import DiceRoll
-
 from gui_windows.gui_new_char_frame import NewCharacter
 from gui_windows.gui_add_sub import AddSub
 

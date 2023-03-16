@@ -1,10 +1,8 @@
 from PySide6.QtWidgets import *
 from PySide6.QtGui import *
 from PySide6.QtCore import *
-
 import os
 import json
-
 import constants as cons
 
 '''

@@ -1,16 +1,12 @@
 from PySide6.QtWidgets import *
 from PySide6.QtGui import *
 from PySide6.QtCore import *
-
 from gui_sheet import CharacterSheetGUI
 from gui_inventory import InventoryGUI
 from gui_log import CombatLogGUI
-
 import sys
-
 from class_combat import CombatLog
 from class_sheet import CharacterSheet
-
 import constants as cons
 
 class MainWindow(QWidget):

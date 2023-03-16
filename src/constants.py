@@ -2,7 +2,6 @@
 import functions as func
 import os
 import sys
-import json
 
 ROOT = os.path.abspath(os.path.dirname(__file__))
 try:

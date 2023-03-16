@@ -1,19 +1,13 @@
 from PySide6.QtWidgets import *
 from PySide6.QtGui import *
 from PySide6.QtCore import *
-
 from qt_thread_updater import get_updater
-
 import pymongo
-import os
 import constants as cons
-from datetime import datetime
 from bson import json_util
 import json
 import threading
-import template.functions as func
 
-from gui_windows.gui_combat_frame import CombatEntry
 
 class CombatLog:
     def __init__(

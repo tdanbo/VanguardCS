@@ -1,19 +1,10 @@
 from PySide6.QtWidgets import *
 from PySide6.QtGui import *
 from PySide6.QtCore import *
-
 import constants as cons
-
-import json
-import functions as func
-import os
 import sys
-
 import pymongo
-
-
 from gui_windows.gui_ability_frame import AbilityItem
-
 from template.section import Section
 from template.widget import Widget
 
