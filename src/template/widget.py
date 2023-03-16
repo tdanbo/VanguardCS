@@ -1,6 +1,6 @@
-from PySide2.QtWidgets import *
-from PySide2.QtGui import *
-from PySide2.QtCore import *
+from PySide6.QtWidgets import *
+from PySide6.QtGui import *
+from PySide6.QtCore import *
 
 import os
 import json
@@ -77,7 +77,7 @@ class Widget:
             self.widget.setHidden(True)
 
     def setup_combobox(self, widget, text):
-        widget.setSizeAdjustPolicy(QComboBox.AdjustToMinimumContentsLength)
+        #widget.setSizeAdjustPolicy(QComboBox.AdjustToMinimumContentsLength)
         widget.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
         model = QStandardItemModel(widget)
 
