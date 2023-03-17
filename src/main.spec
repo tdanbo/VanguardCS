@@ -3,11 +3,9 @@
 
 block_cipher = None
 
-print([item for item in os.listdir(".icons")])
-
 data_list = []
 
-for file in os.listdir(".icons"):
+for file in os.listdir("src/.icons"):
     icon_path = os.path.join(".icons", file)
     data_list.append((icon_path, ".icons"))
 
