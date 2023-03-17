@@ -22,7 +22,6 @@ class Release:
         self.create_exe()
         self.create_github_release()
         self.clean_up()
-        self.push()
 
     def create_version(self):
         try:
