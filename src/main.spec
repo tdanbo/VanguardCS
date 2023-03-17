@@ -9,8 +9,6 @@ for file in os.listdir("src/.icons"):
     icon_path = os.path.join(".icons", file)
     data_list.append((icon_path, ".icons"))
 
-print(data_list)
-
 a = Analysis(
     ['main.py'],
     pathex=[],
