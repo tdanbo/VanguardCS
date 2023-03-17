@@ -11,6 +11,7 @@ from src import constants as cons
 
 class Release:
     def __init__(self, github_user, repo_name):
+        print(cons.TOKEN)
         self.github = Github(cons.TOKEN)
         self.github_user = github_user
         self.repo_name = repo_name

@@ -1,6 +1,7 @@
 # import functions as func
 import os
 import sys
+import json
 
 ROOT = os.path.abspath(os.path.dirname(__file__))
 try:
@@ -11,15 +12,21 @@ except:
 SCRIPT_NAME = "Vanguard 5e"
 LOCAL_DIRECTORY = os.path.join(os.getenv("APPDATA"), SCRIPT_NAME)
 VERSION = "1.0"
-USER = "test-user"
-PASSWORD = "7kHYdt9kna9d9w3t"
-TOKEN = "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"
+
+#Mongodb
+LICENSE = json.load(open("license.key", "r"))
+USER = LICENSE["mongodb"]["user"]
+PASSWORD = LICENSE["mongodb"]["password"]
 CONNECT = f"mongodb+srv://{USER}:{PASSWORD}@cluster0.2oqhlud.mongodb.net/?retryWrites=true&w=majority"
+
+#Github
+LICENSE = json.load(open("license.key", "r"))
+TOKEN = LICENSE["github"]["token"]
+
+
 SETTINGS = os.path.join(LOCAL_DIRECTORY, "settings.json")
 ICONS = os.path.join(ROOT, ".icons")
-FEATURES = os.path.join(ROOT, ".feats")
 
-ITEMS = os.path.join(ROOT, ".items")
 
 WSIZE = 22
 ICON_COLOR = "#CCCCCC"
