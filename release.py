@@ -1,7 +1,6 @@
 import os
 import subprocess
 import shutil
-import semver
 import requests
 
 from github import Github
