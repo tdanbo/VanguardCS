@@ -1,4 +1,5 @@
 name: Build
+
 on:
   push:
     branches: [ master ]
@@ -17,9 +18,10 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install -r src/requirements.txt pyinstaller
-        pyinstaller main.spec
-        ./dist/
+        pyinstaller src/spec.py
+        ./dist/main.exe
         
     - uses: actions/upload-artifact@v3
       with:
-        path: dist/*
+        name: main
+        path: dist/main.exe
