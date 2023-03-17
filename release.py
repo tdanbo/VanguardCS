@@ -6,13 +6,13 @@ import requests
 from github import Github
 from github import InputFileContent
 import git
-from src import constants as cons
-
+import github
+import json
 
 class Release:
     def __init__(self, github_user, repo_name):
-        print(cons.TOKEN)
-        self.github = Github(cons.TOKEN)
+        token = json.load(open("release.key", "r"))["token"]
+        self.github = Github(token)
         self.github_user = github_user
         self.repo_name = repo_name
         self.repo = self.github.get_repo(f"{self.github_user}/{self.repo_name}")

@@ -10,19 +10,23 @@ except:
     ROOT = os.path.dirname(__file__)
 
 SCRIPT_NAME = "Vanguard 5e"
+LICENSE_SCRIPT = "VanguardLauncher"
+
 LOCAL_DIRECTORY = os.path.join(os.getenv("APPDATA"), SCRIPT_NAME)
+LICENSE_DIRECTORY = os.path.join(os.getenv("APPDATA"), LICENSE_SCRIPT)
+
 VERSION = "1.0"
 
-#Mongodb
-LICENSE = json.load(open("license.key", "r"))
+cwd = os.getcwd()
+KEY_PATH = os.path.join(cwd,"world.key")
+
+
+print("license below")
+print(KEY_PATH)
+LICENSE = json.load(open(os.path.join(KEY_PATH), "r"))
 USER = LICENSE["mongodb"]["user"]
 PASSWORD = LICENSE["mongodb"]["password"]
 CONNECT = f"mongodb+srv://{USER}:{PASSWORD}@cluster0.2oqhlud.mongodb.net/?retryWrites=true&w=majority"
-
-#Github
-LICENSE = json.load(open("license.key", "r"))
-TOKEN = LICENSE["github"]["token"]
-
 
 SETTINGS = os.path.join(LOCAL_DIRECTORY, "settings.json")
 ICONS = os.path.join(ROOT, ".icons")
