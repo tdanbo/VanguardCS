@@ -6,7 +6,7 @@ import requests
 
 from github import Github
 from github import InputFileContent
-
+import git
 from src import constants as cons
 
 
@@ -22,7 +22,7 @@ class Release:
         self.create_exe()
         self.create_github_release()
         self.clean_up()
-        # self.push()
+        self.push()
 
     def create_version(self):
         try:
@@ -71,10 +71,3 @@ class Release:
 
 
 Release("tdanbo", "VanguardCS").create_release()
-# subprocess.call("pyinstaller updater.spec", shell=True)
-
-# for item in os.listdir("dist"):
-#     shutil.move(os.path.join("dist", item), os.path.join("versions", item))
-
-# shutil.rmtree("dist")
-# shutil.rmtree("build")
