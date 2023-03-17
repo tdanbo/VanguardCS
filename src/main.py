@@ -9,6 +9,7 @@ from class_combat import CombatLog
 from class_sheet import CharacterSheet
 import constants as cons
 
+
 class MainWindow(QWidget):
     def __init__(self):
         super().__init__()
@@ -29,18 +30,20 @@ class MainWindow(QWidget):
         self.character_inventory_gui.setFixedWidth(300)
 
         # 2 Main classes
-        self.combat_log = CombatLog(combat_log_gui)  
- 
-        self.main_layout.addWidget(self.character_inventory_gui)   
+        self.combat_log = CombatLog(combat_log_gui)
+
+        self.main_layout.addWidget(self.character_inventory_gui)
         self.main_layout.addWidget(self.character_sheet_gui)
-        self.main_layout.addWidget(combat_log_gui)  
+        self.main_layout.addWidget(combat_log_gui)
 
         self.setLayout(self.main_layout)
         self.spacing = 0
-        self.setStyleSheet(f"border-style: outset; color: {cons.FONT_DARK}; background-color: {cons.DARK};border-style: outset;")
+        self.setStyleSheet(
+            f"border-style: outset; color: {cons.FONT_DARK}; background-color: {cons.DARK};border-style: outset;"
+        )
 
         self.combat_log.update_combat_log()
-        self.combat_log.start_watching() 
+        self.combat_log.start_watching()
 
     def closeEvent(self, event: QCloseEvent):
         self.combat_log.stop_watching()
@@ -51,12 +54,14 @@ class MainWindow(QWidget):
         else:
             self.settings_section.get_group().setHidden(True)
 
-def run_gui(name, version):
+
+def run_gui(version):
     app = QApplication(sys.argv)
     w = MainWindow()
-    w.setWindowTitle("%s v%s" % (name, str(version)))
+    w.setWindowTitle(version)
     w.show()
     app.exec_()
 
+
 if __name__ == "__main__":
-    run_gui("Vanguard RP", "v1.0")
+    run_gui("VanguardCS v1.0.0")

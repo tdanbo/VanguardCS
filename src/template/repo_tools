@@ -1,0 +1,42 @@
+import constants as cons
+
+from github import Github
+
+
+class RepoTools:
+    def __init__(self, github_user, repo_name):
+        self.github = Github(cons.TOKEN)
+        self.github_user = github_user
+        self.repo_name = repo_name
+        self.repo = self.github.get_repo(f"{self.github_user}/{self.repo_name}")
+
+    def get_version(self):
+        try:
+            self.current_version = self.repo.get_latest_release().tag_name
+            self.current_release = f"{self.repo_name} v{self.current_version}"
+            major, minor, patch = map(int, self.current_version.split("."))
+            patch += 1
+            if patch > 9:
+                minor += 1
+                patch = 0
+
+            if minor > 9:
+                major += 1
+                minor = 0
+
+            self.new_version = f"{major}.{minor}.{patch}"
+        except:
+            self.new_version = "1.0.0"
+
+        self.release_name = f"{self.repo_name} v{self.version}"
+        return self.current_release
+
+    def create_release(self, binary_path):
+        self.get_version()
+        release = self.repo.create_git_release(
+            tag=self.new_version,
+            name=self.release_name,
+            message=f"Release bundled exe for {self.repo_name}",
+        )
+
+        asset = release.upload_asset(path=binary_path, label=self.release_name)

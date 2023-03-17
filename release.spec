@@ -6,11 +6,11 @@ block_cipher = None
 data_list = []
 
 for file in os.listdir("src/.icons"):
-    icon_path = os.path.join(".icons", file)
+    icon_path = os.path.join("src/.icons", file)
     data_list.append((icon_path, ".icons"))
 
 a = Analysis(
-    ['main.py'],
+    ['src/main.py'],
     pathex=[],
     binaries=[],
     datas=data_list,
