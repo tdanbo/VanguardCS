@@ -20,6 +20,9 @@ USER = LICENSE["user"]
 PASSWORD = LICENSE["password"]
 VERSION = LICENSE["version"]
 
+print("Version Below")
+print(VERSION)
+
 CONNECT = f"mongodb+srv://{USER}:{PASSWORD}@cluster0.2oqhlud.mongodb.net/?retryWrites=true&w=majority"
 
 SETTINGS = os.path.join(LOCAL_DIRECTORY, "settings.json")
