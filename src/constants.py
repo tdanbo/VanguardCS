@@ -19,8 +19,10 @@ VERSION = "1.0"
 
 cwd = os.getcwd()
 KEY_PATH = os.path.join(ROOT,"world.key")
+CWD_KEY_PATH = os.path.join(cwd,"world.key")
 
 print(f"KEY_PATH: {KEY_PATH}")
+print(f"CWD_KEY_PATH: {CWD_KEY_PATH}")
 
 LICENSE = json.load(open(os.path.join(KEY_PATH), "r"))
 USER = LICENSE["user"]
