@@ -10,7 +10,7 @@ except:
     ROOT = os.path.dirname(__file__)
 
 SCRIPT_NAME = "Vanguard 5e"
-LICENSE_SCRIPT = "VanguardLauncher"
+LICENSE_SCRIPT = "VanguardRP"
 
 LOCAL_DIRECTORY = os.path.join(os.getenv("APPDATA"), SCRIPT_NAME)
 LICENSE_DIRECTORY = os.path.join(os.getenv("APPDATA"), LICENSE_SCRIPT)
@@ -20,9 +20,11 @@ VERSION = "1.0"
 cwd = os.getcwd()
 KEY_PATH = os.path.join(ROOT,"world.key")
 CWD_KEY_PATH = os.path.join(cwd,"world.key")
+LOCAL_PATH = os.path.join(LOCAL_DIRECTORY,"world.key")
 
 print(f"KEY_PATH: {KEY_PATH}")
 print(f"CWD_KEY_PATH: {CWD_KEY_PATH}")
+print(f"LOCAL_PATH: {LICENSE_DIRECTORY}")
 
 LICENSE = json.load(open(os.path.join(KEY_PATH), "r"))
 USER = LICENSE["user"]
