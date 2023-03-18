@@ -7,10 +7,10 @@ import constants as cons
 from template.section import Section
 from template.widget import Widget
 
-from gui_functions.class_roll import DiceRoll
-from gui_functions.class_modify_stat import ModifyStat
+from gui_classes.class_roll import DiceRoll
+from gui_classes.class_modify_stat import ModifyStat
 
-from gui_windows.gui_add_sub import AddSub
+from gui_widgets.gui_add_sub import AddSub
 
 class InventoryItem(QWidget):
     def __init__(self, character_sheet, count, item_dict, equipment=""):

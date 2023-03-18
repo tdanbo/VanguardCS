@@ -8,7 +8,7 @@ from template.widget import Widget
 import constants as cons
 import pymongo
 
-from gui_functions.class_roll import DiceRoll
+from gui_classes.class_roll import DiceRoll
 
 import re
 

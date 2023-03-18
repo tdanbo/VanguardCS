@@ -5,10 +5,10 @@ from template.section import Section
 from template.widget import Widget
 import constants as cons
 import pymongo
-from gui_functions import custom_rolls
-from gui_functions.class_roll import DiceRoll
-from gui_windows.gui_new_char_frame import NewCharacter
-from gui_windows.gui_add_sub import AddSub
+from gui_classes import custom_rolls
+from gui_classes.class_roll import DiceRoll
+from gui_widgets.gui_new_char_frame import NewCharacter
+from gui_widgets.gui_add_sub import AddSub
 
 class InventoryGUI(QWidget):
     def __init__(self, csheet=None):

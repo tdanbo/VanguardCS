@@ -4,7 +4,7 @@ from PySide2.QtCore import *
 import constants as cons
 import sys
 import pymongo
-from gui_windows.gui_ability_frame import AbilityItem
+from gui_widgets.gui_ability_frame import AbilityItem
 from template.section import Section
 from template.widget import Widget
 

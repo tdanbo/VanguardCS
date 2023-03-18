@@ -7,10 +7,10 @@ from template.widget import Widget
 import functions as func
 import constants as cons
 from gui_abilities import AddNewAbility
-from gui_functions.class_roll import DiceRoll
-from gui_functions.class_modify_stat import ModifyStat
+from gui_classes.class_roll import DiceRoll
+from gui_classes.class_modify_stat import ModifyStat
 
-from gui_windows.gui_add_sub import AddSub
+from gui_widgets.gui_add_sub import AddSub
 
 class CharacterSheetGUI(QWidget):
     def __init__(self, csheet):

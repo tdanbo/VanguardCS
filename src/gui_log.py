@@ -9,10 +9,10 @@ import constants as cons
 import functions as func
 import functools
 
-from gui_functions import custom_rolls
+from gui_classes import custom_rolls
 
-from gui_windows.gui_combat_frame import CombatEntry
-from gui_functions.class_roll import DiceRoll
+from gui_widgets.gui_combat_frame import CombatEntry
+from gui_classes.class_roll import DiceRoll
 
 import constants as cons
 

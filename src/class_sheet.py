@@ -8,9 +8,9 @@ import constants as cons
 import template.functions as func
 import random
 import re
-from gui_windows.gui_inventory_frame import InventoryItem
-from gui_windows.gui_ability_frame import AbilityItem
-from gui_functions.class_modify_stat import ModifyStat
+from gui_widgets.gui_inventory_frame import InventoryItem
+from gui_widgets.gui_ability_frame import AbilityItem
+from gui_classes.class_modify_stat import ModifyStat
 
 class CharacterSheet(QWidget):
     def __init__(self):
