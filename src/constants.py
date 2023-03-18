@@ -13,11 +13,12 @@ SCRIPT_NAME = "Vanguard 5e"
 LOCAL_DIRECTORY = os.path.join(os.getenv("APPDATA"), SCRIPT_NAME)
 
 
-VERSION = "1.0"
 
 LICENSE = License().get_license()
+
 USER = LICENSE["user"]
 PASSWORD = LICENSE["password"]
+VERSION = LICENSE["version"]
 
 CONNECT = f"mongodb+srv://{USER}:{PASSWORD}@cluster0.2oqhlud.mongodb.net/?retryWrites=true&w=majority"
 

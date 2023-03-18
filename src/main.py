@@ -62,8 +62,5 @@ def run_gui(version):
     w.show()
     app.exec_()
 
-
 if __name__ == "__main__":
-    program_version = os.path.basename(os.getcwd())
-    print(f"Running {program_version}")
-    run_gui(program_version)
+    run_gui(cons.VERSION)

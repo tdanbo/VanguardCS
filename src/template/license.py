@@ -24,7 +24,7 @@ class License():
             return self.open_license
         else:
             raise Exception("No license found!")
-        
+                
     def delete_distributed_license(self):
         shutil.rmtree(os.path.dirname(self.distributed_license))
 
