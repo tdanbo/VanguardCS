@@ -1,6 +1,3 @@
-import sys
-sys.path.append("./src")
-
 from PySide2.QtWidgets import *
 from PySide2.QtGui import *
 from PySide2.QtCore import *
@@ -14,7 +11,7 @@ from gui_windows.gui_new_char_frame import NewCharacter
 from gui_windows.gui_add_sub import AddSub
 
 class InventoryGUI(QWidget):
-    def __init__(self, csheet=None):
+    def __init__(self, csheet):
         super().__init__()
 
         # setting up character sheet
@@ -248,8 +245,7 @@ class InventoryGUI(QWidget):
         self.setLayout(self.master_layout)   
 
         #Updating the character dropdown
-        if self.character_sheet != None:
-            self.character_sheet.set_inv_vars(self)
+        self.character_sheet.set_inv_vars(self)
         self.update_character_dropdown() 
 
     def make_item_slot(self,count,layout,descriptor):
@@ -431,9 +427,3 @@ class InventoryGUI(QWidget):
         else:
             current_value -= 1
         self.modifier_button.get_widget().setText(str(current_value))   
-
-if __name__ == "__main__":
-    app = QApplication(sys.argv)
-    window = InventoryGUI()
-    window.show()
-    sys.exit(app.exec_())

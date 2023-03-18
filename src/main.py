@@ -1,9 +1,9 @@
 from PySide2.QtWidgets import *
 from PySide2.QtGui import *
 from PySide2.QtCore import *
-from gui_sheet.gui_sheet import CharacterSheetGUI
-from gui_inventory.gui_inventory import InventoryGUI
-from gui_combat.gui_log import CombatLogGUI
+from gui_sheet import CharacterSheetGUI
+from gui_inventory import InventoryGUI
+from gui_log import CombatLogGUI
 import sys
 from class_combat import CombatLog
 from class_sheet import CharacterSheet
