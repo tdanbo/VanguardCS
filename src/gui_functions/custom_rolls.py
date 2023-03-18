@@ -7,7 +7,6 @@ This area of code handles the functions of the dice roller.
 '''
 
 def add_dice(self, dice, adjust="add"):
-    print(dice)
     if "_count" in dice:
         count_widget = self.findChild(QPushButton, f"{dice}")
     else:

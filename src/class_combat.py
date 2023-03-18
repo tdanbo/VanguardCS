@@ -38,12 +38,10 @@ class CombatLog:
     def watch_collection(self):
         while self.running:
             with self.collection.watch() as change_stream:
-                print("Watching collection")
                 for update_doc in change_stream:
                     self.update_combat_log()   
         
     def update_combat_log(self):
-        print("Updating combat log")
         combat_log = reversed(self.get_log())
         for count,entry in enumerate(combat_log):
             self.combat_log_gui.combet_log_slots[count].update_widget(entry)

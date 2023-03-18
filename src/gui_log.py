@@ -121,7 +121,6 @@ class CombatLogGUI(QWidget):
 
         self.combet_log_slots = []
         for count in range (21): # Make all static entries in the combatlog
-            print(f"Making entry: {str(count)}")
             log_gui_entry = CombatEntry(count)
             self.log_scroll.inner_layout(1).addWidget(log_gui_entry)
 
@@ -147,7 +146,6 @@ class CombatLogGUI(QWidget):
         if event.button() == Qt.RightButton:
             widget = self.childAt(event.pos())
             if widget.objectName() in ["d4","d6","d8","d10","d12","d20","d4_count","d6_count","d8_count","d10_count","d12_count","d20_count"]:
-                print("Right button was clicked on a stat widget")
                 custom_rolls.add_dice(self, widget.objectName(), adjust="subtract")
             elif widget.objectName() == "roll":
                 custom_rolls.clear_rolls(self)
@@ -165,7 +163,6 @@ class CombatLogGUI(QWidget):
                 rolls.append(f"{counter.text()}{dice}")
                 counter.setText("")
 
-        print(rolls)
         roll = "_".join(rolls)
         rolling_dice = DiceRoll(self, self.character, "Custom", roll, check = 0, sheet=self.character_sheet).roll()
 

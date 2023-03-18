@@ -29,8 +29,6 @@ class ModifyStat:
     
         widget.setText(new_value)
 
-        print(stat_mod)
-
         character_sheet.CHARACTER_DOC["stats"][stat_mod] = new_value
         character_sheet.update_sheet()
 
@@ -44,8 +42,6 @@ class ModifyStat:
             new_value = f"{self.string} {integer_value}"
 
         widget.setText(new_value)
-
-        print(stat_mod)
 
         character_sheet.CHARACTER_DOC["stats"][stat_mod] = new_value
         character_sheet.update_sheet()

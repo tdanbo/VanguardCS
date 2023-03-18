@@ -265,7 +265,6 @@ class CharacterSheetGUI(QWidget):
                 ModifyStat(string).subtract_one(self.character_sheet, widget)
 
     def open_abilities(self):
-        print("opening abilities")
         self.abilities = AddNewAbility(self, self.character_sheet)
         self.abilities.show()
 
@@ -275,7 +274,6 @@ class CharacterSheetGUI(QWidget):
         ModifyStat(string).add_one(self.character_sheet, widget)
 
     def roll_dice(self):
-        print("rolling dice")
         self.character = self.character_sheet.character_name
         self.combat_log = self.character_sheet.combat_log
         self.roll_type = self.sender().property("roll")   

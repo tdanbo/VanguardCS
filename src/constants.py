@@ -20,12 +20,9 @@ VERSION = "1.0"
 cwd = os.getcwd()
 KEY_PATH = os.path.join(cwd,"world.key")
 
-
-print("license below")
-print(KEY_PATH)
 LICENSE = json.load(open(os.path.join(KEY_PATH), "r"))
-USER = LICENSE["mongodb"]["user"]
-PASSWORD = LICENSE["mongodb"]["password"]
+USER = LICENSE["user"]
+PASSWORD = LICENSE["password"]
 CONNECT = f"mongodb+srv://{USER}:{PASSWORD}@cluster0.2oqhlud.mongodb.net/?retryWrites=true&w=majority"
 
 SETTINGS = os.path.join(LOCAL_DIRECTORY, "settings.json")

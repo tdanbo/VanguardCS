@@ -115,10 +115,7 @@ class NewCharacter(QWidget):
         if len(self.state) == 0:
             widget1 = self.sender()
             self.state.append((widget1,widget1.text()))
-            print("copy")
-            print(self.state)
         else:
-            print("paste")
             widget2 = self.sender()
             self.state.append((widget2,widget2.text()))
 

@@ -22,9 +22,6 @@ class DiceRoll:
 
         self.check_active_modifiers()
 
-        print(roll_type)
-        print(roll_type)
-
         self.entry  = {
             "Character": character,
             "Type": self.roll_type,
@@ -45,7 +42,6 @@ class DiceRoll:
                 # stylesheet=f"padding-left: 5px; padding-right: 5px; background-color: {cons.PRIMARY_LIGHTER}; color: {cons.PRIMARY_DARKER}; font-size: 11px; font-weight: bold; border: 1px solid {cons.BORDER}; border-radius: 6px;"
                 # self.widget.setStyleSheet(stylesheet)
             else:
-                print("No ammo")
                 stylesheet=f"padding-left: 5px; padding-right: 5px; background-color: {cons.PRIMARY_LIGHTER}; color: {cons.PRIMARY_DARKER}; font-size: 11px; font-weight: bold; border: 1px solid {cons.BORDER}; border-radius: 6px;"
                 self.widget.setStyleSheet(stylesheet)
                 return

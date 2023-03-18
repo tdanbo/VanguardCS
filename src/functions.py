@@ -41,7 +41,6 @@ def set_icon(widget, icon, color, width=0):
             widget.setPixmap(pixmap)
             widget.setScaledContents(False)
         else:
-            print(f"Scaled icon: {icon} {width}")
             try:
                 pix_width = width  # set the desired width for the scaled icon
                 height = int(
@@ -54,4 +53,3 @@ def set_icon(widget, icon, color, width=0):
                 widget.setPixmap(scaled_pixmap)
             except:
                 widget.setPixmap(pixmap)
-                print(f"Error: {icon} {width}")

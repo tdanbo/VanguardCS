@@ -8,7 +8,7 @@ import sys
 from class_combat import CombatLog
 from class_sheet import CharacterSheet
 import constants as cons
-
+import os
 
 class MainWindow(QWidget):
     def __init__(self):
@@ -64,4 +64,4 @@ def run_gui(version):
 
 
 if __name__ == "__main__":
-    run_gui("VanguardCS v1.0.0")
+    run_gui(os.path.basename(os.getcwd()))

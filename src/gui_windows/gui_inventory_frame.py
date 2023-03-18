@@ -314,7 +314,6 @@ class InventoryItem(QWidget):
         armor = self.character_sheet.CHARACTER_DOC["equipment"]["armor"]
         if armor != {}:
             impeding = [quality for quality in armor["Quality"] if "Impeding" in quality][0]
-            print(impeding)
             value = ModifyStat(impeding).find_integer()
             speed += value
             defense += value

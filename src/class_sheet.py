@@ -18,7 +18,6 @@ class CharacterSheet(QWidget):
         self.equipment = self.get_equipment()
 
     def update_sheet(self):
-        print("Updating Character Sheet - Saving to DB")
         self.set_icon()      
 
         self.update_inventory()
@@ -56,7 +55,7 @@ class CharacterSheet(QWidget):
             integer_value = int(match.group())  # extract the matched string and convert it to an integer
             return integer_value  # outputs: -4
         else:
-            print("No integer value found.")
+            pass
 
     def set_rank(self, slot, rank):
         ability_main_widget = self.csheet.findChild(QWidget, f"{slot}_section_title")
@@ -99,12 +98,11 @@ class CharacterSheet(QWidget):
             new_values = {"$set": self.CHARACTER_DOC}
             self.collection.update_one(query, new_values)
         else:
-            print("No document found")
+            pass
 
     # ITERATE OVER ITEM JSON TO FIND ITEM
 
     def set_stats(self):
-        print("setting stats")
         self.ACC.setText(str(self.CHARACTER_DOC["stats"]["ACCURATE"]))
         self.CUN.setText(str(self.CHARACTER_DOC["stats"]["CUNNING"]))
         self.DIS.setText(str(self.CHARACTER_DOC["stats"]["DISCREET"]))
@@ -236,7 +234,6 @@ class CharacterSheet(QWidget):
         self.update_sheet()
 
     def find_item(self,item_string):
-        print(f"Searching for {item_string}")
         for category in self.equipment:
             for item in self.equipment[category]:
                 if item_string.lower() == item.lower():
@@ -254,90 +251,8 @@ class CharacterSheet(QWidget):
 
     def set_icon(self):
         func.set_icon(self.character_icon,f"{self.character_name}.png","")
-
-    def set_hp(self):
-        level = math.floor(float(self.level.text()))
-        if level == 0:
-            hp_formula = cons.HIT_DICE
-            self.toughness_current.setText(str(hp_formula))
-        else:
-            hp_formula = (cons.HIT_DICE*level) + int(self.CON.text())
-        self.toughness_max.setText(str(hp_formula))
         
-
-    def adjust_hp(self, state, value):
-        toughness_current = int(self.toughness_current.text())
-        self.max_slots = int(self.CON.text())+cons.START_SLOTS
-
-        for point in range(1,int(value)+1):
-            if state == "minus":
-                toughness_current -= 1
-                if toughness_current < 0:
-                    self.add_injury()
-            else:  
-                if toughness_current < 0:
-                    self.remove_injury()
-                toughness_current += 1
-
-
-        if toughness_current > int(self.toughness_max.text()):
-            self.toughness_current.setText(self.toughness_max.text())
-        elif toughness_current < -abs(self.max_slots):
-            self.toughness_current.setText(str(-abs(self.max_slots)))
-        else:
-            self.toughness_current.setText(str(toughness_current))   
-
-        self.update_sheet()
-
-    def remove_injury(self):
-        print("remove injury")
-        self.empty_slot_dict = {"Hit":"","Evoke":"","Evoke Mod":["","",""],"Hit Mod":["","",""],"Roll":"","Roll Mod":["","",""]}
-        self.max_slots = int(self.CON.text())+cons.START_SLOTS
-        for slot in range(1,self.max_slots+1):
-            widget_slot = self.csheet.findChild(QLineEdit, f"inventory{slot}")
-            if widget_slot.text() == "Injury":
-                self.update_item(slot, "", "", self.empty_slot_dict)
-                return
-            else:
-                pass
-
-    def add_injury(self):
-        self.empty_slot_dict = {"Hit":"","Evoke":"","Evoke Mod":["","",""],"Hit Mod":["","",""],"Roll":"","Roll Mod":["","",""]}
-        current_slots = int(self.CON.text())+cons.START_SLOTS
-        free_slots = []
-        for slot in range(1,current_slots+1):
-            widget_slot = self.csheet.findChild(QLineEdit, f"inventory{slot}")
-            if widget_slot.text() == "Injury":
-                pass
-            else:
-                free_slots.append(slot)
-        if free_slots == []:
-            return
-        else:
-            injury_slot = random.choice(free_slots)
-            self.update_item(injury_slot, "Injury", "damage", self.empty_slot_dict)
-
-    def set_feats(self):
-        current_level = math.floor(float(self.level.text()))
-        if current_level < 3:
-            self.feat1.setEnabled(False)
-            self.feat2.setEnabled(False)
-            self.feat3.setEnabled(False)
-        if current_level == 3:
-            self.feat1.setEnabled(True)
-            self.feat2.setEnabled(False)
-            self.feat3.setEnabled(False)
-        elif current_level == 6:
-            self.feat1.setEnabled(True)
-            self.feat2.setEnabled(True)
-            self.feat3.setEnabled(False)
-        elif current_level == 9:
-            self.feat1.setEnabled(True)
-            self.feat2.setEnabled(True)
-            self.feat3.setEnabled(True)
-
     def load_character(self, isheet, character_name):
-        print(f"Loading {character_name}")
 
         #Updating the character sheet gui
         self.isheet = isheet
@@ -355,69 +270,9 @@ class CharacterSheet(QWidget):
         query = {"character": self.character_name}
         self.CHARACTER_DOC = self.collection.find_one(query)
 
-        # if self.CHARACTER_DOC != None:
-        #     self.experience.setText(str(self.CHARACTER_DOC["experience"]))
-        #     self.experience_unspent.setText(str(self.CHARACTER_DOC["experience unspent"]))
-
-        #     self.ACC.setText(str(self.CHARACTER_DOC["stats"]["ACCURATE"]))
-        #     self.CUN.setText(str(self.CHARACTER_DOC["stats"]["CUNNING"]))
-        #     self.DIS.setText(str(self.CHARACTER_DOC["stats"]["DISCREET"]))
-        #     self.PER.setText(str(self.CHARACTER_DOC["stats"]["PERSUASIVE"]))
-        #     self.QUI.setText(str(self.CHARACTER_DOC["stats"]["QUICK"]))
-        #     self.RES.setText(str(self.CHARACTER_DOC["stats"]["RESOLUTE"]))
-        #     self.STR.setText(str(self.CHARACTER_DOC["stats"]["STRONG"]))
-        #     self.VIG.setText(str(self.CHARACTER_DOC["stats"]["VIGILANT"]))
-
-        #     try:
-        #         self.toughness_current.setText(str(self.CHARACTER_DOC["toughness current"]))
-
-        #         self.corruption_permanent.setText(str(self.CHARACTER_DOC["corruption permanent"]))
-        #         self.corruption_temporary.setText(str(self.CHARACTER_DOC["corruption temporary"]))
-
-        #         self.DEF_mod.setText(str(self.CHARACTER_DOC["modifiers"]["DEFENSE"]))
-        #         self.ACC_mod.setText(str(self.CHARACTER_DOC["modifiers"]["ACCURATE"]))
-        #         self.CUN_mod.setText(str(self.CHARACTER_DOC["modifiers"]["CUNNING"]))
-        #         self.DIS_mod.setText(str(self.CHARACTER_DOC["modifiers"]["DISCREET"]))
-        #         self.PER_mod.setText(str(self.CHARACTER_DOC["modifiers"]["PERSUASIVE"]))
-        #         self.QUI_mod.setText(str(self.CHARACTER_DOC["modifiers"]["QUICK"]))
-        #         self.RES_mod.setText(str(self.CHARACTER_DOC["modifiers"]["RESOLUTE"]))
-        #         self.STR_mod.setText(str(self.CHARACTER_DOC["modifiers"]["STRONG"]))
-        #         self.VIG_mod.setText(str(self.CHARACTER_DOC["modifiers"]["VIGILANT"]))
-
-        #         self.ability1.setText(str(self.CHARACTER_DOC["abilities"]["ability1"][0]))
-        #         self.ability2.setText(str(self.CHARACTER_DOC["abilities"]["ability2"][0]))
-        #         self.ability3.setText(str(self.CHARACTER_DOC["abilities"]["ability3"][0]))
-        #         self.ability4.setText(str(self.CHARACTER_DOC["abilities"]["ability4"][0]))
-        #         self.ability5.setText(str(self.CHARACTER_DOC["abilities"]["ability5"][0]))
-        #         self.ability6.setText(str(self.CHARACTER_DOC["abilities"]["ability6"][0]))
-        #         self.ability7.setText(str(self.CHARACTER_DOC["abilities"]["ability7"][0]))
-        #         self.ability8.setText(str(self.CHARACTER_DOC["abilities"]["ability8"][0]))
-        #         self.ability9.setText(str(self.CHARACTER_DOC["abilities"]["ability9"][0]))
-        #         self.ability10.setText(str(self.CHARACTER_DOC["abilities"]["ability10"][0]))
-        #         self.ability11.setText(str(self.CHARACTER_DOC["abilities"]["ability11"][0]))
-        #         self.ability12.setText(str(self.CHARACTER_DOC["abilities"]["ability12"][0]))
-
-        #         self.ability1.setProperty("Rank",str(self.CHARACTER_DOC["abilities"]["ability1"][1]))
-        #         self.ability2.setProperty("Rank",str(self.CHARACTER_DOC["abilities"]["ability2"][1]))
-        #         self.ability3.setProperty("Rank",str(self.CHARACTER_DOC["abilities"]["ability3"][1]))
-        #         self.ability4.setProperty("Rank",str(self.CHARACTER_DOC["abilities"]["ability4"][1]))
-        #         self.ability5.setProperty("Rank",str(self.CHARACTER_DOC["abilities"]["ability5"][1]))
-        #         self.ability6.setProperty("Rank",str(self.CHARACTER_DOC["abilities"]["ability6"][1]))
-        #         self.ability7.setProperty("Rank",str(self.CHARACTER_DOC["abilities"]["ability7"][1]))
-        #         self.ability8.setProperty("Rank",str(self.CHARACTER_DOC["abilities"]["ability8"][1]))
-        #         self.ability9.setProperty("Rank",str(self.CHARACTER_DOC["abilities"]["ability9"][1]))
-        #         self.ability10.setProperty("Rank",str(self.CHARACTER_DOC["abilities"]["ability10"][1]))
-        #         self.ability11.setProperty("Rank",str(self.CHARACTER_DOC["abilities"]["ability11"][1]))
-        #         self.ability12.setProperty("Rank",str(self.CHARACTER_DOC["abilities"]["ability12"][1]))
-
-        #     except:
-        #         print("No modifiers or inventory")
-        #         print("Likely new character")
-
         self.update_sheet()
 
     def set_sheet_vars(self, csheet):
-        print("Setting sheet vars")
         self.csheet = csheet        
         
         self.TOU = csheet.findChild(QWidget, "TOUGHNESS")
@@ -472,7 +327,6 @@ class CharacterSheet(QWidget):
         self.combat_log = clog
 
     def set_inv_vars(self, isheet):
-        print("Setting inv vars")
         self.isheet = isheet
 
         self.character_icon = self.isheet.portrait.get_widget()

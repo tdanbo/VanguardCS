@@ -349,7 +349,6 @@ class InventoryGUI(QWidget):
         if event.button() == Qt.RightButton:
             widget = self.childAt(event.pos())
             if widget.objectName() in ["d4","d6","d8","d10","d12","d20","MOD","d4_count","d6_count","d8_count","d10_count","d12_count","d20_count","MOD_count"]:
-                print("Right button was clicked on a stat widget")
                 custom_rolls.add_dice(self, widget.objectName(), adjust="subtract")
             if widget.objectName() == "modifier":
                 self.adjust_modifier("subtract")
@@ -375,7 +374,6 @@ class InventoryGUI(QWidget):
         self.character_name.get_widget().addItems(character_list)
 
     def roll_dice(self):
-        print("rolling dice")
         self.character = self.character_sheet.character_name
         self.combat_log = self.character_sheet.combat_log
         self.roll_type = self.sender().property("roll")   
@@ -399,7 +397,6 @@ class InventoryGUI(QWidget):
         current_mod_name = current_mod.objectName()
         current_button_name = current_mod_name.replace("button","mod")
         current_button = self.findChild(QWidget, current_button_name)
-        print(current_button)
 
         for button in ["ATTACK button","DEFENSE button","CASTING button","SNEAKING button"]:
             if button != current_mod_name:
