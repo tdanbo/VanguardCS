@@ -1,16 +1,7 @@
-<<<<<<< HEAD:src/gui_sheet/gui_sheet.py
-import sys
-sys.path.append("./src")
-
 from PySide2.QtWidgets import *
 from PySide2.QtGui import *
 from PySide2.QtCore import *
-=======
-from PySide6.QtWidgets import *
-from PySide6.QtGui import *
-from PySide6.QtCore import *
 
->>>>>>> parent of d4669ef (.):src/gui_sheet.py
 from template.section import Section
 from template.widget import Widget
 import functions as func
