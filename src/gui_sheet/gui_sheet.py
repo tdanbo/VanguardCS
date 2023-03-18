@@ -1,10 +1,11 @@
+import sys
+sys.path.append("./src")
+
 from PySide2.QtWidgets import *
 from PySide2.QtGui import *
 from PySide2.QtCore import *
-
 from template.section import Section
 from template.widget import Widget
-
 import functions as func
 import constants as cons
 from gui_abilities import AddNewAbility
@@ -291,3 +292,9 @@ class CharacterSheetGUI(QWidget):
         doc_string = self.sender().objectName()
         add_sub_gui = AddSub(self.character_sheet, self.sender(), doc_item = doc_string)
         add_sub_gui.show()
+
+if __name__ == "__main__":
+    app = QApplication(sys.argv)
+    window = CharacterSheetGUI()
+    window.show()
+    sys.exit(app.exec_())
