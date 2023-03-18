@@ -1,9 +1,18 @@
+<<<<<<< HEAD
 from PySide2.QtWidgets import *
 from PySide2.QtGui import *
 from PySide2.QtCore import *
 from gui_sheet.gui_sheet import CharacterSheetGUI
 from gui_inventory.gui_inventory import InventoryGUI
 from gui_combat.gui_log import CombatLogGUI
+=======
+from PySide6.QtWidgets import *
+from PySide6.QtGui import *
+from PySide6.QtCore import *
+from gui_sheet import CharacterSheetGUI
+from gui_inventory import InventoryGUI
+from gui_log import CombatLogGUI
+>>>>>>> parent of d4669ef (.)
 import sys
 from class_combat import CombatLog
 from class_sheet import CharacterSheet
@@ -59,7 +68,6 @@ def run_gui(version):
     app = QApplication(sys.argv)
     w = MainWindow()
     w.setWindowTitle(version)
-    w.setWindowIcon(QIcon(os.path.join(cons.ICONS, 'app_icon.ico')))
     w.show()
     app.exec_()
 
