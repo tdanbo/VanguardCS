@@ -67,6 +67,4 @@ class Release:
         shutil.rmtree("dist")
         shutil.rmtree("build")
         os.remove(self.exe_path)
-
-
 Release("tdanbo", "VanguardCS").create_release()

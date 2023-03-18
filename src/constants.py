@@ -18,7 +18,9 @@ LICENSE_DIRECTORY = os.path.join(os.getenv("APPDATA"), LICENSE_SCRIPT)
 VERSION = "1.0"
 
 cwd = os.getcwd()
-KEY_PATH = os.path.join(cwd,"world.key")
+KEY_PATH = os.path.join(ROOT,"world.key")
+
+print(f"KEY_PATH: {KEY_PATH}")
 
 LICENSE = json.load(open(os.path.join(KEY_PATH), "r"))
 USER = LICENSE["user"]

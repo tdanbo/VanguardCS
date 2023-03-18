@@ -122,9 +122,6 @@ class CombatEntry(QWidget):
         self.result_breakdown = entry["Result Breakdown"]
         self.time = entry["Time"]
 
-        print(self.result)
-
-
         color_type = {"Damage": "#925833", "Armor": "#495C60"}
         if self.type not in color_type:
             type_bg_color = "#926f2b"
@@ -136,8 +133,6 @@ class CombatEntry(QWidget):
         else:
             self.item.get_widget().setText(self.type+" "+self.modifier)
             
-        print(self.result_message)
-
         self.item_label.get_widget().setText(self.character)
         result_widget = self.result_label.get_widget()
         result_widget.setText(str(self.result))
