@@ -3,9 +3,9 @@ import datetime
 import pymongo
 import constants as cons
 
-from PySide6.QtWidgets import *
-from PySide6.QtGui import *
-from PySide6.QtCore import *
+from PySide2.QtWidgets import *
+from PySide2.QtGui import *
+from PySide2.QtCore import *
 
 class DiceRoll:
     def __init__(self, widget, combat_log, character, roll_type, dice, check=0, sheet=None, ammo=False):
