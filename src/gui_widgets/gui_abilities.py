@@ -91,7 +91,7 @@ class AddNewAbility(QWidget):
 
         self.setLayout(self.master_layout)     
         self.setStyleSheet(f"border-style: outset; color: {cons.FONT_DARK}; background-color: {cons.DARK};")
-        self.setWindowTitle("Select Feat")
+        self.setWindowTitle("Select Ability")
 
     def add_abilities(self):
         for button in self.all_abilities:

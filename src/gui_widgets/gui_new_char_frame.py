@@ -31,6 +31,8 @@ class NewCharacter(QWidget):
             class_group=self.section_group,
         )
 
+        self.name_section.get_title()[1].setAlignment(Qt.AlignCenter)
+
         self.name = Widget(
             widget_type=QLineEdit(),
             text="",
@@ -38,6 +40,8 @@ class NewCharacter(QWidget):
             objectname = "name",
             class_group = self.widget_group,
             parent_layout=self.name_section.inner_layout(1),
+            stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; border: 1px solid {cons.BORDER};font-size: 20px;color: {cons.FONT_COLOR};",
+            height=cons.WSIZE*2,
         )
 
         self.stat_section = Section(
@@ -49,6 +53,8 @@ class NewCharacter(QWidget):
             class_group=self.section_group,
         )
 
+        self.stat_section.get_title()[1].setAlignment(Qt.AlignCenter)
+
         self.state = []
         stat_pool = ["5","7","9","10","10","11","13","15"]
         for count, item in enumerate(cons.STATS):
@@ -57,7 +63,9 @@ class NewCharacter(QWidget):
                 text=item,
                 parent_layout=self.stat_section.inner_layout(count),
                 class_group = self.widget_group,
+                height=cons.WSIZE*1.5,
                 size_policy=(QSizePolicy.Expanding, QSizePolicy.Fixed),
+                stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; border: 1px solid {cons.BORDER};font-size: 14px;color: {cons.FONT_MEDIUM}; font-weight: bold;",
             )
 
             self.stat_input = Widget(
@@ -65,9 +73,12 @@ class NewCharacter(QWidget):
                 text=stat_pool[count],
                 parent_layout=self.stat_section.inner_layout(count),
                 class_group = self.widget_group,
+                height=cons.WSIZE*1.5,
                 size_policy=(QSizePolicy.Expanding, QSizePolicy.Fixed),
                 signal=self.set_stat,
                 objectname=item,
+
+                stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; border: 1px solid {cons.BORDER};font-size: 14px;color: {cons.FONT_COLOR}; font-weight: bold;",
             )
 
         self.new_widget_layout = Section(
@@ -84,20 +95,22 @@ class NewCharacter(QWidget):
             widget_type=QPushButton(),
             text="Cancel",
             objectname = "cancel",
-            size_policy = (QSizePolicy.Expanding , QSizePolicy.Expanding),
             class_group = self.widget_group,
             parent_layout=self.new_widget_layout.inner_layout(2),
-            signal=self.create_character
+            signal=self.create_character,
+            height=cons.WSIZE*2,
+            stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; border: 1px solid {cons.BORDER};",
         )
 
         self.accept_widget = Widget(
             widget_type=QPushButton(),
             text="Accept",
             objectname = "accept",
-            size_policy = (QSizePolicy.Expanding , QSizePolicy.Expanding),
+            height=cons.WSIZE*2,
             class_group = self.widget_group,
             parent_layout=self.new_widget_layout.inner_layout(2),
-            signal=self.create_character
+            signal=self.create_character,
+            stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; border: 1px solid {cons.BORDER};",
         )
 
         for widget in self.widget_group:
@@ -107,9 +120,10 @@ class NewCharacter(QWidget):
         for section in self.section_group:
             section.connect_to_parent()
 
-        self.setLayout(self.master_layout)     
-
         self.setWindowTitle("New Character")
+        self.setLayout(self.master_layout)
+        self.setFixedSize(cons.WSIZE*15,cons.WSIZE*20)     
+        self.setStyleSheet(f"border-style: outset; color: {cons.FONT_DARK}; background-color: {cons.DARK};")
 
     def set_stat(self):
         if len(self.state) == 0:

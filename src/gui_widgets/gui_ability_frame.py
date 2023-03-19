@@ -327,7 +327,7 @@ class AbilityItem(QWidget):
         self.setLayout(self.master_layout)  
 
     def restyle_description(self, ability_string):
-        new_string = ability_string.replace("Reaction", "<b>Reaction</b>").replace("Special", "<b>Special</b>").replace("Free", "<b>Free</b>").replace("Active", "<b>Active</b>")
+        new_string = ability_string.replace("Reaction", "<b>Reaction</b>").replace("Special", "<b>Special</b>").replace("Free", "<b>Free</b>").replace("Active", "<b>Active</b>").replace("Passive", "<b>Passive</b>")
         return new_string
 
     def delete_ability(self):
