@@ -186,7 +186,7 @@ class AbilityItem(QWidget):
 
         self.divider = Widget(
             widget_type=QFrame(),
-            parent_layout = self.power_section.inner_layout(1),
+            parent_layout = self.novice_section.outer_layout(),
             height=1,
             stylesheet=f"background-color: {cons.BORDER}",
             class_group=self.section_group
@@ -194,7 +194,7 @@ class AbilityItem(QWidget):
 
         self.adept_section = Section(
             outer_layout = QVBoxLayout(),
-            inner_layout = ("HBox", 3),
+            inner_layout = ("HBox", 1),
             parent_layout = self.power_section.inner_layout(1),
             spacing = 5,
             class_group=self.section_group,
@@ -222,13 +222,12 @@ class AbilityItem(QWidget):
             size_policy=(QSizePolicy.Expanding, QSizePolicy.Expanding),
         )
 
-        self.build_dice_section(self.ability_dict["Adept"], self.adept_section.inner_layout(2))
-
+        self.build_dice_section(self.ability_dict["Adept"], self.adept_section.inner_layout(1))
         self.adept_box.get_widget().setWordWrap(True)
 
         self.divider = Widget(
             widget_type=QFrame(),
-            parent_layout = self.power_section.inner_layout(1),
+            parent_layout = self.adept_section.outer_layout(),
             height=1,
             stylesheet=f"background-color: {cons.BORDER}",
             class_group=self.section_group
@@ -264,8 +263,15 @@ class AbilityItem(QWidget):
         )
 
         self.build_dice_section(self.ability_dict["Master"], self.master_section.inner_layout(2))
-
         self.master_box.get_widget().setWordWrap(True)
+
+        self.divider = Widget(
+            widget_type=QFrame(),
+            parent_layout = self.master_section.outer_layout(),
+            height=1,
+            stylesheet=f"background-color: {cons.BORDER}",
+            class_group=self.section_group
+        )
 
         for widget in self.widget_group:
             widget.connect_to_parent()
@@ -273,11 +279,6 @@ class AbilityItem(QWidget):
 
         for section in self.section_group:
             section.connect_to_parent()
-
-        self.divider = QFrame()
-        self.divider.setFixedHeight(1)
-        self.divider.setStyleSheet(f"background-color: {cons.BORDER}")
-        self.master_layout.addWidget(self.divider)
 
         self.gui_rank_state()
 

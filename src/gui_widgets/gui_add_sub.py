@@ -94,9 +94,18 @@ class AddSub(QWidget):
         else:
             new_value = current_value - value
         
+        if new_value < 0:
+            new_value = 0
+
+        current_sender = self.widget.objectName()
+
         if self.item == True:
             self.character.CHARACTER_DOC["inventory"][self.doc_item]["Quantity"] = new_value
-        else:   
+        else:
+            if current_sender == "TOUGHNESS":
+                if new_value > int(self.character.sheet_gui.toughness_max.get_widget().text()):
+                    new_value = int(self.character.sheet_gui.toughness_max.get_widget().text())
+
             self.character.CHARACTER_DOC[self.doc_item] = new_value
     
         self.character.set_stats()

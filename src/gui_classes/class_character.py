@@ -96,7 +96,7 @@ class Character:
             self.sheet_gui.findChild(QWidget, f"{stat} mod").setText(self.CHARACTER_DOC["stats"][f"{stat} mod"])
 
         self.sheet_gui.toughness_current.get_widget().setText(str(self.CHARACTER_DOC["TOUGHNESS"]))
-        self.sheet_gui.corruption_current.get_widget().setText(str(self.CHARACTER_DOC["CORRUPTION"]))
+        self.sheet_gui.corruption_current.get_widget().setText(str(self.CHARACTER_DOC["CORRUPTION"]+self.CHARACTER_DOC["PERMANENT"]))
         self.sheet_gui.corruption_permanent.get_widget().setText(str(self.CHARACTER_DOC["PERMANENT"]))
 
     def set_modifiers(self):

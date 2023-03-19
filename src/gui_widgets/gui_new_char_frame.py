@@ -151,8 +151,8 @@ class NewCharacter(QWidget):
             toughness = 10 if strong < 10 else strong
 
             new_character["TOUGHNESS"] = str(toughness)
-            new_character["CORRUPTION"] = "0"  
-            new_character["PERMANENT"] = "0"
+            new_character["CORRUPTION"] = 0
+            new_character["PERMANENT"] = 0
             
             new_character["DEFENSE mod"] = 0
             new_character["CASTING mod"] = 0
