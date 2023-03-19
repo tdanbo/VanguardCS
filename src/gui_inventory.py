@@ -194,7 +194,10 @@ class InventoryGUI(QWidget):
                 objectname=f"{stat} mod",
                 class_group=self.widget_group,
                 size_policy=(QSizePolicy.Expanding, QSizePolicy.Expanding),
-                stylesheet=f"background-color: {cons.PRIMARY_DARKER}; color: {cons.FONT_COLOR}; font-size: 15px; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-top-right-radius: 6px;"
+                stylesheet=f"background-color: {cons.PRIMARY_DARKER}; color: {cons.FONT_COLOR}; font-size: 15px; font-weight: bold; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-top-right-radius: 6px;",
+                signal=self.check_modifier,
+                checkable=True,
+                checked=False,
             )
 
             self.extra_modifier_label = Widget(
@@ -203,7 +206,7 @@ class InventoryGUI(QWidget):
                 icon=(f"{stat.capitalize()}.png","",cons.FONT_DARK,cons.WSIZE),
                 class_group=self.widget_group,
                 size_policy=(QSizePolicy.Expanding, QSizePolicy.Expanding),
-                stylesheet=f"background-color: {cons.PRIMARY_DARKER}; color: {cons.FONT_DARK}; font-size: 10px; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;",
+                stylesheet=f"background-color: {cons.PRIMARY_DARKER}; color: {cons.FONT_COLOR}; font-size: 10px; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;",
                 checkable=True,
                 checked=False,
                 objectname=f"{stat} button",
@@ -226,11 +229,11 @@ class InventoryGUI(QWidget):
         self.modifier_button = Widget(
             widget_type=QPushButton(),
             parent_layout = self.modifier_section.inner_layout(1),
-            signal=lambda: self.adjust_modifier("add"),
             objectname="modifier",
             class_group=self.widget_group,
-            stylesheet=f"background-color: {cons.PRIMARY_DARKER}; color: {cons.FONT_COLOR}; font-size: 15px; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-top-right-radius: 6px;",
+            stylesheet=f"background-color: {cons.PRIMARY_DARKER}; color: {cons.FONT_COLOR}; font-size: 15px; font-weight: bold; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-top-right-radius: 6px;",
             size_policy=(QSizePolicy.Expanding, QSizePolicy.Expanding),
+            signal = lambda: self.adjust_modifier("add")
         )
 
         self.modifier_label = Widget(
@@ -239,7 +242,9 @@ class InventoryGUI(QWidget):
             icon=(f"Modifier.png","",cons.FONT_DARK,cons.WSIZE),
             class_group=self.widget_group,
             size_policy=(QSizePolicy.Expanding, QSizePolicy.Expanding),
-            stylesheet=f"background-color: {cons.PRIMARY_DARKER}; color: {cons.FONT_DARK}; font-size: 10px; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;",
+            objectname="modifier button",
+            stylesheet=f"background-color: {cons.PRIMARY_DARKER}; font-size: 10px; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;",
+            signal = lambda: self.adjust_modifier("add")
         )
 
         for widget in self.widget_group:
@@ -357,7 +362,7 @@ class InventoryGUI(QWidget):
     def mousePressEvent(self, event): #this is a very specific event used to subtract values when right clicking on a widget
         if event.button() == Qt.RightButton:
             widget = self.childAt(event.pos())
-            if widget.objectName() == "modifier":
+            if widget.objectName() in ["modifier","modifier button"]:
                 self.adjust_modifier("subtract")
 
     def load_character(self):
@@ -398,33 +403,38 @@ class InventoryGUI(QWidget):
         add_sub_gui.show()
 
     def check_modifier(self):
-        current_mod = self.sender()
-        current_mod_name = current_mod.objectName()
-        current_button_name = current_mod_name.replace("button","mod")
-        current_button = self.findChild(QWidget, current_button_name)
+        mod = self.sender().objectName().split(" ")[0]
+        print(mod)
 
-        for button in ["ATTACK button","DEFENSE button","CASTING button","SNEAKING button"]:
-            if button != current_mod_name:
+        type_color = cons.ACTIVE_COLOR[mod]
+        current_mod = self.findChild(QWidget, mod+" mod")
+        current_button = self.findChild(QWidget, mod+" button")
+
+        for button in ["ATTACK mod","DEFENSE mod","CASTING mod","SNEAKING mod"]:
+            if button != current_mod.objectName():
                 mod_widget = self.findChild(QWidget, button)
                 mod_widget.setChecked(False)
-                stylesheet=f"background-color: {cons.PRIMARY_DARKER}; color: {cons.FONT_COLOR}; font-size: 15px; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;"
+                stylesheet=f"background-color: {cons.PRIMARY_DARKER}; color: {cons.FONT_COLOR}; font-size: 15px; font-weight: bold; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-top-right-radius: 6px;"
                 mod_widget.setStyleSheet(stylesheet)
 
-        for mod in ["ATTACK mod","DEFENSE mod","CASTING mod","SNEAKING mod"]:
-            if mod != current_button_name:
+        for mod in ["ATTACK button","DEFENSE button","CASTING button","SNEAKING button"]:
+            if mod != current_button.objectName():
                 mod_widget = self.findChild(QWidget, mod)
                 mod_widget.setChecked(False)
-                stylesheet=f"background-color: {cons.PRIMARY_DARKER}; color: {cons.FONT_COLOR}; font-size: 15px; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-top-right-radius: 6px;"
+                stylesheet=f"background-color: {cons.PRIMARY_DARKER}; color: {cons.FONT_COLOR}; font-size: 15px; font-weight: bold; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;"
                 mod_widget.setStyleSheet(stylesheet)
 
 
-        if current_mod.isChecked():
-            current_button.setStyleSheet(f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_COLOR}; font-size: 15px; font-weight: bold; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-top-right-radius: 6px;")
-            current_mod.setStyleSheet(f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_COLOR}; font-size: 10px; font-weight: bold; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;")
+        if self.sender().isChecked():
+            current_button.setStyleSheet(f"background-color: {type_color}; color: {cons.PRIMARY_LIGHTER}; font-size: 15px; font-weight: bold; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;")
+            current_mod.setStyleSheet(f"background-color: {type_color}; color: {cons.PRIMARY_LIGHTER}; font-size: 15px; font-weight: bold; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-top-right-radius: 6px;")
+            current_mod.setChecked(True)
+            current_button.setChecked(True)
         else:
-            current_button.setStyleSheet(f"background-color: {cons.PRIMARY_DARKER}; color: {cons.FONT_COLOR}; font-size: 15px; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-top-right-radius: 6px;")
-            current_mod.setStyleSheet(f"background-color: {cons.PRIMARY_DARKER}; color: {cons.FONT_COLOR}; font-size: 15px; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;")
-
+            current_button.setStyleSheet(f"background-color: {cons.PRIMARY_DARKER}; color: {cons.FONT_COLOR}; font-size: 15px; font-weight: bold; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;")
+            current_mod.setStyleSheet(f"background-color: {cons.PRIMARY_DARKER}; color: {cons.FONT_COLOR}; font-size: 15px; font-weight: bold; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-top-right-radius: 6px;")
+            current_mod.setChecked(False)
+            current_button.setChecked(False)
     def adjust_modifier(self, adjust):
         current_value = int(self.modifier_button.get_widget().text())
         if adjust == "add":

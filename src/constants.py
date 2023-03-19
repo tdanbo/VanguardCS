@@ -48,6 +48,13 @@ STATS = [
 
 # func.create_folder(LOCAL_DIRECTORY)
 
+ACTIVE_COLOR = {
+    "ATTACK": "#925833",
+    "DEFENSE": "#495C60",
+    "CASTING": "#60495c",
+    "SNEAKING": "#5c6049",
+}
+
 #PRIMARY_DARKER = "#e1ddcd"
 PRIMARY_DARKER = "#dbd7c8"
 PRIMARY = "#f0e8d9"

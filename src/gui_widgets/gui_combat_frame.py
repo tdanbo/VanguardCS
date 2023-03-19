@@ -48,7 +48,7 @@ class CombatEntry(QWidget):
             widget_type=QLabel(),
             parent_layout=self.item_section.inner_layout(1),
             class_group=self.widget_group,
-            width=5,
+            width=7,
             align="left",
         )
 
@@ -124,11 +124,11 @@ class CombatEntry(QWidget):
         self.result_breakdown = entry["Result Breakdown"]
         self.time = entry["Time"]
 
-        color_type = {"Damage": "#925833", "Armor": "#495C60"}
-        if self.type not in color_type:
+        color_type = cons.ACTIVE_COLOR
+        if self.type.upper() not in color_type:
             type_bg_color = "#926f2b"
         else:
-            type_bg_color = color_type[self.type]   
+            type_bg_color = color_type[self.type.upper()]   
 
         if self.modifier == "0":
             self.item.get_widget().setText(self.type)

@@ -88,7 +88,7 @@ class AbilityItem(QWidget):
         self.header_label = Widget(
             widget_type=QLabel(),
             parent_layout = self.header_section.inner_layout(1),
-            text=self.ability_dict["Name"].upper(),
+            text=self.ability_dict["Name"],
             objectname=f"ability_name",
             class_group=self.widget_group,
             stylesheet=f"font-size: 14px; font-weight: bold; color: {cons.FONT_LIGHT}"
@@ -174,7 +174,7 @@ class AbilityItem(QWidget):
         self.novice_box = Widget(
             widget_type=QLabel(),
             parent_layout = self.novice_section.inner_layout(1),
-            text=self.ability_dict["Novice"],
+            text=self.restyle_description(self.ability_dict["Novice"]),
             objectname=f"ability_label",
             class_group=self.widget_group,
             size_policy=(QSizePolicy.Expanding, QSizePolicy.Expanding),
@@ -218,7 +218,7 @@ class AbilityItem(QWidget):
             class_group=self.widget_group,
             objectname=f"ability",
             enabled=False,
-            text = self.ability_dict["Adept"],
+            text = self.restyle_description(self.ability_dict["Adept"]),
             size_policy=(QSizePolicy.Expanding, QSizePolicy.Expanding),
         )
 
@@ -260,7 +260,7 @@ class AbilityItem(QWidget):
             class_group=self.widget_group,
             objectname=f"ability",
             enabled=False,
-            text = self.ability_dict["Master"],
+            text = self.restyle_description(self.ability_dict["Master"]),
         )
 
         self.build_dice_section(self.ability_dict["Master"], self.master_section.inner_layout(2))
@@ -286,6 +286,10 @@ class AbilityItem(QWidget):
         self.master_layout.setContentsMargins(0,0,10,0)    
 
         self.setLayout(self.master_layout)  
+
+    def restyle_description(self, ability_string):
+        new_string = ability_string.replace("Reaction", "<b>Reaction</b>").replace("Special", "<b>Special</b>").replace("Free", "<b>Free</b>").replace("Active", "<b>Active</b>")
+        return new_string
 
     def delete_ability(self):
         self.character.CHARACTER_DOC["abilities"].pop(self.slot)
@@ -370,8 +374,7 @@ class AbilityItem(QWidget):
         self.character.set_abilities()
 
     def roll_dice(self):
-        self.character = self.character.character_name
-        self.combat_log = self.character.combat_log
+        self.character_name = self.character.character_name
         self.roll_type = self.sender().property("roll")   
 
         if self.roll_type in ["CASTING","DEFENSE"]:
@@ -381,7 +384,7 @@ class AbilityItem(QWidget):
             self.check = 0
             self.dice = self.sender().text()
 
-        rolling_dice = DiceRoll(self.combat_log,self.character,self.roll_type.capitalize(),self.dice, check = self.check).roll()
+        rolling_dice = DiceRoll(self.sender(),self.character_name,self.roll_type.capitalize(), self.dice, check = self.check, character=self.character).roll()
 
 def get_abilities(category, name):
     all_equipment = {}

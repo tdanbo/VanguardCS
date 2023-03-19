@@ -25,7 +25,10 @@ class ModifyStat:
         if integer_value == 0:
             new_value =  self.string
         else:
-            new_value = f"{self.string} {integer_value}"
+            if integer_value > 0:
+                new_value = f"{self.string} +{integer_value}"
+            else:
+                new_value = f"{self.string} {integer_value}"
     
         widget.setText(new_value)
 
