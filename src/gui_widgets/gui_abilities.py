@@ -146,7 +146,6 @@ class AddNewAbility(QWidget):
             collection = db[name]
             document = collection.find_one()
             all_equipment[name] = document
-            all_equipment[name]["Category"] = name
 
         return all_equipment
                 

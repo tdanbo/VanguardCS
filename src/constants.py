@@ -50,11 +50,11 @@ STATS = [
 
 ACTIVE_COLOR = {
     "ATTACK": "#925833",
-    "ABILITIES": "#925833",
+    "ABILITY": "#925833",
     "DEFENSE": "#495C60",
     "CASTING": "#60495c",
-    "MYSTICAL_POWERS": "#60495c",
-    "RITUALS": "#60495c",
+    "MYSTICAL POWER": "#60495c",
+    "RITUAL": "#60495c",
     "SNEAKING": "#5c6049",
 }
 
@@ -67,6 +67,7 @@ DARK = "#231f20"
 
 
 FONT_LIGHT = "#ffffff"
+FONT_MEDIUM = "#4d473e"
 FONT_DARK = "#282425"
 FONT_COLOR = "#864433"
 

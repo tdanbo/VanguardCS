@@ -39,7 +39,6 @@ class AddSub(QWidget):
             class_group = self.widget_group,
             validator="numbers",
             stylesheet= f"font-size: 15px; font-weight: bold; color: {cons.FONT_COLOR}; background-color: {cons.PRIMARY_LIGHTER}; border: 1px solid {cons.BORDER}; border-radius: 6px;"
-
         )
 
         self.minus_widget = Widget(
@@ -52,7 +51,6 @@ class AddSub(QWidget):
             height = cons.WSIZE*1.5,
             signal=self.send_value,
             stylesheet= f"font-size: 15px; font-weight: bold; color: {cons.FONT_COLOR}; background-color: {cons.PRIMARY_LIGHTER}; border: 1px solid {cons.BORDER}; border-radius: 6px;"
-
         )
 
         self.plus_widget = Widget(
