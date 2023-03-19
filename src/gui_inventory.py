@@ -53,7 +53,8 @@ class InventoryGUI(QWidget):
             spacing=3,
         )
 
-        scroll_style = f"QScrollBar {{background-color: {cons.PRIMARY_LIGHTER}; width: 6px;}}"\
+        scroll_style = f"QScrollBar {{background-color: {cons.PRIMARY}; width: 6px;}}"\
+                       f"QWidget {{background-color: {cons.PRIMARY};}}"\
                        f"QScrollBar::handle:vertical {{background-color: {cons.BORDER}; width: 6px; min-height: 20px; border: none; outline: none;}}"\
 
         self.inventory_scroll = Section(
@@ -159,7 +160,7 @@ class InventoryGUI(QWidget):
             class_group = self.section_group,
             content_margin=(0,0,0,0),
             spacing=0,
-            height=246
+            height=216
         )
 
         self.equipment_layout.get_title()[1].setAlignment(Qt.AlignCenter)

@@ -21,6 +21,7 @@ class CharacterSheetGUI(QWidget):
 
         self.master_layout = QVBoxLayout()
         self.master_layout.setContentsMargins(0,0,0,0)
+        self.master_layout.setSpacing(0)
         self.section_group = []
         self.widget_group = []
 
@@ -32,6 +33,10 @@ class CharacterSheetGUI(QWidget):
             class_group = self.section_group,
         )
 
+        scroll_style = f"QScrollBar {{background-color: {cons.PRIMARY}; width: 6px;}}"\
+                       f"QWidget {{background-color: {cons.PRIMARY};}}"\
+                       f"QScrollBar::handle:vertical {{background-color: {cons.BORDER}; width: 6px; min-height: 20px; border: none; outline: none;}}"\
+
         self.ability_layout = Section(
             outer_layout = QVBoxLayout(),
             inner_layout = ("VBox", 1),
@@ -40,8 +45,9 @@ class CharacterSheetGUI(QWidget):
             group = True,
             scroll=(True,"top"),
             icon = ("plus.png", cons.WSIZE, cons.ICON_COLOR),
-            spacing=5,
-            class_group=self.section_group
+            spacing=10,
+            class_group=self.section_group,
+            stylesheet=scroll_style
         )
         
         self.ability_layout.get_title()[0].clicked.connect(self.open_abilities)

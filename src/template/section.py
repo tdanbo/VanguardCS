@@ -113,8 +113,12 @@ class Section(QWidget):
                     Qt.ScrollBarAlwaysOff
                 )
 
-                self.scroll_widget.setStyleSheet(f"background-color: {cons.PRIMARY};")
-                self.scroll_area_widget.setStyleSheet(f"background-color: {cons.PRIMARY};")
+                if stylesheet != "":
+                    self.scroll_widget.setStyleSheet(stylesheet)
+                    self.scroll_area_widget.setStyleSheet(stylesheet)
+                else:
+                    self.scroll_widget.setStyleSheet(f"background-color: {cons.PRIMARY};")
+                    self.scroll_area_widget.setStyleSheet(f"background-color: {cons.PRIMARY};")
 
                 self.outer_layout_type.addWidget(self.scroll_area_widget)
         else:

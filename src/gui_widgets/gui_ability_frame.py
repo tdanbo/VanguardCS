@@ -27,15 +27,29 @@ class AbilityItem(QWidget):
         self.section_group = []
         self.widget_group = []
 
-        self.power_section = Section(
+        self.header_section = Section(
             outer_layout = QVBoxLayout(),
-            inner_layout = ("HBox", 6),
+            inner_layout = ("HBox", 1),
             parent_layout = self.master_layout,
             group = True,
             spacing = 5,
             class_group=self.section_group,
+            height = 40,
             objectname=f"ability_section",
-            stylesheet=f"background-color: {cons.PRIMARY_DARKER}; border-radius: 5px; padding: 5px;"
+            stylesheet=f"background-color: {cons.DARK};",
+            content_margin=(0,0,10,0)
+        )
+
+        self.power_section = Section(
+            outer_layout = QVBoxLayout(),
+            inner_layout = ("VBox", 1),
+            parent_layout = self.master_layout,
+            group = True,
+            spacing = 0,
+            class_group=self.section_group,
+            objectname=f"ability_section",
+            stylesheet=f"background-color: {cons.PRIMARY_DARKER};",
+            content_margin=(0,0,0,0)
         )
         
         # self.header_icon = Widget(
@@ -51,7 +65,7 @@ class AbilityItem(QWidget):
         if self.select:
             self.header_select = Widget(
                 widget_type=QToolButton(),
-                parent_layout = self.power_section.inner_layout(1),
+                parent_layout = self.header_section.inner_layout(1),
                 icon = ("plus.png",cons.WSIZE,cons.BORDER),
                 height=cons.WSIZE,
                 width = cons.WSIZE,
@@ -62,8 +76,8 @@ class AbilityItem(QWidget):
         else:
             self.header_delete = Widget(
                 widget_type=QToolButton(),
-                parent_layout = self.power_section.inner_layout(1),
-                icon = ("delete.png",cons.WSIZE,cons.BORDER),
+                parent_layout = self.header_section.inner_layout(1),
+                icon = ("delete.png",cons.WSIZE,cons.FONT_COLOR),
                 height=cons.WSIZE,
                 width = cons.WSIZE,
                 objectname=f"ability_delete",
@@ -73,16 +87,16 @@ class AbilityItem(QWidget):
 
         self.header_label = Widget(
             widget_type=QLabel(),
-            parent_layout = self.power_section.inner_layout(1),
+            parent_layout = self.header_section.inner_layout(1),
             text=self.ability_dict["Name"].upper(),
             objectname=f"ability_name",
             class_group=self.widget_group,
-            stylesheet=f"font-size: 14px; font-weight: bold; color: {cons.FONT_COLOR}"
+            stylesheet=f"font-size: 14px; font-weight: bold; color: {cons.FONT_LIGHT}"
         )
 
         self.set_rank_novice = Widget(
             widget_type=QToolButton(),
-            parent_layout = self.power_section.inner_layout(1),
+            parent_layout = self.header_section.inner_layout(1),
             text="N",
             height=cons.WSIZE,
             width=cons.WSIZE,
@@ -94,33 +108,31 @@ class AbilityItem(QWidget):
 
         self.set_rank_adept = Widget(
             widget_type=QToolButton(),
-            parent_layout = self.power_section.inner_layout(1),
+            parent_layout = self.header_section.inner_layout(1),
             text = "A",
             height=cons.WSIZE,
             width=cons.WSIZE,
             objectname=f"ability_adept",
             class_group=self.widget_group,
             signal=self.change_rank,
-            stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.BORDER}; font-size: 11px; border: 1px solid {cons.BORDER}; border-radius: 6px;",
+            stylesheet=f"background-color: {cons.PRIMARY}; color: {cons.PRIMARY_LIGHTER}; font-size: 11px; border: 1px solid {cons.BORDER}; border-radius: 6px;",
         )
 
         self.set_rank_master = Widget(
             widget_type=QToolButton(),
-            parent_layout = self.power_section.inner_layout(1),
+            parent_layout = self.header_section.inner_layout(1),
             text = "M",
             height=cons.WSIZE,
             width=cons.WSIZE,
             objectname=f"ability_master",
             class_group=self.widget_group,
             signal=self.change_rank,
-            stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.BORDER}; font-size: 11px; border: 1px solid {cons.BORDER}; border-radius: 6px;",
+            stylesheet=f"background-color: {cons.PRIMARY}; color: {cons.PRIMARY_LIGHTER}; font-size: 11px; border: 1px solid {cons.BORDER}; border-radius: 6px;",
         )
-
-        self.power_section.inner_layout(1).setSpacing(2)
 
         self.description = Widget(
             widget_type=QLabel(),
-            parent_layout = self.power_section.inner_layout(2),
+            parent_layout = self.power_section.inner_layout(1),
             text=self.ability_dict["Description"],
             objectname=f"ability_description",
             class_group=self.widget_group,
@@ -133,7 +145,7 @@ class AbilityItem(QWidget):
 
         self.divider = Widget(
             widget_type=QFrame(),
-            parent_layout = self.power_section.inner_layout(3),
+            parent_layout = self.power_section.inner_layout(1),
             height=1,
             stylesheet=f"background-color: {cons.BORDER}",
             class_group=self.section_group
@@ -142,10 +154,12 @@ class AbilityItem(QWidget):
         self.novice_section = Section(
             outer_layout = QVBoxLayout(),
             inner_layout = ("HBox", 3),
-            parent_layout = self.power_section.inner_layout(4),
+            parent_layout = self.power_section.inner_layout(1),
             spacing = 5,
             class_group=self.section_group,
-            hidden=False
+            hidden=False,
+            stylesheet=f"background-color: {cons.PRIMARY_DARKER};",
+            group=True
         )
 
         self.novice_rank = Widget(
@@ -172,7 +186,7 @@ class AbilityItem(QWidget):
 
         self.divider = Widget(
             widget_type=QFrame(),
-            parent_layout = self.novice_section.inner_layout(3),
+            parent_layout = self.power_section.inner_layout(1),
             height=1,
             stylesheet=f"background-color: {cons.BORDER}",
             class_group=self.section_group
@@ -181,10 +195,12 @@ class AbilityItem(QWidget):
         self.adept_section = Section(
             outer_layout = QVBoxLayout(),
             inner_layout = ("HBox", 3),
-            parent_layout = self.power_section.inner_layout(5),
+            parent_layout = self.power_section.inner_layout(1),
             spacing = 5,
             class_group=self.section_group,
-            hidden=True
+            hidden=True,
+            stylesheet=f"background-color: {cons.PRIMARY};",
+            group=True
         )
 
         self.adept_rank = Widget(
@@ -212,7 +228,7 @@ class AbilityItem(QWidget):
 
         self.divider = Widget(
             widget_type=QFrame(),
-            parent_layout = self.adept_section.inner_layout(3),
+            parent_layout = self.power_section.inner_layout(1),
             height=1,
             stylesheet=f"background-color: {cons.BORDER}",
             class_group=self.section_group
@@ -221,10 +237,12 @@ class AbilityItem(QWidget):
         self.master_section = Section(
             outer_layout = QVBoxLayout(),
             inner_layout = ("HBox", 3),
-            parent_layout = self.power_section.inner_layout(6),
+            parent_layout = self.power_section.inner_layout(1),
             spacing = 5,
             class_group=self.section_group,
-            hidden=True
+            hidden=True,
+            stylesheet=f"background-color: {cons.PRIMARY_DARKER};",
+            group=True
         )
 
         self.master_rank = Widget(
@@ -256,11 +274,16 @@ class AbilityItem(QWidget):
         for section in self.section_group:
             section.connect_to_parent()
 
+        self.divider = QFrame()
+        self.divider.setFixedHeight(1)
+        self.divider.setStyleSheet(f"background-color: {cons.BORDER}")
+        self.master_layout.addWidget(self.divider)
+
         self.gui_rank_state()
 
-        self.setStyleSheet(f"border-style: outset; color: {cons.FONT_DARK}; background-color: {cons.PRIMARY};border-style: outset;")
+        self.setStyleSheet(f"border-style: outset; color: {cons.FONT_DARK}; background-color: {cons.PRIMARY}; border-style: outset;")
         self.master_layout.setSpacing(0)
-        self.master_layout.setContentsMargins(0,0,0,0)    
+        self.master_layout.setContentsMargins(0,0,10,0)    
 
         self.setLayout(self.master_layout)  
 
@@ -275,27 +298,27 @@ class AbilityItem(QWidget):
             self.adept_section.setHidden(True)
             self.master_section.setHidden(True)
 
-            self.set_rank_novice.get_widget().setStyleSheet(f"background-color: {cons.FONT_COLOR}; color: {cons.PRIMARY_LIGHTER}; font-size: 11px; font-weight: bold; border: 1px solid {cons.BORDER}; border-radius: 6px;")
-            self.set_rank_adept.get_widget().setStyleSheet(f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.BORDER}; font-size: 11px; border: 1px solid {cons.BORDER}; border-radius: 6px;")
-            self.set_rank_master.get_widget().setStyleSheet(f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.BORDER}; font-size: 11px; border: 1px solid {cons.BORDER}; border-radius: 6px;")
+            self.set_rank_novice.get_widget().setStyleSheet(f"background-color: {cons.FONT_COLOR}; color: {cons.PRIMARY_LIGHTER}; font-size: 11px; font-weight: bold; border: 1px solid {cons.BORDER_DARK}; border-radius: 6px;")
+            self.set_rank_adept.get_widget().setStyleSheet(f"background-color: {cons.DARK}; color: {cons.PRIMARY_LIGHTER}; font-size: 11px; border: 1px solid {cons.BORDER_DARK}; border-radius: 6px;")
+            self.set_rank_master.get_widget().setStyleSheet(f"background-color: {cons.DARK}; color: {cons.PRIMARY_LIGHTER}; font-size: 11px; border: 1px solid {cons.BORDER_DARK}; border-radius: 6px;")
 
         elif self.ability_dict["Rank"] == "Adept":
             self.novice_section.setHidden(False)
             self.adept_section.setHidden(False)
             self.master_section.setHidden(True)
 
-            self.set_rank_novice.get_widget().setStyleSheet(f"background-color: {cons.FONT_COLOR}; color: {cons.PRIMARY_LIGHTER}; font-size: 11px; font-weight: bold; border: 1px solid {cons.BORDER}; border-radius: 6px;")
-            self.set_rank_adept.get_widget().setStyleSheet(f"background-color: {cons.FONT_COLOR}; color: {cons.PRIMARY_LIGHTER}; font-size: 11px; font-weight: bold; border: 1px solid {cons.BORDER}; border-radius: 6px;")
-            self.set_rank_master.get_widget().setStyleSheet(f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.BORDER}; font-size: 11px; border: 1px solid {cons.BORDER}; border-radius: 6px;")
+            self.set_rank_novice.get_widget().setStyleSheet(f"background-color: {cons.FONT_COLOR}; color: {cons.PRIMARY_LIGHTER}; font-size: 11px; font-weight: bold; border: 1px solid {cons.BORDER_DARK}; border-radius: 6px;")
+            self.set_rank_adept.get_widget().setStyleSheet(f"background-color: {cons.FONT_COLOR}; color: {cons.PRIMARY_LIGHTER}; font-size: 11px; font-weight: bold; border: 1px solid {cons.BORDER_DARK}; border-radius: 6px;")
+            self.set_rank_master.get_widget().setStyleSheet(f"background-color: {cons.DARK}; color: {cons.PRIMARY_LIGHTER}; font-size: 11px; border: 1px solid {cons.BORDER_DARK}; border-radius: 6px;")
 
         elif self.ability_dict["Rank"] == "Master":
             self.novice_section.setHidden(False)
             self.adept_section.setHidden(False)
             self.master_section.setHidden(False)
 
-            self.set_rank_novice.get_widget().setStyleSheet(f"background-color: {cons.FONT_COLOR}; color: {cons.PRIMARY_LIGHTER}; font-size: 11px; font-weight: bold; border: 1px solid {cons.BORDER}; border-radius: 6px;")
-            self.set_rank_adept.get_widget().setStyleSheet(f"background-color: {cons.FONT_COLOR}; color: {cons.PRIMARY_LIGHTER}; font-size: 11px; font-weight: bold; border: 1px solid {cons.BORDER}; border-radius: 6px;")
-            self.set_rank_master.get_widget().setStyleSheet(f"background-color: {cons.FONT_COLOR}; color: {cons.PRIMARY_LIGHTER}; font-size: 11px; font-weight: bold; border: 1px solid {cons.BORDER}; border-radius: 6px;")
+            self.set_rank_novice.get_widget().setStyleSheet(f"background-color: {cons.FONT_COLOR}; color: {cons.PRIMARY_LIGHTER}; font-size: 11px; font-weight: bold; border: 1px solid {cons.BORDER_DARK}; border-radius: 6px;")
+            self.set_rank_adept.get_widget().setStyleSheet(f"background-color: {cons.FONT_COLOR}; color: {cons.PRIMARY_LIGHTER}; font-size: 11px; font-weight: bold; border: 1px solid {cons.BORDER_DARK}; border-radius: 6px;")
+            self.set_rank_master.get_widget().setStyleSheet(f"background-color: {cons.FONT_COLOR}; color: {cons.PRIMARY_LIGHTER}; font-size: 11px; font-weight: bold; border: 1px solid {cons.BORDER_DARK}; border-radius: 6px;")
 
     def change_rank(self):
         rank = self.sender().objectName()
@@ -308,7 +331,8 @@ class AbilityItem(QWidget):
         elif rank == "ability_master":
             self.ability_dict["Rank"] = "Master"
 
-        self.character.update_sheet()
+        self.character.set_abilities()
+        self.character.save_document()
 
     def build_dice_section(self, string, layout):
 

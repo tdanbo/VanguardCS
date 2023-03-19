@@ -29,23 +29,31 @@ class InventoryItem(QWidget):
         color_type = {"melee": "#925833", "armor": "#495c60", "elixirs": "#926f2b"}
 
         if count % 2 == 0:
-            bg_color = cons.PRIMARY
+            self.bg_color = cons.PRIMARY
         else:
-            bg_color = cons.PRIMARY_DARKER             
+            self.bg_color = cons.PRIMARY_DARKER             
 
         self.item_section = Section(
             outer_layout=QHBoxLayout(),
-            inner_layout=("VBox", 3),
+            inner_layout=("VBox", 5),
             parent_layout=self.master_layout,
             class_group=self.section_group,
-            spacing=5,
+            spacing=0,
             group=True,
-            stylesheet=f"background-color: {bg_color};",           
+            stylesheet=f"background-color: {self.bg_color};",
+            content_margin=(0,0,0,0)       
         )
+
+        self.item_section.inner_layout(1).setContentsMargins(0, 0, 0, 0)
+        self.item_section.inner_layout(2).setContentsMargins(1, 1, 1, 1)
+        self.item_section.inner_layout(2).setSpacing(1)
+        self.item_section.inner_layout(3).setContentsMargins(5, 5, 5, 5)
+        self.item_section.inner_layout(4).setContentsMargins(0, 5, 5, 0)
+        self.item_section.inner_layout(5).setContentsMargins(5, 12, 5, 5)
 
         self.item = Widget(
             widget_type=QLineEdit(),
-            parent_layout=self.item_section.inner_layout(2),
+            parent_layout=self.item_section.inner_layout(4),
             objectname=f"{count}",
             class_group=self.widget_group,
             stylesheet=f"font-size: 13px; font-weight: bold;",
@@ -55,9 +63,16 @@ class InventoryItem(QWidget):
 
         # CREATING EMPTY OR POPULATED ITEM WIDGET
         if item_dict == {}:
+            self.type_bg_color = self.bg_color
             pass # Setting up empty item
         else:
             self.make_item(item_dict)
+
+        # self.divider = QFrame()
+        # self.divider.setFixedHeight(1)
+        # self.divider.setStyleSheet(f"background-color: {self.type_bg_color}")
+
+        # self.master_layout.addWidget(self.divider)
 
         for widget in self.widget_group:
             widget.connect_to_parent()
@@ -65,6 +80,12 @@ class InventoryItem(QWidget):
 
         for section in self.section_group:
             section.connect_to_parent()
+
+        # self.divider = QFrame()
+        # self.divider.setFixedHeight(1)
+        # self.divider.setStyleSheet(f"background-color: {self.type_bg_color}")
+
+        # self.master_layout.addWidget(self.divider)
 
         self.divider = QFrame()
         self.divider.setFixedHeight(1)
@@ -75,7 +96,7 @@ class InventoryItem(QWidget):
         self.master_layout.setSpacing(0)
         self.master_layout.setContentsMargins(0, 0, 0, 0)
         self.setLayout(self.master_layout)
-        self.setFixedHeight(75)
+        self.setFixedHeight(65)
         self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
         layout.addWidget(self)
 
@@ -130,32 +151,36 @@ class InventoryItem(QWidget):
             self.equipped = self.item_dict["Equipped"]
 
 
-        color_type = {"melee": "#925833", "ranged": "#925833", "armor": "#495c60", "elixirs": "#926f2b", "ammunition": "#925833", "treasure": "#926f2b", "misc": "#926f2b"}
+        color_type = {"melee": "#925833", "ranged": "#925833", "ammunition": "#925833", "armor": "#495c60", "elixirs": "#4e6e5d",  "treasure": "#a7754d", "misc": "#dcccbb"}
+        print(self.category)
         self.type_bg_color = color_type[self.category]
 
         self.item.widget.setText(self.name)
-        
+
         if "Equip" in item_dict:
             equip = self.item_dict["Equip"]
             if self.equipment != "":
                 self.type_label = Widget(
                     widget_type=QPushButton(),
-                    parent_layout=self.item_section.inner_layout(1),
+                    parent_layout=self.item_section.inner_layout(2),
                     class_group=self.widget_group,
-                    width=5,
-                    stylesheet=f"background-color: {self.type_bg_color};",
+                    width=7,
+                    stylesheet=f"QPushButton {{ background-color: {cons.BORDER}; }}"\
+                               f"QPushButton:hover {{ background-color: {self.type_bg_color}; }}",
                     size_policy=(QSizePolicy.Fixed, QSizePolicy.Expanding),
                     objectname=f"{self.equipment}_EQUIPPED",
                     signal=self.prepare_equip_item,
                 )
+
             else:
                 for count, state in enumerate(equip):
                     self.type_label = Widget(
                         widget_type=QPushButton(),
-                        parent_layout=self.item_section.inner_layout(1),
+                        parent_layout=self.item_section.inner_layout(2),
                         class_group=self.widget_group,
-                        width=5,
-                        stylesheet=f"background-color: {cons.BORDER};",
+                        width=7,
+                        stylesheet=f"QPushButton {{ background-color: {cons.BORDER}; }}"\
+                                   f"QPushButton:hover {{ background-color: {self.type_bg_color}; }}",
                         size_policy=(QSizePolicy.Fixed, QSizePolicy.Expanding),
                         objectname=state,
                         signal=self.prepare_equip_item,
@@ -163,61 +188,71 @@ class InventoryItem(QWidget):
         else:
             self.type_label = Widget(
                 widget_type=QLabel(),
-                parent_layout=self.item_section.inner_layout(1),
+                parent_layout=self.item_section.inner_layout(2),
                 class_group=self.widget_group,
-                width=5,
-                stylesheet=f"background-color: {cons.BORDER}",
+                width=7,
+                stylesheet=f"background-color: {self.bg_color}",
             )
 
         self.item_section.inner_layout(1).setSpacing(1)
 
         # If item has qualities
 
-        if "Quality" in self.item_dict:
-            qualities = self.item_dict["Quality"]
-            self.quality_section = Section(
-                outer_layout=QVBoxLayout(),
-                inner_layout=("HBox", 1),
-                parent_layout=self.item_section.inner_layout(2),
-                class_group=self.section_group,
-                spacing=2,
-            )
-
-            for count, quality in enumerate(qualities):
-                self.item_quality = Widget(
-                    widget_type=QToolButton(),
-                    parent_layout=self.quality_section.inner_layout(1),
-                    objectname=quality,
-                    class_group=self.widget_group,
-                    icon=(f"{quality}.png", cons.WSIZE / 2, cons.FONT_COLOR),
-                    stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_DARK}; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-radius: 6px;",
-                    height=cons.WSIZE,
-                    width=cons.WSIZE,
-                )
-
-            self.quality_section.inner_layout(1).setAlignment(Qt.AlignLeft)
 
         self.item_label = Widget(
-            widget_type=QLabel(),
-            parent_layout=self.item_section.inner_layout(3),
+            widget_type=QLineEdit(),
+            parent_layout=self.item_section.inner_layout(4),
             text=self.item_type,
             objectname="item",
-            class_group=self.widget_group,
-            align="right",
+            class_group=self.section_group,
             height=cons.WSIZE,
-            
+            stylesheet=f"color: {cons.BORDER_DARK}; font-size: 10px; font-weight: bold;",  
+            enabled=False,  
         )
+
+        qualities = self.item_dict["Quality"]
+        self.quality_section = Section(
+            outer_layout=QHBoxLayout(),
+            inner_layout=("VBox", 2),
+            parent_layout=self.item_section.inner_layout(3),
+            class_group=self.section_group,
+            spacing=0,
+        )
+
+        for count in range(4):
+            try:
+                quality = qualities[count]
+            except:
+                quality = ""
+
+            if count > 1:
+                layout = 1
+            else:
+                layout = 2
+
+            self.item_quality = Widget(
+                widget_type=QToolButton(),
+                parent_layout=self.quality_section.inner_layout(layout),
+                objectname=f"quality{count}",
+                class_group=self.widget_group,
+                icon=(f"{quality}.png", cons.WSIZE / 2, self.type_bg_color),
+                height=cons.WSIZE,
+                width=cons.WSIZE,
+            )
+
+        #self.quality_section.inner_layout(1).setAlignment(Qt.AlignLeft)
+
+
 
         # If item has a roll
 
         self.roll_section = Section(
             outer_layout=QVBoxLayout(),
             inner_layout=("HBox", 1),
-            parent_layout=self.item_section.inner_layout(3),
+            parent_layout=self.item_section.inner_layout(5),
             class_group=self.section_group,
             spacing=2,
         )
-
 
         if "Roll" in self.item_dict:
             dice_type = self.item_dict["Roll"][0]
@@ -229,7 +264,7 @@ class InventoryItem(QWidget):
                 text=dice,
                 objectname="item",
                 class_group=self.widget_group,
-                stylesheet=f"padding-left: 5px; padding-right: 5px; background-color: {cons.PRIMARY_LIGHTER}; color: {self.type_bg_color}; font-size: 11px; font-weight: bold; border: 1px solid {cons.BORDER}; border-radius: 6px;",
+                stylesheet=f"padding-left: 5px; padding-right: 5px; background-color: {cons.PRIMARY_LIGHTER}; color: {self.type_bg_color}; font-size: 12px; font-weight: bold; border: 1px solid {cons.BORDER}; border-radius: 6px;",
                 height=cons.WSIZE,
                 signal=self.roll_dice,
                 property=("roll",dice_type),
@@ -241,19 +276,29 @@ class InventoryItem(QWidget):
             self.quantity = Widget(
                 widget_type=QToolButton(),
                 parent_layout=self.roll_section.inner_layout(1),
-                text=str(quantity),
+                text=f"x {quantity}",
                 objectname="quantity",
                 class_group=self.widget_group,
-                stylesheet=f"padding-left: 5px; padding-right: 5px; background-color: {cons.PRIMARY_LIGHTER}; color: {self.type_bg_color}; font-size: 11px; font-weight: bold; border: 1px solid {cons.BORDER}; border-radius: 6px;",
+                stylesheet=f"padding-left: 5px; padding-right: 5px; background-color: {cons.BORDER}; color: {cons.PRIMARY_LIGHTER}; font-size: 12px; font-weight: bold; border-radius: 6px;",
                 height=cons.WSIZE,
                 signal=self.add_sub,
             )
 
+        self.type_label = Widget(
+            widget_type=QLabel(),
+            parent_layout=self.item_section.inner_layout(1),
+            objectname="item",
+            class_group=self.widget_group,
+            width=7,
+            stylesheet=f"background-color: {self.type_bg_color}",
+            
+        )
+
         self.roll_section.inner_layout(1).setAlignment(Qt.AlignRight)
 
-        self.item_section.inner_layout(1).setAlignment(Qt.AlignLeft)
-        self.item_section.inner_layout(2).setAlignment(Qt.AlignRight)
-        self.item_label.get_widget().setAlignment(Qt.AlignRight | Qt.AlignVCenter)
+        # self.item_section.inner_layout(2).setAlignment(Qt.AlignLeft)
+        self.item_section.inner_layout(5).setAlignment(Qt.AlignTop)
+        self.item_label.get_widget().setAlignment(Qt.AlignTop)
 
     def add_sub(self):
         add_sub_gui = AddSub(self.character, self.sender(), doc_item = self.count, item=True)

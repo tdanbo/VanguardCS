@@ -21,6 +21,7 @@ class CombatLogGUI(QWidget):
         
         self.master_layout = QVBoxLayout()
         self.master_layout.setContentsMargins(0,0,0,0)
+        self.master_layout.setSpacing(0)
         self.section_group = []
         self.widget_group = []
 

@@ -57,7 +57,7 @@ class Widget:
         self.set_size(self.widget, width, height)
         self.set_validator(self.widget, validator)
         self.set_placeholder(self.widget, placeholder)
-        self.load_setting(self.setting)
+        #self.load_setting(self.setting)
         if icon[0] != "":
             if len(icon) == 4:
                 pix_width = icon[3]

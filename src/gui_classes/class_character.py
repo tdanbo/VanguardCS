@@ -63,7 +63,7 @@ class Character:
     def set_inventory(self):
         self.inventory_layout = self.inventory_gui.inventory_scroll.inner_layout(1)
         func.clear_layout(self.inventory_layout)
-        priority = {'melee': 0, 'ranged': 1, 'armor': 2, 'elixirs': 3}
+        priority = {'melee': 0, 'ranged': 1, 'ammunition': 2, 'armor': 3, 'elixirs': 4, 'treasure': 5, 'misc': 6}
         sorted_list = sorted(self.CHARACTER_DOC["inventory"], key=lambda x: priority.get(x.get('Category', ''), len(priority)))
         self.CHARACTER_DOC["inventory"] = sorted_list
 

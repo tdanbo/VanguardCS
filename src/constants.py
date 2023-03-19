@@ -9,9 +9,9 @@ try:
 except:
     ROOT = os.path.dirname(__file__)
 
-SCRIPT_NAME = "Vanguard 5e"
-LOCAL_DIRECTORY = os.path.join(os.getenv("APPDATA"), SCRIPT_NAME)
-
+# SCRIPT_NAME = "Vanguard 5e"
+# LOCAL_DIRECTORY = os.path.join(os.getenv("APPDATA"), SCRIPT_NAME)
+# SETTINGS = os.path.join(LOCAL_DIRECTORY, "settings.json")
 
 
 LICENSE = License().get_license()
@@ -24,8 +24,6 @@ print("Version Below")
 print(VERSION)
 
 CONNECT = f"mongodb+srv://{USER}:{PASSWORD}@cluster0.2oqhlud.mongodb.net/?retryWrites=true&w=majority"
-
-SETTINGS = os.path.join(LOCAL_DIRECTORY, "settings.json")
 ICONS = os.path.join(ROOT, ".icons")
 
 
@@ -46,11 +44,12 @@ STATS = [
     "STRONG",
     "VIGILANT",
 ]
-ARMOR = ["armor"]
+#ARMOR = ["armor"]
 
 # func.create_folder(LOCAL_DIRECTORY)
 
-PRIMARY_DARKER = "#e1ddcd"
+#PRIMARY_DARKER = "#e1ddcd"
+PRIMARY_DARKER = "#dbd7c8"
 PRIMARY = "#f0e8d9"
 PRIMARY_LIGHTER = "#f1efe9"
 
@@ -61,4 +60,5 @@ FONT_LIGHT = "#ffffff"
 FONT_DARK = "#282425"
 FONT_COLOR = "#864433"
 
-BORDER = "#BAAD96"
+BORDER = "#b3a691"
+BORDER_DARK = "#998e7c"
