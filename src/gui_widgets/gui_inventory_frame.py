@@ -339,6 +339,7 @@ class InventoryItem(QWidget):
         self.set_impeding()
         self.character.set_inventory()
         self.character.set_equipment()
+        self.character.set_modifiers()
         self.character.save_document()
 
     def unequip_item(self):
@@ -365,6 +366,7 @@ class InventoryItem(QWidget):
         self.set_impeding()
         self.character.set_inventory()
         self.character.set_equipment()
+        self.character.set_modifiers()
         self.character.save_document()
 
     def set_impeding(self):
@@ -397,3 +399,4 @@ class InventoryItem(QWidget):
         self.character.CHARACTER_DOC["DEFENSE mod"] = defense
         self.character.CHARACTER_DOC["CASTING mod"] = casting
         self.character.CHARACTER_DOC["SNEAKING mod"] = speed
+

@@ -103,6 +103,9 @@ class Character:
         for stat in cons.STATS:
             self.sheet_gui.findChild(QWidget, f"{stat} mod").setText(str(self.CHARACTER_DOC["stats"][f"{stat} mod"]))
 
+        for stat in ["DEFENSE", "CASTING", "SNEAKING", "ATTACK"]:
+            self.inventory_gui.findChild(QWidget, f"{stat} mod").setText(str(self.CHARACTER_DOC[f"{stat} mod"]))
+
     def set_calculated_stats(self):
         strong = self.CHARACTER_DOC["stats"]["STRONG"]
         max_toughness = 10 if strong < 10 else strong
@@ -117,6 +120,8 @@ class Character:
         self.sheet_gui.corruption_threshold.get_widget().setText(f"{corruption_threshold} / {resolute}")
 
         self.inventory_gui.modifier_button.get_widget().setText("0")
+
+        
 
     def set_abilities(self):
         self.ability_layout = self.sheet_gui.ability_layout.inner_layout(1)

@@ -4,9 +4,6 @@ import shutil
 import requests
 
 from github import Github
-from github import InputFileContent
-import git
-import github
 import json
 
 class Release:

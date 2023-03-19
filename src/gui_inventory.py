@@ -356,12 +356,8 @@ class InventoryGUI(QWidget):
     def mousePressEvent(self, event): #this is a very specific event used to subtract values when right clicking on a widget
         if event.button() == Qt.RightButton:
             widget = self.childAt(event.pos())
-            if widget.objectName() in ["d4","d6","d8","d10","d12","d20","MOD","d4_count","d6_count","d8_count","d10_count","d12_count","d20_count","MOD_count"]:
-                class_custom_rolls.add_dice(self, widget.objectName(), adjust="subtract")
             if widget.objectName() == "modifier":
                 self.adjust_modifier("subtract")
-            elif widget.objectName() == "roll":
-                class_custom_rolls.clear_rolls(self)
 
     def load_character(self):
         self.current_character_name = self.sender().currentText()
