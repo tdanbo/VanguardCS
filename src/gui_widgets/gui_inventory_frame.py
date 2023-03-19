@@ -3,6 +3,7 @@ from PySide2.QtGui import *
 from PySide2.QtCore import *
 
 import constants as cons
+import pymongo
 
 from template.section import Section
 from template.widget import Widget
@@ -13,13 +14,12 @@ from gui_classes.class_modify_stat import ModifyStat
 from gui_widgets.gui_add_sub import AddSub
 
 class InventoryItem(QWidget):
-    def __init__(self, character_sheet, count, item_dict, equipment=""):
+    def __init__(self, character, count, item_dict, layout, equipment=""):
         super().__init__()
 
-        self.character_sheet = character_sheet
-        self.combat_log = character_sheet.combat_log
+        self.character = character
 
-        self.master_layout = QHBoxLayout()
+        self.master_layout = QVBoxLayout()
         self.widget_group = []
         self.section_group = []
         self.count = count
@@ -50,7 +50,7 @@ class InventoryItem(QWidget):
             class_group=self.widget_group,
             stylesheet=f"font-size: 13px; font-weight: bold;",
             height=cons.WSIZE,
-            signal=self
+            signal=self.get_item
         )
 
         # CREATING EMPTY OR POPULATED ITEM WIDGET
@@ -66,9 +66,59 @@ class InventoryItem(QWidget):
         for section in self.section_group:
             section.connect_to_parent()
 
+        self.divider = QFrame()
+        self.divider.setFixedHeight(1)
+        self.divider.setStyleSheet(f"background-color: {cons.BORDER}")
+
+        self.master_layout.addWidget(self.divider)
+
+        self.master_layout.setSpacing(0)
         self.master_layout.setContentsMargins(0, 0, 0, 0)
         self.setLayout(self.master_layout)
         self.setFixedHeight(75)
+        self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
+        layout.addWidget(self)
+
+    def get_item(self):
+        item_string = self.sender().text()
+        item_slot = int(self.sender().objectName())
+
+        print(item_string, item_slot)
+
+        self.all_equipment = self.get_equipment()
+        for category in self.all_equipment:
+            for item in self.all_equipment[category]:
+                if item_string.lower() == item.lower():
+                    item_dict = self.all_equipment[category][item]
+                    item_dict["Name"] = item
+                    item_dict["Category"] = category
+                    item_dict["Equipped"] = {}
+                    item_dict["Equipped"]["1"] = False
+                    item_dict["Equipped"]["2"] = False
+
+                    self.character.CHARACTER_DOC["inventory"].append(item_dict)
+                    self.character.set_inventory()
+                    self.character.save_document()
+                    return
+                else:
+                    pass
+
+        self.character.CHARACTER_DOC["inventory"].pop(item_slot)
+        self.character.set_inventory()
+        self.character.save_document()
+
+    def get_equipment(self):
+        all_equipment = {}
+        client = pymongo.MongoClient(cons.CONNECT)
+        # get a list of collection names
+        db = client["equipment"]
+        collection_names = db.list_collection_names()
+        for name in collection_names:
+            # get a collection object
+            collection = db[name]
+            document = collection.find_one()
+            all_equipment[name] = document
+        return all_equipment
 
     def make_item(self, item_dict):
         self.item_dict = item_dict
@@ -206,11 +256,11 @@ class InventoryItem(QWidget):
         self.item_label.get_widget().setAlignment(Qt.AlignRight | Qt.AlignVCenter)
 
     def add_sub(self):
-        add_sub_gui = AddSub(self.character_sheet, self.sender(), doc_item = self.count, item=True)
+        add_sub_gui = AddSub(self.character, self.sender(), doc_item = self.count, item=True)
         add_sub_gui.show()
 
     def roll_dice(self):
-        self.character = self.character_sheet.character_name
+        self.character_name = self.character.character_name
         self.roll_type = self.sender().property("roll") 
 
         if self.roll_type in cons.STATS:
@@ -225,93 +275,103 @@ class InventoryItem(QWidget):
         else:
             needs_ammo = False
 
-        rolling_dice = DiceRoll(self.sender(),self.combat_log,self.character,self.roll_type.capitalize(), self.dice, check = self.check, sheet=self.character_sheet, ammo=needs_ammo).roll()
+        rolling_dice = DiceRoll(self.sender(),self.character_name,self.roll_type.capitalize(), self.dice, check = self.check, character=self.character, ammo=needs_ammo).roll()
 
     def prepare_equip_item(self):
+        print("EQUIP")
         self.equip_button = self.sender()
         self.equip_button_type = self.equip_button.objectName()
 
+        print(self.equip_button)
+        print(self.equip_button_type)
+
         if "EQUIPPED" in self.equip_button_type:
             self.unequip_item()
+            print("UNEQUIP")
         else:
             self.equip_item()
+            print("EQUIP")
 
     def equip_item(self):
         if self.equip_button_type == "2H":
-            self.character_sheet.CHARACTER_DOC["inventory"].pop(self.count)
+            self.character.CHARACTER_DOC["inventory"].pop(self.count)
 
-            if self.character_sheet.CHARACTER_DOC["equipment"]["main hand"] != {}:
-                self.character_sheet.CHARACTER_DOC["inventory"].append(self.character_sheet.CHARACTER_DOC["equipment"]["main hand"])
-            if self.character_sheet.CHARACTER_DOC["equipment"]["off hand"] != {}:
-                self.character_sheet.CHARACTER_DOC["inventory"].append(self.character_sheet.CHARACTER_DOC["equipment"]["off hand"])
+            if self.character.CHARACTER_DOC["equipment"]["main hand"] != {}:
+                self.character.CHARACTER_DOC["inventory"].append(self.character.CHARACTER_DOC["equipment"]["main hand"])
+            if self.character.CHARACTER_DOC["equipment"]["off hand"] != {}:
+                self.character.CHARACTER_DOC["inventory"].append(self.character.CHARACTER_DOC["equipment"]["off hand"])
 
-            self.character_sheet.CHARACTER_DOC["equipment"]["main hand"] = self.item_dict
-            self.character_sheet.CHARACTER_DOC["equipment"]["off hand"] = {}
+            self.character.CHARACTER_DOC["equipment"]["main hand"] = self.item_dict
+            self.character.CHARACTER_DOC["equipment"]["off hand"] = {}
 
             self.equip_button.setObjectName("2H_EQUIPPED")
 
         elif self.equip_button_type == "MH":
-            self.character_sheet.CHARACTER_DOC["inventory"].pop(self.count)
+            self.character.CHARACTER_DOC["inventory"].pop(self.count)
             
-            if self.character_sheet.CHARACTER_DOC["equipment"]["main hand"] != {}:
-                self.character_sheet.CHARACTER_DOC["inventory"].append(self.character_sheet.CHARACTER_DOC["equipment"]["main hand"])
+            if self.character.CHARACTER_DOC["equipment"]["main hand"] != {}:
+                self.character.CHARACTER_DOC["inventory"].append(self.character.CHARACTER_DOC["equipment"]["main hand"])
 
-            self.character_sheet.CHARACTER_DOC["equipment"]["main hand"] = self.item_dict
+            self.character.CHARACTER_DOC["equipment"]["main hand"] = self.item_dict
 
             self.equip_button.setObjectName("MH_EQUIPPED")
 
         elif self.equip_button_type == "OH":
-            self.character_sheet.CHARACTER_DOC["inventory"].pop(self.count)
+            self.character.CHARACTER_DOC["inventory"].pop(self.count)
             
-            if self.character_sheet.CHARACTER_DOC["equipment"]["off hand"] != {}:
-                self.character_sheet.CHARACTER_DOC["inventory"].append(self.character_sheet.CHARACTER_DOC["equipment"]["off hand"])
+            if self.character.CHARACTER_DOC["equipment"]["off hand"] != {}:
+                self.character.CHARACTER_DOC["inventory"].append(self.character.CHARACTER_DOC["equipment"]["off hand"])
 
-            self.character_sheet.CHARACTER_DOC["equipment"]["off hand"] = self.item_dict
+            self.character.CHARACTER_DOC["equipment"]["off hand"] = self.item_dict
 
             self.equip_button.setObjectName("OH_EQUIPPED")
 
         elif self.equip_button_type == "AR":
-            self.character_sheet.CHARACTER_DOC["inventory"].pop(self.count)
+            self.character.CHARACTER_DOC["inventory"].pop(self.count)
             
-            if self.character_sheet.CHARACTER_DOC["equipment"]["armor"] != {}:
-                self.character_sheet.CHARACTER_DOC["inventory"].append(self.character_sheet.CHARACTER_DOC["equipment"]["armor"])
+            if self.character.CHARACTER_DOC["equipment"]["armor"] != {}:
+                self.character.CHARACTER_DOC["inventory"].append(self.character.CHARACTER_DOC["equipment"]["armor"])
 
-            self.character_sheet.CHARACTER_DOC["equipment"]["armor"] = self.item_dict
+            self.character.CHARACTER_DOC["equipment"]["armor"] = self.item_dict
 
             self.equip_button.setObjectName("AR_EQUIPPED")
         
         self.set_impeding()
-        self.character_sheet.update_sheet()
+        self.character.set_inventory()
+        self.character.set_equipment()
+        self.character.save_document()
 
     def unequip_item(self):
         if self.equip_button_type == "2H_EQUIPPED":
-            self.character_sheet.CHARACTER_DOC["inventory"].append(self.character_sheet.CHARACTER_DOC["equipment"]["main hand"])
-            self.character_sheet.CHARACTER_DOC["equipment"]["main hand"] = {}
+            self.character.CHARACTER_DOC["inventory"].append(self.character.CHARACTER_DOC["equipment"]["main hand"])
+            self.character.CHARACTER_DOC["equipment"]["main hand"] = {}
             self.equip_button.setObjectName("2H")
 
         elif self.equip_button_type == "MH_EQUIPPED":
-            self.character_sheet.CHARACTER_DOC["inventory"].append(self.character_sheet.CHARACTER_DOC["equipment"]["main hand"])
-            self.character_sheet.CHARACTER_DOC["equipment"]["main hand"] = {}
+            self.character.CHARACTER_DOC["inventory"].append(self.character.CHARACTER_DOC["equipment"]["main hand"])
+            self.character.CHARACTER_DOC["equipment"]["main hand"] = {}
             self.equip_button.setObjectName("MH")
 
         elif self.equip_button_type == "OH_EQUIPPED":
-            self.character_sheet.CHARACTER_DOC["inventory"].append(self.character_sheet.CHARACTER_DOC["equipment"]["off hand"])
-            self.character_sheet.CHARACTER_DOC["equipment"]["off hand"] = {}
+            self.character.CHARACTER_DOC["inventory"].append(self.character.CHARACTER_DOC["equipment"]["off hand"])
+            self.character.CHARACTER_DOC["equipment"]["off hand"] = {}
             self.equip_button.setObjectName("OH")
 
         elif self.equip_button_type == "AR_EQUIPPED":
-            self.character_sheet.CHARACTER_DOC["inventory"].append(self.character_sheet.CHARACTER_DOC["equipment"]["armor"])
-            self.character_sheet.CHARACTER_DOC["equipment"]["armor"] = {}
+            self.character.CHARACTER_DOC["inventory"].append(self.character.CHARACTER_DOC["equipment"]["armor"])
+            self.character.CHARACTER_DOC["equipment"]["armor"] = {}
             self.equip_button.setObjectName("AR")
 
         self.set_impeding()
-        self.character_sheet.update_sheet()
+        self.character.set_inventory()
+        self.character.set_equipment()
+        self.character.save_document()
 
     def set_impeding(self):
         defense = 0
         casting = 0
         speed = 0
-        armor = self.character_sheet.CHARACTER_DOC["equipment"]["armor"]
+        armor = self.character.CHARACTER_DOC["equipment"]["armor"]
         if armor != {}:
             impeding = [quality for quality in armor["Quality"] if "Impeding" in quality][0]
             value = ModifyStat(impeding).find_integer()
@@ -319,14 +379,14 @@ class InventoryItem(QWidget):
             defense += value
             casting += value
 
-        mh = self.character_sheet.CHARACTER_DOC["equipment"]["main hand"]
+        mh = self.character.CHARACTER_DOC["equipment"]["main hand"]
         if mh != {}:
             if mh["Name"] in ["Shield","Buckler"]:
                 defense -= 1
             elif mh["Name"] == "Steel Shield":
                 defense -= 2
 
-        oh = self.character_sheet.CHARACTER_DOC["equipment"]["off hand"]
+        oh = self.character.CHARACTER_DOC["equipment"]["off hand"]
         if oh != {}:
             if oh["Name"] in ["Shield","Buckler"]:
                 defense -= 1
@@ -334,6 +394,6 @@ class InventoryItem(QWidget):
                 defense -= 2
 
 
-        self.character_sheet.CHARACTER_DOC["DEFENSE mod"] = defense
-        self.character_sheet.CHARACTER_DOC["CASTING mod"] = casting
-        self.character_sheet.CHARACTER_DOC["SNEAKING mod"] = speed
+        self.character.CHARACTER_DOC["DEFENSE mod"] = defense
+        self.character.CHARACTER_DOC["CASTING mod"] = casting
+        self.character.CHARACTER_DOC["SNEAKING mod"] = speed

@@ -5,8 +5,8 @@ from gui_sheet import CharacterSheetGUI
 from gui_inventory import InventoryGUI
 from gui_log import CombatLogGUI
 import sys
-from class_combat import CombatLog
-from class_sheet import CharacterSheet
+from gui_classes.class_combat import CombatLog
+from gui_classes.class_character import Character
 import constants as cons
 import os
 
@@ -17,17 +17,16 @@ class MainWindow(QWidget):
         # Layouts
         self.main_layout = QHBoxLayout()
 
-        self.character_sheet = CharacterSheet()
+        self.character = Character()
 
-        self.character_sheet_gui = CharacterSheetGUI(self.character_sheet)
-        self.character_inventory_gui = InventoryGUI(self.character_sheet)
+        self.character_sheet_gui = CharacterSheetGUI(self.character)
+        self.character_inventory_gui = InventoryGUI(self.character)
 
         # 3 Main GUIS
-        combat_log_gui = CombatLogGUI(self.character_sheet, self.character_sheet_gui)
+        combat_log_gui = CombatLogGUI(self.character)
 
         # Simple styling
         combat_log_gui.setFixedWidth(300)
-        self.character_inventory_gui.setFixedWidth(300)
 
         # 2 Main classes
         self.combat_log = CombatLog(combat_log_gui)

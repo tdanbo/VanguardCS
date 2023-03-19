@@ -18,7 +18,7 @@ class ModifyStat:
             self.number = int(split[1])
             return self.number
     
-    def add_one(self, character_sheet, widget):
+    def add_one(self, character, widget):
         stat_mod = widget.objectName()
         integer_value = self.find_integer()
         integer_value += 1
@@ -29,10 +29,11 @@ class ModifyStat:
     
         widget.setText(new_value)
 
-        character_sheet.CHARACTER_DOC["stats"][stat_mod] = new_value
-        character_sheet.update_sheet()
+        character.CHARACTER_DOC["stats"][stat_mod] = new_value
+        character.save_document()
+        character.set_stats()
 
-    def subtract_one(self, character_sheet, widget):
+    def subtract_one(self, character, widget):
         stat_mod = widget.objectName()
         integer_value = self.find_integer()
         integer_value -= 1
@@ -43,5 +44,6 @@ class ModifyStat:
 
         widget.setText(new_value)
 
-        character_sheet.CHARACTER_DOC["stats"][stat_mod] = new_value
-        character_sheet.update_sheet()
+        character.CHARACTER_DOC["stats"][stat_mod] = new_value
+        character.save_document()
+        character.set_stats()

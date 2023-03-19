@@ -4,19 +4,20 @@ from PySide2.QtCore import *
 
 from template.section import Section
 from template.widget import Widget
-import functions as func
 import constants as cons
-from gui_abilities import AddNewAbility
+from gui_widgets.gui_abilities import AddNewAbility
 from gui_classes.class_roll import DiceRoll
 from gui_classes.class_modify_stat import ModifyStat
 
 from gui_widgets.gui_add_sub import AddSub
 
+import sys
+
 class CharacterSheetGUI(QWidget):
-    def __init__(self, csheet):
+    def __init__(self, character):
         super().__init__()
 
-        self.character_sheet = csheet
+        self.character = character
 
         self.master_layout = QVBoxLayout()
         self.master_layout.setContentsMargins(0,0,0,0)
@@ -180,7 +181,7 @@ class CharacterSheetGUI(QWidget):
 
         )
 
-        self.corruption= Widget(
+        self.corruption_current= Widget(
             widget_type=QPushButton(),
             parent_layout=self.corruption_layout.inner_layout(1),
             signal=self.add_sub,
@@ -253,28 +254,26 @@ class CharacterSheetGUI(QWidget):
             section.connect_to_parent()
 
         self.setLayout(self.master_layout)       
-
-        self.character_sheet.set_sheet_vars(self)
+        self.character.set_sheet_gui(self)
 
     def mousePressEvent(self, event): #this is a very specific event used to subtract values when right clicking on a widget
         if event.button() == Qt.RightButton:
             widget = self.childAt(event.pos())
             if widget.objectName() in [stat+" mod" for stat in cons.STATS]:
                 string = widget.text()
-                ModifyStat(string).subtract_one(self.character_sheet, widget)
+                ModifyStat(string).subtract_one(self.character, widget)
 
     def open_abilities(self):
-        self.abilities = AddNewAbility(self, self.character_sheet)
+        self.abilities = AddNewAbility(self, self.character)
         self.abilities.show()
 
     def modify_stat(self):
         widget = self.sender()
         string = widget.text()
-        ModifyStat(string).add_one(self.character_sheet, widget)
+        ModifyStat(string).add_one(self.character, widget)
 
     def roll_dice(self):
-        self.character = self.character_sheet.character_name
-        self.combat_log = self.character_sheet.combat_log
+        self.character_name = self.character.character_name
         self.roll_type = self.sender().property("roll")   
 
         if self.roll_type in cons.STATS:
@@ -284,11 +283,11 @@ class CharacterSheetGUI(QWidget):
             self.check = 0
             self.dice = self.sender().text()
 
-        rolling_dice = DiceRoll(self.sender(),self.combat_log,self.character,self.roll_type.capitalize(),self.dice, check = self.check, sheet = self.character_sheet).roll()
+        rolling_dice = DiceRoll(self.sender(),self.character_name,self.roll_type.capitalize(),self.dice, check = self.check, character = self.character).roll()
 
     def add_sub(self):
         doc_string = self.sender().objectName()
-        add_sub_gui = AddSub(self.character_sheet, self.sender(), doc_item = doc_string)
+        add_sub_gui = AddSub(self.character, self.sender(), doc_item = doc_string)
         add_sub_gui.show()
 
 if __name__ == "__main__":

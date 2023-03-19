@@ -8,11 +8,10 @@ from PySide2.QtGui import *
 from PySide2.QtCore import *
 
 class DiceRoll:
-    def __init__(self, widget, combat_log, character, roll_type, dice, check=0, sheet=None, ammo=False):
+    def __init__(self, widget, character_name, roll_type, dice, check=0, character=None, ammo=False):
 
-        self.character_sheet = sheet
-        self.combat_log = combat_log
-        self.modifier_widget = self.character_sheet.modifier
+        self.character = character
+        self.modifier_widget = self.character.inventory_gui.modifier_button.get_widget()
         self.dice = dice
         self.modifier = int(self.modifier_widget.text())
         self.check = check
@@ -23,7 +22,7 @@ class DiceRoll:
         self.check_active_modifiers()
 
         self.entry  = {
-            "Character": character,
+            "Character": character_name,
             "Type": self.roll_type,
             "Dice": dice,
             "Modifier": self.modifier,
@@ -94,12 +93,13 @@ class DiceRoll:
 
     def subtract_ammo(self):
         has_ammo = False
-        for value, item in self.character_sheet.CHARACTER_DOC["equipment"].items():
+        for value, item in self.character.CHARACTER_DOC["equipment"].items():
             if item != {}:
-                if self.character_sheet.CHARACTER_DOC["equipment"][value]["Type"] == "Arrow":
-                    if self.character_sheet.CHARACTER_DOC["equipment"][value]["Quantity"] > 0:
-                        self.character_sheet.CHARACTER_DOC["equipment"][value]["Quantity"] -= 1
-                        self.character_sheet.update_sheet()
+                if self.character.CHARACTER_DOC["equipment"][value]["Type"] == "Arrow":
+                    if self.character.CHARACTER_DOC["equipment"][value]["Quantity"] > 0:
+                        self.character.CHARACTER_DOC["equipment"][value]["Quantity"] -= 1
+                        self.character.set_equipment()
+                        self.character.save_document()
                         has_ammo = True
                     else:
                         has_ammo = False
@@ -112,15 +112,16 @@ class DiceRoll:
             self.entry["Result Message"] = "Failed"
 
     def check_active_modifiers(self):
-        atk_value = self.character_sheet.ATK_mod
-        def_value = self.character_sheet.DEF_mod
-        cas_value = self.character_sheet.CAS_mod
-        sne_value = self.character_sheet.SNE_mod
+        atk_value = self.character.inventory_gui.findChild(QWidget, "ATTACK mod")
+        def_value = self.character.inventory_gui.findChild(QWidget, "DEFENSE mod")
+        cas_value = self.character.inventory_gui.findChild(QWidget, "CASTING mod")
+        sne_value = self.character.inventory_gui.findChild(QWidget, "SNEAKING mod")
 
-        atk_mod = self.character_sheet.ATK
-        def_mod = self.character_sheet.DEF
-        cas_mod = self.character_sheet.CAS
-        sne_mod = self.character_sheet.SNE
+        atk_mod = self.character.inventory_gui.findChild(QWidget, "ATTACK button")
+        def_mod = self.character.inventory_gui.findChild(QWidget, "DEFENSE button")
+        cas_mod = self.character.inventory_gui.findChild(QWidget, "CASTING button")
+        sne_mod = self.character.inventory_gui.findChild(QWidget, "SNEAKING button")
+
         
         stylesheet_mod = f"background-color: {cons.PRIMARY_DARKER}; color: {cons.FONT_COLOR}; font-size: 20px; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-top-right-radius: 6px;"
         stylesheet_button  = f"background-color: {cons.PRIMARY_DARKER}; color: {cons.FONT_COLOR}; font-size: 20px; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;"

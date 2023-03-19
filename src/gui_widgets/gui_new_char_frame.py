@@ -11,11 +11,11 @@ import constants as cons
 import pymongo
 
 class NewCharacter(QWidget):
-    def __init__(self, isheet, csheet):
+    def __init__(self, isheet, character):
         super().__init__(None, Qt.WindowStaysOnTopHint)
 
         self.isheet = isheet
-        self.csheet = csheet
+        self.character = character
 
         # settings up the character sheet
         self.master_layout = QVBoxLayout()
@@ -144,7 +144,7 @@ class NewCharacter(QWidget):
             
             for stat in cons.STATS:
                 stat_value = self.findChild(QPushButton,stat).text()
-                new_character["stats"][stat] = stat_value
+                new_character["stats"][stat] = int(stat_value)
                 new_character["stats"][stat + " mod"] = stat
 
             strong = int(new_character["stats"]["STRONG"])
@@ -167,7 +167,7 @@ class NewCharacter(QWidget):
             self.isheet.character_name.get_widget().setCurrentText(self.character_name)
 
             self.update_database(new_character)
-            self.csheet.load_character(self.isheet, self.character_name)
+            self.character.load_document(self.character_name)
 
             self.hide()
         else:

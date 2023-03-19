@@ -6,10 +6,9 @@ from template.section import Section
 from template.widget import Widget
 
 import constants as cons
-import functions as func
 import functools
 
-from gui_classes import custom_rolls
+from gui_classes import class_custom_rolls
 
 from gui_widgets.gui_combat_frame import CombatEntry
 from gui_classes.class_roll import DiceRoll
@@ -17,7 +16,7 @@ from gui_classes.class_roll import DiceRoll
 import constants as cons
 
 class CombatLogGUI(QWidget):
-    def __init__(self, character_sheet, csheet):
+    def __init__(self, character):
         super().__init__()
         
         self.master_layout = QVBoxLayout()
@@ -25,8 +24,7 @@ class CombatLogGUI(QWidget):
         self.section_group = []
         self.widget_group = []
 
-        self.character_sheet = character_sheet
-        self.csheet = csheet
+        self.character = character
 
         #Setting up layouts/sections
 
@@ -90,7 +88,7 @@ class CombatLogGUI(QWidget):
                 text="",
                 objectname=f"{die_type[0]}_count",
                 signal=functools.partial(
-                    custom_rolls.add_dice,
+                    class_custom_rolls.add_dice,
                     self,
                     die_type[0],
                 ),
@@ -107,7 +105,7 @@ class CombatLogGUI(QWidget):
                 text = die_type[0],
                 #icon = (f"{die_type[0]}.png","",cons.FONT_COLOR,100),
                 signal=functools.partial(
-                    custom_rolls.add_dice,
+                    class_custom_rolls.add_dice,
                     self,
                     die_type[0]
                 ),
@@ -139,23 +137,17 @@ class CombatLogGUI(QWidget):
             section.connect_to_parent()    
 
         self.setLayout(self.master_layout)        
-        
-        self.character_sheet.set_combat_log(self)
 
     def mousePressEvent(self, event): #this is a very specific event used to subtract values when right clicking on a widget
         if event.button() == Qt.RightButton:
             widget = self.childAt(event.pos())
             if widget.objectName() in ["d4","d6","d8","d10","d12","d20","d4_count","d6_count","d8_count","d10_count","d12_count","d20_count"]:
-                custom_rolls.add_dice(self, widget.objectName(), adjust="subtract")
+                class_custom_rolls.add_dice(self, widget.objectName(), adjust="subtract")
             elif widget.objectName() == "roll":
-                custom_rolls.clear_rolls(self)
-
-    def get_charater(self):
-        character = self.csheet.findChild(QComboBox, "name").currentText()
-        return character  
+                class_custom_rolls.clear_rolls(self)
 
     def roll_dice(self):
-        self.character = self.character_sheet.character_name
+        self.character_name = self.character.character_name
         rolls = []
         for dice in ["d4","d6","d8","d10","d12","d20"]:
             counter = self.findChild(QPushButton, f"{dice}_count")
@@ -164,7 +156,7 @@ class CombatLogGUI(QWidget):
                 counter.setText("")
 
         roll = "_".join(rolls)
-        rolling_dice = DiceRoll(self, self.character, "Custom", roll, check = 0, sheet=self.character_sheet).roll()
+        rolling_dice = DiceRoll(self, self.character_name, "Custom", roll, check = 0, character=self.character).roll()
 
         self.roll_button.get_widget().setHidden(True)
         title_widgets = self.log_dice.get_title()

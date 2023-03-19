@@ -6,7 +6,7 @@ from template.section import Section
 from template.widget import Widget
 
 import constants as cons
-import functions as func
+import template.functions as func
 
 from qt_thread_updater import get_updater
 
@@ -107,6 +107,8 @@ class CombatEntry(QWidget):
         self.setFixedWidth(300)
         self.setFixedHeight(cons.WSIZE*2.5)
         self.setLayout(self.master_layout)
+
+        self.master_layout.setAlignment(Qt.AlignBottom)
         self.master_layout.setContentsMargins(0,0,0,0)
 
         style_a = f"color: {cons.FONT_DARK}; background-color: {cons.DARK}; border-style: outset;"

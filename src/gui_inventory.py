@@ -1,3 +1,5 @@
+
+import sys
 from PySide2.QtWidgets import *
 from PySide2.QtGui import *
 from PySide2.QtCore import *
@@ -5,22 +7,26 @@ from template.section import Section
 from template.widget import Widget
 import constants as cons
 import pymongo
-from gui_classes import custom_rolls
+
+#from gui_classes.custom_roll import class_custom_rolls
+from gui_classes.class_character import Character
+
 from gui_classes.class_roll import DiceRoll
 from gui_widgets.gui_new_char_frame import NewCharacter
 from gui_widgets.gui_add_sub import AddSub
 
 class InventoryGUI(QWidget):
-    def __init__(self, csheet=None):
+    def __init__(self, character):
         super().__init__()
 
         # setting up character sheet
-        self.character_sheet = csheet
+        self.character = character
 
         self.master_layout = QVBoxLayout()
         self.section_group = []
         self.widget_group = []
         self.master_layout.setContentsMargins(0,0,0,0)
+        self.master_layout.setSpacing(0)
         #Setting up layouts/sections
         
         self.portrait_layout = Section(
@@ -83,10 +89,10 @@ class InventoryGUI(QWidget):
         self.character_name = Widget(
             widget_type=QComboBox(),
             parent_layout=self.portrait_layout.get_title()[2],
-            objectname="name",
             text=[""],
+            objectname="name",
             class_group=self.widget_group,
-            signal=lambda: self.character_sheet.load_character(self,self.character_name.get_widget().currentText()),
+            signal=self.load_character,
             height=cons.WSIZE,
             stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; border: 1px solid {cons.BORDER}; font-size: 14px; font-weight: bold; color: {cons.FONT_COLOR};",
 
@@ -151,9 +157,9 @@ class InventoryGUI(QWidget):
             group = True,
             title = "EQUIPMENT",
             class_group = self.section_group,
-            spacing=0,
             content_margin=(0,0,0,0),
-            height=240	
+            spacing=0,
+            height=246
         )
 
         self.equipment_layout.get_title()[1].setAlignment(Qt.AlignCenter)
@@ -242,12 +248,13 @@ class InventoryGUI(QWidget):
         for section in self.section_group:
             section.connect_to_parent()
 
+        self.setFixedWidth(300)
+        self.setStyleSheet(
+            f"border-style: outset; color: {cons.FONT_DARK}; background-color: {cons.DARK};border-style: outset;"
+        )
         self.setLayout(self.master_layout)   
-
-        #Updating the character dropdown
-        if self.character_sheet != None:
-            self.character_sheet.set_inv_vars(self)
         self.update_character_dropdown() 
+        self.character.set_inventory_gui(self)
 
     def make_item_slot(self,count,layout,descriptor):
         if count % 2 == 0:
@@ -287,7 +294,7 @@ class InventoryGUI(QWidget):
             widget_type=QLineEdit(),
             parent_layout=self.slot_layot.inner_layout(2),
             height = cons.WSIZE*1.5,
-            signal= lambda: self.character_sheet.update_sheet(),
+            signal= lambda: self.find_item,
             objectname=f"item{count}",
             class_group=self.widget_group,
             align="center",
@@ -350,22 +357,22 @@ class InventoryGUI(QWidget):
         if event.button() == Qt.RightButton:
             widget = self.childAt(event.pos())
             if widget.objectName() in ["d4","d6","d8","d10","d12","d20","MOD","d4_count","d6_count","d8_count","d10_count","d12_count","d20_count","MOD_count"]:
-                custom_rolls.add_dice(self, widget.objectName(), adjust="subtract")
+                class_custom_rolls.add_dice(self, widget.objectName(), adjust="subtract")
             if widget.objectName() == "modifier":
                 self.adjust_modifier("subtract")
             elif widget.objectName() == "roll":
-                custom_rolls.clear_rolls(self)
+                class_custom_rolls.clear_rolls(self)
 
-    def get_charater(self):
-        self.character = self.csheet.findChild(QComboBox, "name").currentText()
-        return  self.character
+    def load_character(self):
+        self.current_character_name = self.sender().currentText()
+        self.character.load_document(self.current_character_name)
+
+    def find_item(self):
+        print("WHAT")
 
     def open_new_character(self):
-        self.new_character = NewCharacter(self, self.character_sheet)
+        self.new_character = NewCharacter(self, self.character)
         self.new_character.show()        
-
-    def select_item(self):
-        self.character_sheet.update_sheet()
 
     def update_character_dropdown(self):
         self.client = pymongo.MongoClient(cons.CONNECT)

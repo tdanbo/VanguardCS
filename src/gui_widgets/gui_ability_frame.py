@@ -13,16 +13,13 @@ from gui_classes.class_roll import DiceRoll
 import re
 
 class AbilityItem(QWidget):
-    def __init__(self, character_sheet, ability_dict, select = False, slot = None):
+    def __init__(self, character, ability_dict, select = False, slot = None):
         super().__init__()
         self.select = select
 
-        self.character_sheet = character_sheet
+        self.character = character
         self.ability_dict = ability_dict
         
-        self.experience = self.character_sheet.XP
-        self.unspent_xp = self.character_sheet.UXP
-
         self.slot = slot
         # an empty widget was used to push the content together. might need to introduce.
 
@@ -268,8 +265,9 @@ class AbilityItem(QWidget):
         self.setLayout(self.master_layout)  
 
     def delete_ability(self):
-        self.character_sheet.CHARACTER_DOC["abilities"].pop(self.slot)
-        self.character_sheet.update_sheet()
+        self.character.CHARACTER_DOC["abilities"].pop(self.slot)
+        self.character.save_document()
+        self.character.set_abilities()
 
     def gui_rank_state(self):
         if self.ability_dict["Rank"] == "Novice":
@@ -310,7 +308,7 @@ class AbilityItem(QWidget):
         elif rank == "ability_master":
             self.ability_dict["Rank"] = "Master"
 
-        self.character_sheet.update_sheet()
+        self.character.update_sheet()
 
     def build_dice_section(self, string, layout):
 
@@ -343,12 +341,13 @@ class AbilityItem(QWidget):
 
     def select_ability(self):
         self.ability_dict["Rank"] = "Novice"
-        self.character_sheet.CHARACTER_DOC["abilities"].append(self.ability_dict)
-        self.character_sheet.update_sheet()
+        self.character.CHARACTER_DOC["abilities"].append(self.ability_dict)
+        self.character.save_document()
+        self.character.set_abilities()
 
     def roll_dice(self):
-        self.character = self.character_sheet.character_name
-        self.combat_log = self.character_sheet.combat_log
+        self.character = self.character.character_name
+        self.combat_log = self.character.combat_log
         self.roll_type = self.sender().property("roll")   
 
         if self.roll_type in ["CASTING","DEFENSE"]:
@@ -382,8 +381,3 @@ if __name__ == "__main__":
     window = AbilityItem(ability)
     window.show()
     app.exec_()
-
-
-
-#         self.all_abilities = self.get_abilities()
-#         self.ability_dict = self.all_abilities[self.category][item]

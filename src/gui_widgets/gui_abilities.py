@@ -97,8 +97,6 @@ class AddNewAbility(QWidget):
                 ability = AbilityItem(self.character_sheet,ability_dict, select=True)
                 self.feats_scroll.inner_layout(1).addWidget(ability)
 
-
-
     def get_abilities(self):
         all_equipment = {}
         client = pymongo.MongoClient(cons.CONNECT)

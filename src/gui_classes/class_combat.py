@@ -47,9 +47,3 @@ class CombatLog:
             self.combat_log_gui.combet_log_slots[count].update_widget(entry)
         scrollbar = self.combat_log_gui.log_scroll.get_scroll().verticalScrollBar()
         scrollbar.setValue(scrollbar.maximum())
-            # layout.addWidget(log_gui_entry)
-
-            # self.divider = QFrame()
-            # self.divider.setFixedHeight(1)
-            # self.divider.setStyleSheet(f"background-color: {cons.BORDER}")
-            # layout.addWidget(self.divider)
