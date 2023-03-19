@@ -36,7 +36,7 @@ class CombatEntry(QWidget):
 
         self.item_section = Section(
             outer_layout=QHBoxLayout(),
-            inner_layout=("VBox", 4),
+            inner_layout=("VBox", 3),
             parent_layout=self.master_layout,
             class_group=self.section_group,
             group=True,
@@ -44,17 +44,17 @@ class CombatEntry(QWidget):
             stylesheet=f"background-color: {bg_color};"
         )
 
-        self.character_label = Widget(
-            widget_type=QLabel(),
-            parent_layout=self.item_section.inner_layout(1),
-            class_group=self.widget_group,
-            width=7,
-            align="left",
-        )
+        # self.character_label = Widget(
+        #     widget_type=QLabel(),
+        #     parent_layout=self.item_section.inner_layout(3),
+        #     class_group=self.widget_group,
+        #     width=7,
+        #     align="left",
+        # )
 
         self.portrait = Widget(
             widget_type=QLabel(),
-            parent_layout=self.item_section.inner_layout(2),
+            parent_layout=self.item_section.inner_layout(3),
             class_group=self.widget_group,
             width=cons.WSIZE*4,
         )
@@ -63,40 +63,41 @@ class CombatEntry(QWidget):
 
         self.item = Widget(
             widget_type=QPushButton(),
-            parent_layout=self.item_section.inner_layout(3),
+            parent_layout=self.item_section.inner_layout(2),
             class_group=self.widget_group,
             stylesheet="font-size: 14px; font-weight: bold;",
             size_policy=(QSizePolicy.Expanding, QSizePolicy.Expanding),
         )
 
-        self.item_label = Widget(
+        # self.item_label = Widget(
+        #     widget_type=QPushButton(),
+        #     parent_layout=self.item_section.inner_layout(3),
+        #     class_group=self.widget_group,
+        #     size_policy=(QSizePolicy.Expanding, QSizePolicy.Expanding),
+        # )
+
+
+        self.result_message_label = Widget(
             widget_type=QPushButton(),
-            parent_layout=self.item_section.inner_layout(3),
-            class_group=self.widget_group,
+            parent_layout=self.item_section.inner_layout(2),
+            class_group=self.widget_group,       
             size_policy=(QSizePolicy.Expanding, QSizePolicy.Expanding),
         )
 
         self.result_label = Widget(
             widget_type=QPushButton(),
-            parent_layout=self.item_section.inner_layout(4),
+            parent_layout=self.item_section.inner_layout(1),
             class_group=self.widget_group,
-            size_policy=(QSizePolicy.Fixed, QSizePolicy.Expanding),
             width=cons.WSIZE*2,
+            height=cons.WSIZE*2,
         )
 
-        self.result_message_label = Widget(
-            widget_type=QPushButton(),
-            parent_layout=self.item_section.inner_layout(4),
-            class_group=self.widget_group,       
-            size_policy=(QSizePolicy.Fixed, QSizePolicy.Expanding),
-            width=cons.WSIZE*2,     
-        )
-
-
+        self.item_section.inner_layout(1).setContentsMargins(5,5,5,5)
+        self.item_section.inner_layout(2).setContentsMargins(5,5,5,5)
+        self.item_section.inner_layout(3).setContentsMargins(1,1,1,1)
         self.item_section.inner_layout(1).setAlignment(Qt.AlignLeft)
         self.item_section.inner_layout(2).setAlignment(Qt.AlignLeft)
-        self.item_section.inner_layout(4).setAlignment(Qt.AlignRight)
-
+        
         for widget in self.widget_group:
             widget.connect_to_parent()
             widget.set_signal()
@@ -130,21 +131,19 @@ class CombatEntry(QWidget):
         else:
             type_bg_color = color_type[self.type.upper()]   
 
-        if self.modifier == "0":
-            self.item.get_widget().setText(self.type)
+        if int(self.modifier) >= 0:
+            self.item.get_widget().setText("+"+self.modifier+" "+self.type)
         else:
-            self.item.get_widget().setText(self.type+" "+self.modifier)
+            self.item.get_widget().setText(self.modifier+" "+self.type)
             
-        self.item_label.get_widget().setText(self.character)
+        #self.item_label.get_widget().setText(self.character)
         result_widget = self.result_label.get_widget()
         result_widget.setText(str(self.result))
         result_widget.setToolTip(f"{self.result_breakdown}")
         self.result_message_label.get_widget().setText(self.result_message)
 
         func.set_icon(self.portrait.get_widget(),f"{self.character}.png","")
+        self.portrait.get_widget().setToolTip(f"{self.character}")
 
-        style_b = f"background-color: {type_bg_color}"
-        get_updater().call_latest(self.character_label.get_widget().setStyleSheet, style_b)
-
-        style_c = f"background-color: {cons.PRIMARY_LIGHTER}; color: {type_bg_color}; font-size: 17px; font-weight: bold; border: 1px solid {cons.BORDER}; border-radius: 6px;"
+        style_c = f"background-color: {type_bg_color}; color: {cons.PRIMARY}; font-size: 20px; font-weight: bold; border: 1px solid {cons.BORDER}; border-radius: 6px;"
         get_updater().call_latest(self.result_label.get_widget().setStyleSheet, style_c)

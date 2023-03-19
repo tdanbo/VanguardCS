@@ -50,8 +50,11 @@ STATS = [
 
 ACTIVE_COLOR = {
     "ATTACK": "#925833",
+    "ABILITIES": "#925833",
     "DEFENSE": "#495C60",
     "CASTING": "#60495c",
+    "MYSTICAL_POWERS": "#60495c",
+    "RITUALS": "#60495c",
     "SNEAKING": "#5c6049",
 }
 

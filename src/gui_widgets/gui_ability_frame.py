@@ -23,9 +23,24 @@ class AbilityItem(QWidget):
         self.slot = slot
         # an empty widget was used to push the content together. might need to introduce.
 
-        self.master_layout = QVBoxLayout()
+        self.master_layout = QHBoxLayout()
         self.section_group = []
         self.widget_group = []
+
+        color_type = cons.ACTIVE_COLOR
+        if self.ability_dict['Type'].upper() not in color_type:
+            self.type_bg_color = "#926f2b"
+        else:
+            self.type_bg_color = color_type[self.ability_dict['Type']] 
+
+        self.type_label = Widget(
+            widget_type=QLabel(),
+            parent_layout=self.master_layout,
+            objectname="item",
+            class_group=self.widget_group,
+            width=7,
+            stylesheet=f"background-color: {cons.ACTIVE_COLOR[self.ability_dict['Category']]}", 
+        )
 
         self.header_section = Section(
             outer_layout = QVBoxLayout(),
@@ -298,10 +313,20 @@ class AbilityItem(QWidget):
         self.character.set_abilities()
 
     def gui_rank_state(self):
+        if self.ability_dict["Novice"] == "":
+            self.novice_box.get_widget().setText(self.ability_dict["Description"])
+
+            self.set_rank_novice.get_widget().setStyleSheet(f"background-color: {cons.FONT_COLOR}; color: {cons.PRIMARY_LIGHTER}; font-size: 11px; font-weight: bold; border: 1px solid {cons.BORDER_DARK}; border-radius: 6px;")
+            self.set_rank_adept.get_widget().setStyleSheet(f"background-color: {cons.DARK}; color: {cons.DARK}; font-size: 11px; border: 1px solid {cons.DARK}; border-radius: 6px;")
+            self.set_rank_master.get_widget().setStyleSheet(f"background-color: {cons.DARK}; color: {cons.DARK}; font-size: 11px; border: 1px solid {cons.DARK}; border-radius: 6px;")
+
+            return
+
         if self.ability_dict["Rank"] == "Novice":
             self.novice_section.setHidden(False)
             self.adept_section.setHidden(True)
             self.master_section.setHidden(True)
+            self.description.get_widget().setHidden(True)
 
             self.set_rank_novice.get_widget().setStyleSheet(f"background-color: {cons.FONT_COLOR}; color: {cons.PRIMARY_LIGHTER}; font-size: 11px; font-weight: bold; border: 1px solid {cons.BORDER_DARK}; border-radius: 6px;")
             self.set_rank_adept.get_widget().setStyleSheet(f"background-color: {cons.DARK}; color: {cons.PRIMARY_LIGHTER}; font-size: 11px; border: 1px solid {cons.BORDER_DARK}; border-radius: 6px;")
@@ -311,6 +336,7 @@ class AbilityItem(QWidget):
             self.novice_section.setHidden(False)
             self.adept_section.setHidden(False)
             self.master_section.setHidden(True)
+            self.description.get_widget().setHidden(True)
 
             self.set_rank_novice.get_widget().setStyleSheet(f"background-color: {cons.FONT_COLOR}; color: {cons.PRIMARY_LIGHTER}; font-size: 11px; font-weight: bold; border: 1px solid {cons.BORDER_DARK}; border-radius: 6px;")
             self.set_rank_adept.get_widget().setStyleSheet(f"background-color: {cons.FONT_COLOR}; color: {cons.PRIMARY_LIGHTER}; font-size: 11px; font-weight: bold; border: 1px solid {cons.BORDER_DARK}; border-radius: 6px;")
@@ -320,6 +346,7 @@ class AbilityItem(QWidget):
             self.novice_section.setHidden(False)
             self.adept_section.setHidden(False)
             self.master_section.setHidden(False)
+            self.description.get_widget().setHidden(True)
 
             self.set_rank_novice.get_widget().setStyleSheet(f"background-color: {cons.FONT_COLOR}; color: {cons.PRIMARY_LIGHTER}; font-size: 11px; font-weight: bold; border: 1px solid {cons.BORDER_DARK}; border-radius: 6px;")
             self.set_rank_adept.get_widget().setStyleSheet(f"background-color: {cons.FONT_COLOR}; color: {cons.PRIMARY_LIGHTER}; font-size: 11px; font-weight: bold; border: 1px solid {cons.BORDER_DARK}; border-radius: 6px;")
@@ -401,6 +428,7 @@ def get_abilities(category, name):
     
     ability_dict = all_equipment[category][name]
     ability_dict["Category"] = category
+
     return ability_dict
 
 if __name__ == "__main__":
