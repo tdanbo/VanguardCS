@@ -229,7 +229,7 @@ class AbilityItem(QWidget):
 
         self.novice_section = Section(
             outer_layout = QVBoxLayout(),
-            inner_layout = ("HBox", 3),
+            inner_layout = ("HBox", 2),
             parent_layout = self.power_section.inner_layout(1),
             spacing = 5,
             class_group=self.section_group,
@@ -270,7 +270,7 @@ class AbilityItem(QWidget):
 
         self.adept_section = Section(
             outer_layout = QVBoxLayout(),
-            inner_layout = ("HBox", 1),
+            inner_layout = ("HBox", 2),
             parent_layout = self.power_section.inner_layout(1),
             spacing = 5,
             class_group=self.section_group,
@@ -298,7 +298,7 @@ class AbilityItem(QWidget):
             size_policy=(QSizePolicy.Expanding, QSizePolicy.Expanding),
         )
 
-        self.build_dice_section(self.ability_dict["Adept"], self.adept_section.inner_layout(1))
+        self.build_dice_section(self.ability_dict["Adept"], self.adept_section.inner_layout(2))
         self.adept_box.get_widget().setWordWrap(True)
 
         self.divider = Widget(
@@ -311,7 +311,7 @@ class AbilityItem(QWidget):
 
         self.master_section = Section(
             outer_layout = QVBoxLayout(),
-            inner_layout = ("HBox", 3),
+            inner_layout = ("HBox", 2),
             parent_layout = self.power_section.inner_layout(1),
             spacing = 5,
             class_group=self.section_group,
@@ -362,10 +362,12 @@ class AbilityItem(QWidget):
         self.master_layout.setSpacing(0)
         self.master_layout.setContentsMargins(0,0,10,0)    
 
+        self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
         self.setLayout(self.master_layout)  
 
     def restyle_description(self, ability_string):
-        new_string = ability_string.replace("Reaction", "<b>Reaction</b>").replace("Special", "<b>Special</b>").replace("Free", "<b>Free</b>").replace("Active", "<b>Active</b>").replace("Passive", "<b>Passive</b>")
+        #new_string = ability_string.replace("Reaction", "<b>Reaction</b>").replace("Special", "<b>Special</b>").replace("Free", "<b>Free</b>").replace("Active", "<b>Active</b>").replace("Passive", "<b>Passive</b>")
+        new_string = ability_string
         return new_string
 
     def delete_ability(self):

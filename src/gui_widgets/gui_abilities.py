@@ -11,7 +11,7 @@ from template.widget import Widget
 class AddNewAbility(QWidget):
     def __init__(self, character):
         super().__init__(None, Qt.WindowStaysOnTopHint)
-        self.all_abilities = self.get_abilities()
+        self.all_abilities = cons.ABILITIES
 
         self.character = character
 
@@ -60,7 +60,8 @@ class AddNewAbility(QWidget):
             align="center",
             objectname = "search",
             class_group = self.widget_group,
-            signal=self.add_abilities
+            signal=self.add_abilities,
+            stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; border: 1px solid {cons.BORDER};"
         )
 
         self.search_section.get_title()[1].setAlignment(Qt.AlignCenter)
@@ -90,6 +91,8 @@ class AddNewAbility(QWidget):
 
         self.setLayout(self.master_layout)     
         self.setStyleSheet(f"border-style: outset; color: {cons.FONT_DARK}; background-color: {cons.DARK};")
+        self.setMinimumHeight(cons.WSIZE*30)
+        self.setMinimumWidth(cons.WSIZE*20)
         self.setWindowTitle("Select Ability")
 
     def add_abilities(self):
@@ -120,7 +123,10 @@ class AddNewAbility(QWidget):
                                 self.ability_dict = self.all_abilities[category][item]
                                 self.add_ability()
 
+            self.search_bar.get_widget().clearFocus()
+
         else:
+            self.search_bar.get_widget().setText("")
             for item in self.all_abilities[self.category]:
                 if item != "_id":
                     if self.search_bar.get_widget().text() == "":
@@ -134,20 +140,6 @@ class AddNewAbility(QWidget):
         self.ability_dict["Rank"] = "Master"
         ability = AbilityItem(self.character,self.ability_dict, select=True)
         self.feats_scroll.inner_layout(1).addWidget(ability)
-
-    def get_abilities(self):
-        all_equipment = {}
-        client = pymongo.MongoClient(cons.CONNECT)
-        # get a list of collection names
-        db = client["abilities"]
-        collection_names = db.list_collection_names()
-        for name in collection_names:
-            # get a collection object
-            collection = db[name]
-            document = collection.find_one()
-            all_equipment[name] = document
-
-        return all_equipment
                 
     def clear_layout(self,layout):
         for item in range(layout.count()):

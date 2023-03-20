@@ -77,7 +77,7 @@ ACTIVE_COLOR = {
     "CASTING": PURPLE,
     "MYSTICAL POWER": PURPLE,
     "RITUAL": PURPLE,
-    "ELIXIR": PURPLE,
+    "ELIXIRS": PURPLE,
     "SNEAKING": GREEN,
     "AMMUNITION": GREEN,
     "TEST":YELLOW,
@@ -109,3 +109,11 @@ BORDER_DARK = "#998e7c"
 
 client = pymongo.MongoClient(CONNECT)
 QUALITIES = client["equipment"]["quality"].find_one()
+
+ABILITIES = {}
+db = client["abilities"]
+collection_names = db.list_collection_names()
+for name in collection_names:
+    collection = db[name]
+    document = collection.find_one()
+    ABILITIES[name] = document
