@@ -82,7 +82,7 @@ class AddSub(QWidget):
         if self.item == True:
             current_value = int(self.character.CHARACTER_DOC["inventory"][self.doc_item]["Quantity"])
         else:
-            current_value = int(self.character.CHARACTER_DOC[self.doc_item])
+            current_value = int(self.character.CHARACTER_DOC["stats"][self.doc_item])
 
         value = int(self.integer_line.get_widget().text())
     
@@ -104,9 +104,10 @@ class AddSub(QWidget):
                 if new_value > int(self.character.sheet_gui.toughness_max.get_widget().text()):
                     new_value = int(self.character.sheet_gui.toughness_max.get_widget().text())
 
-            self.character.CHARACTER_DOC[self.doc_item] = new_value
+            self.character.CHARACTER_DOC["stats"][self.doc_item] = new_value
     
         self.character.set_stats()
+        self.character.set_calculated_stats()
         self.character.set_xp()
         self.character.set_inventory()
         self.character.save_document()

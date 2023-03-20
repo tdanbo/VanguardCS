@@ -60,14 +60,29 @@ SECONDARY_STATS = [
 
 # func.create_folder(LOCAL_DIRECTORY)
 
+RED = "#925833"
+BLUE = "#495C60"
+PURPLE = "#60495c"
+GREEN = "#5c6049"
+YELLOW = "#926f2b"
+WHITE = "#bfb6ac"
+
 ACTIVE_COLOR = {
-    "ATTACK": "#925833",
-    "ABILITY": "#925833",
-    "DEFENSE": "#495C60",
-    "CASTING": "#60495c",
-    "MYSTICAL POWER": "#60495c",
-    "RITUAL": "#60495c",
-    "SNEAKING": "#5c6049",
+    "ATTACK": RED,
+    "ABILITY": RED,
+    "MELEE": RED,
+    "RANGED": RED,
+    "DEFENSE": BLUE,
+    "ARMOR": BLUE,
+    "CASTING": PURPLE,
+    "MYSTICAL POWER": PURPLE,
+    "RITUAL": PURPLE,
+    "ELIXIR": PURPLE,
+    "SNEAKING": GREEN,
+    "AMMUNITION": GREEN,
+    "TEST":YELLOW,
+    "TREASURE": YELLOW,
+    "MISC": WHITE
 }
 
 #PRIMARY_DARKER = "#e1ddcd"

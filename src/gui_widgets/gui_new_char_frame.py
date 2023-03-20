@@ -7,6 +7,7 @@ import constants as cons
 from template.section import Section
 from template.widget import Widget
 import constants as cons
+import math
 
 import pymongo
 
@@ -157,7 +158,6 @@ class NewCharacter(QWidget):
             new_character["total experience"] = 50
             
             for stat in cons.STATS+cons.SECONDARY_STATS:
-
                 try:
                     stat_value = self.findChild(QPushButton,stat).text()
                 except:
@@ -166,10 +166,10 @@ class NewCharacter(QWidget):
                 new_character["stats"][stat] = int(stat_value)
                 new_character["mods"][stat + " mod"] = stat
 
-            # strong = int(new_character["stats"]["STRONG"])
-            # toughness = 10 if strong < 10 else strong
+            strong = int(new_character["stats"]["STRONG"])
+            toughness = 10 if strong < 10 else strong
 
-            new_character["stats"]["TOUGHNESS"] = 0
+            new_character["stats"]["TOUGHNESS"] = toughness
             new_character["stats"]["CORRUPTION"] = 0
             new_character["stats"]["PERMANENT"] = 0
 

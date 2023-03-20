@@ -68,24 +68,12 @@ class InventoryItem(QWidget):
         else:
             self.make_item(item_dict)
 
-        # self.divider = QFrame()
-        # self.divider.setFixedHeight(1)
-        # self.divider.setStyleSheet(f"background-color: {self.type_bg_color}")
-
-        # self.master_layout.addWidget(self.divider)
-
         for widget in self.widget_group:
             widget.connect_to_parent()
             widget.set_signal()
 
         for section in self.section_group:
             section.connect_to_parent()
-
-        # self.divider = QFrame()
-        # self.divider.setFixedHeight(1)
-        # self.divider.setStyleSheet(f"background-color: {self.type_bg_color}")
-
-        # self.master_layout.addWidget(self.divider)
 
         self.divider = QFrame()
         self.divider.setFixedHeight(1)
@@ -107,26 +95,48 @@ class InventoryItem(QWidget):
         print(item_string, item_slot)
 
         self.all_equipment = self.get_equipment()
-        for category in self.all_equipment:
-            for item in self.all_equipment[category]:
-                if item_string.lower() == item.lower():
-                    item_dict = self.all_equipment[category][item]
-                    item_dict["Name"] = item
-                    item_dict["Category"] = category
-                    item_dict["Equipped"] = {}
-                    item_dict["Equipped"]["1"] = False
-                    item_dict["Equipped"]["2"] = False
+        if item_string != "":
+            for category in self.all_equipment:
+                for item in self.all_equipment[category]:
+                    if item_string.lower() == item.lower():
+                        item_dict = self.all_equipment[category][item]
+                        item_dict["Name"] = item
+                        item_dict["Category"] = category
+                        item_dict["Equipped"] = {}
+                        item_dict["Equipped"]["1"] = False
+                        item_dict["Equipped"]["2"] = False
 
-                    self.character.CHARACTER_DOC["inventory"].append(item_dict)
-                    self.character.set_inventory()
-                    self.character.save_document()
-                    return
-                else:
-                    pass
+                        self.character.CHARACTER_DOC["inventory"].append(item_dict)
+                        self.character.set_inventory()
+                        self.character.save_document()
+                        return
+                    else:
+                        pass
+
+            # Create misc item!
+            item_dict = self.misc_item()
+            item_dict["Name"] = item_string.title()
+            item_dict["Category"] = "Misc"
+            item_dict["Equipped"] = {}
+            item_dict["Equipped"]["1"] = False
+            item_dict["Equipped"]["2"] = False
+
+            self.character.CHARACTER_DOC["inventory"].append(item_dict)
+            self.character.set_inventory()
+            self.character.save_document()
+            return
 
         self.character.CHARACTER_DOC["inventory"].pop(item_slot)
         self.character.set_inventory()
         self.character.save_document()
+
+    def misc_item(self):
+        item = {
+            "Quantity":1,
+            "Type":"Misc",
+            "Quality":[]
+        }
+        return item
 
     def get_equipment(self):
         all_equipment = {}
@@ -150,10 +160,10 @@ class InventoryItem(QWidget):
         if "Equipped" in self.item_dict:
             self.equipped = self.item_dict["Equipped"]
 
-
-        color_type = {"melee": "#925833", "ranged": "#925833", "ammunition": "#925833", "armor": "#495c60", "elixirs": "#4e6e5d",  "treasure": "#a7754d", "misc": "#dcccbb"}
-        print(self.category)
-        self.type_bg_color = color_type[self.category]
+        if self.category.upper() in cons.ACTIVE_COLOR:
+            self.type_bg_color = cons.ACTIVE_COLOR[self.category.upper()]
+        else:
+            self.type_bg_color = cons.ACTIVE_COLOR["MISC"]
 
         self.item.widget.setText(self.name)
 

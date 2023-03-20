@@ -63,7 +63,7 @@ class Character:
     def set_inventory(self):
         self.inventory_layout = self.inventory_gui.inventory_scroll.inner_layout(1)
         func.clear_layout(self.inventory_layout)
-        priority = {'melee': 0, 'ranged': 1, 'ammunition': 2, 'armor': 3, 'elixirs': 4, 'treasure': 5, 'misc': 6}
+        priority = {'melee': 0, 'ranged': 1, 'armor': 2, 'ammunition': 3, 'elixirs': 4, 'treasure': 5, 'misc': 6}
         sorted_list = sorted(self.CHARACTER_DOC["inventory"], key=lambda x: priority.get(x.get('Category', ''), len(priority)))
         self.CHARACTER_DOC["inventory"] = sorted_list
 
@@ -97,7 +97,7 @@ class Character:
 
     def set_modifiers(self):
         for stat in cons.STATS:
-            self.sheet_gui.findChild(QWidget, f"{stat} mod").setText(str(self.CHARACTER_DOC["mods"][f"{stat} mod"]))
+            self.sheet_gui.findChild(QWidget, f"{stat} mod").setText(str(self.CHARACTER_DOC["mods"][f"{stat} mod"]))   
 
         for stat in ["DEFENSE", "CASTING", "SNEAKING", "ATTACK"]:
             modifier = int(self.CHARACTER_DOC[f"{stat} mod"])
@@ -122,6 +122,12 @@ class Character:
 
         corruption_threshold = math.ceil(resolute/2)+corruption_mod
         self.sheet_gui.corruption_threshold.get_widget().setText(f"{corruption_threshold} / {resolute}")
+
+        # set total corruption
+        corruption = int(self.sheet_gui.corruption_current.get_widget().text())
+        permanent = int(self.sheet_gui.corruption_permanent.get_widget().text())
+        self.sheet_gui.corruption_current.get_widget().setText(str(corruption+permanent))
+
 
         self.inventory_gui.modifier_button.get_widget().setText("0")
 
