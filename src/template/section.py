@@ -59,7 +59,7 @@ class Section(QWidget):
                 self.title_layout = QHBoxLayout()
                 self.title_label = QLabel(title)
                 self.title_label.setStyleSheet(
-                    f"color: {cons.FONT_LIGHT}; font-size: 12px; background-color: {cons.DARK};"
+                    f"color: {cons.FONT_LIGHT}; font-size: {cons.FONT_SMALL}; background-color: {cons.DARK};"
                 )
                 self.title_label.setObjectName(f"{objectname}_title")
                 self.outer_layout_type.addWidget(self.title_label)

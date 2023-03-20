@@ -95,7 +95,7 @@ class InventoryGUI(QWidget):
             class_group=self.widget_group,
             signal=self.load_character,
             height=cons.WSIZE,
-            stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; border: 1px solid {cons.BORDER}; font-size: 14px; font-weight: bold; color: {cons.FONT_COLOR};",
+            stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; border: 1px solid {cons.BORDER}; font-size: {cons.FONT_MID}; font-weight: bold; color: {cons.FONT_COLOR};",
 
         )
 
@@ -113,7 +113,7 @@ class InventoryGUI(QWidget):
             objectname="experience",
             class_group=self.widget_group,
             height=cons.WSIZE*1.5,
-            stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_COLOR}; font-size: 16px; font-weight: bold; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-top-right-radius: 6px;"
+            stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_COLOR}; font-size: {cons.FONT_MID}; font-weight: bold; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-top-right-radius: 6px;"
 
         )
 
@@ -124,7 +124,7 @@ class InventoryGUI(QWidget):
             class_group=self.widget_group,
             text = "XP",
             height=cons.WSIZE,
-            stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_DARK}; font-size: 10px; font-weight: bold; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;"
+            stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_DARK}; font-size: {cons.FONT_SMALL}; font-weight: bold; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;"
         )
 
         self.unspent_experience= Widget(
@@ -134,7 +134,7 @@ class InventoryGUI(QWidget):
             signal = self.add_sub,
             class_group=self.widget_group,
             height=cons.WSIZE*1.5,
-            stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_COLOR}; font-size: 16px; font-weight: bold; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-top-right-radius: 6px;"
+            stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_COLOR}; font-size: {cons.FONT_MID}; font-weight: bold; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-top-right-radius: 6px;"
 
         )
 
@@ -145,7 +145,7 @@ class InventoryGUI(QWidget):
             class_group=self.widget_group,
             text = "UNSPENT XP",
             height=cons.WSIZE,
-            stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_DARK}; font-size: 10px; font-weight: bold; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;"
+            stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_DARK}; font-size: {cons.FONT_SMALL}; font-weight: bold; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;"
         )
 
         portrait_title = self.portrait_layout.get_title()[0]
@@ -194,7 +194,7 @@ class InventoryGUI(QWidget):
                 objectname=f"{stat} mod",
                 class_group=self.widget_group,
                 size_policy=(QSizePolicy.Expanding, QSizePolicy.Expanding),
-                stylesheet=f"background-color: {cons.PRIMARY_DARKER}; color: {cons.FONT_COLOR}; font-size: 15px; font-weight: bold; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-top-right-radius: 6px;",
+                stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_COLOR}; font-size: {cons.FONT_MID}; font-weight: bold; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-top-right-radius: 6px;",
                 signal=self.check_modifier,
                 checkable=True,
                 checked=False,
@@ -203,10 +203,10 @@ class InventoryGUI(QWidget):
             self.extra_modifier_label = Widget(
                 widget_type=QToolButton(),
                 parent_layout=self.active_section.inner_layout(number+1),
-                icon=(f"{stat.capitalize()}.png","",cons.FONT_DARK,cons.WSIZE),
+                icon=(f"{stat.capitalize()}.png","",cons.DARK,cons.WSIZE),
                 class_group=self.widget_group,
                 size_policy=(QSizePolicy.Expanding, QSizePolicy.Expanding),
-                stylesheet=f"background-color: {cons.PRIMARY_DARKER}; color: {cons.FONT_COLOR}; font-size: 10px; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;",
+                stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_COLOR}; font-size: {cons.FONT_MID}; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;",
                 checkable=True,
                 checked=False,
                 objectname=f"{stat} button",
@@ -231,7 +231,7 @@ class InventoryGUI(QWidget):
             parent_layout = self.modifier_section.inner_layout(1),
             objectname="modifier",
             class_group=self.widget_group,
-            stylesheet=f"background-color: {cons.PRIMARY_DARKER}; color: {cons.FONT_COLOR}; font-size: 15px; font-weight: bold; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-top-right-radius: 6px;",
+            stylesheet=f"background-color: {cons.FONT_COLOR}; color: {cons.FONT_LIGHT}; font-size: {cons.FONT_MID}; font-weight: bold; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-top-right-radius: 6px;",
             size_policy=(QSizePolicy.Expanding, QSizePolicy.Expanding),
             signal = lambda: self.adjust_modifier("add")
         )
@@ -239,11 +239,11 @@ class InventoryGUI(QWidget):
         self.modifier_label = Widget(
             widget_type=QToolButton(),
             parent_layout=self.modifier_section.inner_layout(1),
-            icon=(f"Modifier.png","",cons.FONT_DARK,cons.WSIZE),
+            icon=(f"Modifier.png","",cons.PRIMARY_LIGHTER,cons.WSIZE),
             class_group=self.widget_group,
             size_policy=(QSizePolicy.Expanding, QSizePolicy.Expanding),
             objectname="modifier button",
-            stylesheet=f"background-color: {cons.PRIMARY_DARKER}; font-size: 10px; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;",
+            stylesheet=f"background-color: {cons.FONT_COLOR}; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;",
             signal = lambda: self.adjust_modifier("add")
         )
 
@@ -399,7 +399,7 @@ class InventoryGUI(QWidget):
 
     def add_sub(self):
         doc_string = self.sender().objectName()
-        add_sub_gui = AddSub(self.character_sheet, self.sender(), doc_item = doc_string)
+        add_sub_gui = AddSub(self.character, self.sender(), doc_item = doc_string)
         add_sub_gui.show()
 
     def check_modifier(self):
@@ -414,25 +414,25 @@ class InventoryGUI(QWidget):
             if button != current_mod.objectName():
                 mod_widget = self.findChild(QWidget, button)
                 mod_widget.setChecked(False)
-                stylesheet=f"background-color: {cons.PRIMARY_DARKER}; color: {cons.FONT_COLOR}; font-size: 15px; font-weight: bold; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-top-right-radius: 6px;"
+                stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_COLOR}; font-size: {cons.FONT_MID}; font-weight: bold; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-top-right-radius: 6px;"
                 mod_widget.setStyleSheet(stylesheet)
 
         for mod in ["ATTACK button","DEFENSE button","CASTING button","SNEAKING button"]:
             if mod != current_button.objectName():
                 mod_widget = self.findChild(QWidget, mod)
                 mod_widget.setChecked(False)
-                stylesheet=f"background-color: {cons.PRIMARY_DARKER}; color: {cons.FONT_COLOR}; font-size: 15px; font-weight: bold; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;"
+                stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_COLOR}; font-size: {cons.FONT_MID}; font-weight: bold; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;"
                 mod_widget.setStyleSheet(stylesheet)
 
 
         if self.sender().isChecked():
-            current_button.setStyleSheet(f"background-color: {type_color}; color: {cons.PRIMARY_LIGHTER}; font-size: 15px; font-weight: bold; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;")
-            current_mod.setStyleSheet(f"background-color: {type_color}; color: {cons.PRIMARY_LIGHTER}; font-size: 15px; font-weight: bold; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-top-right-radius: 6px;")
+            current_button.setStyleSheet(f"background-color: {type_color}; color: {cons.PRIMARY_LIGHTER}; font-size: {cons.FONT_MID}; font-weight: bold; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;")
+            current_mod.setStyleSheet(f"background-color: {type_color}; color: {cons.PRIMARY_LIGHTER}; font-size: {cons.FONT_MID}; font-weight: bold; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-top-right-radius: 6px;")
             current_mod.setChecked(True)
             current_button.setChecked(True)
         else:
-            current_button.setStyleSheet(f"background-color: {cons.PRIMARY_DARKER}; color: {cons.FONT_COLOR}; font-size: 15px; font-weight: bold; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;")
-            current_mod.setStyleSheet(f"background-color: {cons.PRIMARY_DARKER}; color: {cons.FONT_COLOR}; font-size: 15px; font-weight: bold; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-top-right-radius: 6px;")
+            current_button.setStyleSheet(f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_COLOR}; font-size: {cons.FONT_MID}; font-weight: bold; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;")
+            current_mod.setStyleSheet(f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_COLOR}; font-size: {cons.FONT_MID}; font-weight: bold; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-top-right-radius: 6px;")
             current_mod.setChecked(False)
             current_button.setChecked(False)
     def adjust_modifier(self, adjust):
@@ -441,6 +441,9 @@ class InventoryGUI(QWidget):
             current_value += 1
         else:
             current_value -= 1
+        
+        if current_value > 0:
+            current_value = f"+{current_value}"
         self.modifier_button.get_widget().setText(str(current_value))   
 
 if __name__ == "__main__":

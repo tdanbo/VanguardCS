@@ -40,7 +40,7 @@ class NewCharacter(QWidget):
             objectname = "name",
             class_group = self.widget_group,
             parent_layout=self.name_section.inner_layout(1),
-            stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; border: 1px solid {cons.BORDER};font-size: 20px;color: {cons.FONT_COLOR};",
+            stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; border: 1px solid {cons.BORDER};font-size: {cons.FONT_LARGE};color: {cons.FONT_COLOR};",
             height=cons.WSIZE*2,
         )
 
@@ -65,7 +65,7 @@ class NewCharacter(QWidget):
                 class_group = self.widget_group,
                 height=cons.WSIZE*1.5,
                 size_policy=(QSizePolicy.Expanding, QSizePolicy.Fixed),
-                stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; border: 1px solid {cons.BORDER};font-size: 14px;color: {cons.FONT_MEDIUM}; font-weight: bold;",
+                stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; border: 1px solid {cons.BORDER};font-size: {cons.FONT_MID};color: {cons.FONT_MEDIUM}; font-weight: bold;",
             )
 
             self.stat_input = Widget(
@@ -78,7 +78,7 @@ class NewCharacter(QWidget):
                 signal=self.set_stat,
                 objectname=item,
 
-                stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; border: 1px solid {cons.BORDER};font-size: 14px;color: {cons.FONT_COLOR}; font-weight: bold;",
+                stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; border: 1px solid {cons.BORDER};font-size: {cons.FONT_MID};color: {cons.FONT_COLOR}; font-weight: bold;",
             )
 
         self.new_widget_layout = Section(
@@ -86,7 +86,7 @@ class NewCharacter(QWidget):
             inner_layout = ("HBox", 2),
             parent_layout = self.master_layout,
             title="New Character",
-            icon = ("plus.png",cons.WSIZE*1.5,cons.ICON_COLOR),
+            icon = ("plus.png",cons.WSIZE*1.5,cons.PRIMARY_LIGHTER),
             group=(True,None,None),
             class_group = self.section_group,
         )
@@ -150,24 +150,29 @@ class NewCharacter(QWidget):
 
         state = self.sender().objectName()
         if state == "accept":
-            new_character = {"character":"","rank":"","experience unspent":"","stats":{}}
+            new_character = {"character":"","rank":"","experience unspent":"","stats":{}, "mods":{}}
             new_character["character"] = self.character_name
             new_character["rank"] = "Player"
             new_character["character experience"] = 0
             new_character["total experience"] = 50
             
-            for stat in cons.STATS:
-                stat_value = self.findChild(QPushButton,stat).text()
+            for stat in cons.STATS+cons.SECONDARY_STATS:
+
+                try:
+                    stat_value = self.findChild(QPushButton,stat).text()
+                except:
+                    stat_value = 0
+
                 new_character["stats"][stat] = int(stat_value)
-                new_character["stats"][stat + " mod"] = stat
+                new_character["mods"][stat + " mod"] = stat
 
-            strong = int(new_character["stats"]["STRONG"])
-            toughness = 10 if strong < 10 else strong
+            # strong = int(new_character["stats"]["STRONG"])
+            # toughness = 10 if strong < 10 else strong
 
-            new_character["TOUGHNESS"] = str(toughness)
-            new_character["CORRUPTION"] = 0
-            new_character["PERMANENT"] = 0
-            
+            new_character["stats"]["TOUGHNESS"] = 0
+            new_character["stats"]["CORRUPTION"] = 0
+            new_character["stats"]["PERMANENT"] = 0
+
             new_character["DEFENSE mod"] = 0
             new_character["CASTING mod"] = 0
             new_character["SNEAKING mod"] = 0

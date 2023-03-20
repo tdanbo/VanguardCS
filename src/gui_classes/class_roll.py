@@ -38,10 +38,10 @@ class DiceRoll:
         if self.ammo == True:
             if self.subtract_ammo() == True:
                 pass
-                # stylesheet=f"padding-left: 5px; padding-right: 5px; background-color: {cons.PRIMARY_LIGHTER}; color: {cons.PRIMARY_DARKER}; font-size: 11px; font-weight: bold; border: 1px solid {cons.BORDER}; border-radius: 6px;"
+                # stylesheet=f"padding-left: 5px; padding-right: 5px; background-color: {cons.PRIMARY_LIGHTER}; color: {cons.PRIMARY_DARKER}; font-size: {cons.FONT_SMALL}; font-weight: bold; border: 1px solid {cons.BORDER}; border-radius: 6px;"
                 # self.widget.setStyleSheet(stylesheet)
             else:
-                stylesheet=f"padding-left: 5px; padding-right: 5px; background-color: {cons.PRIMARY_LIGHTER}; color: {cons.PRIMARY_DARKER}; font-size: 11px; font-weight: bold; border: 1px solid {cons.BORDER}; border-radius: 6px;"
+                stylesheet=f"padding-left: 5px; padding-right: 5px; background-color: {cons.PRIMARY_LIGHTER}; color: {cons.PRIMARY_DARKER}; font-size: {cons.FONT_SMALL}; font-weight: bold; border: 1px solid {cons.BORDER}; border-radius: 6px;"
                 self.widget.setStyleSheet(stylesheet)
                 return
 
@@ -123,8 +123,8 @@ class DiceRoll:
         sne_mod = self.character.inventory_gui.findChild(QWidget, "SNEAKING button")
 
         
-        stylesheet_mod = f"background-color: {cons.PRIMARY_DARKER}; color: {cons.FONT_COLOR}; font-size: 20px; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-top-right-radius: 6px;"
-        stylesheet_button  = f"background-color: {cons.PRIMARY_DARKER}; color: {cons.FONT_COLOR}; font-size: 20px; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;"
+        stylesheet_mod = f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_COLOR}; font-size: {cons.FONT_LARGE}; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-top-right-radius: 6px;"
+        stylesheet_button  = f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_COLOR}; font-size: {cons.FONT_LARGE}; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;"
 
         if atk_mod.isChecked():
             self.modifier += int(atk_value.text())

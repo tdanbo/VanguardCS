@@ -56,7 +56,7 @@ class InventoryItem(QWidget):
             parent_layout=self.item_section.inner_layout(4),
             objectname=f"{count}",
             class_group=self.widget_group,
-            stylesheet=f"font-size: 13px; font-weight: bold;",
+            stylesheet=f"font-size: {cons.FONT_MID}; font-weight: bold;",
             height=cons.WSIZE,
             signal=self.get_item
         )
@@ -165,7 +165,7 @@ class InventoryItem(QWidget):
                     parent_layout=self.item_section.inner_layout(2),
                     class_group=self.widget_group,
                     width=7,
-                    stylesheet=f"QPushButton {{ background-color: {cons.BORDER}; }}"\
+                    stylesheet=f"QPushButton {{ background-color: {cons.BORDER_LIGHT}; }}"\
                                f"QPushButton:hover {{ background-color: {self.type_bg_color}; }}",
                     size_policy=(QSizePolicy.Fixed, QSizePolicy.Expanding),
                     objectname=f"{self.equipment}_EQUIPPED",
@@ -179,7 +179,7 @@ class InventoryItem(QWidget):
                         parent_layout=self.item_section.inner_layout(2),
                         class_group=self.widget_group,
                         width=7,
-                        stylesheet=f"QPushButton {{ background-color: {cons.BORDER}; }}"\
+                        stylesheet=f"QPushButton {{ background-color: {cons.BORDER_LIGHT}; }}"\
                                    f"QPushButton:hover {{ background-color: {self.type_bg_color}; }}",
                         size_policy=(QSizePolicy.Fixed, QSizePolicy.Expanding),
                         objectname=state,
@@ -206,7 +206,7 @@ class InventoryItem(QWidget):
             objectname="item",
             class_group=self.section_group,
             height=cons.WSIZE,
-            stylesheet=f"color: {cons.BORDER_DARK}; font-size: 10px; font-weight: bold;",  
+            stylesheet=f"color: {self.type_bg_color}; font-size: {cons.FONT_SMALL}; font-weight: bold;",  
             enabled=False,  
         )
 
@@ -216,14 +216,27 @@ class InventoryItem(QWidget):
             inner_layout=("VBox", 2),
             parent_layout=self.item_section.inner_layout(3),
             class_group=self.section_group,
-            spacing=0,
+            spacing=2,
         )
+
 
         for count in range(4):
             try:
                 quality = qualities[count]
+                quality_tag = quality[:2]
+                style = f"QToolButton {{background-color: {cons.BORDER_LIGHT}; color: {self.type_bg_color}; font-weight: bold; font-size: 10px; border-radius: 6px;}}"\
+                        f"QToolTip {{background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_DARK}; font-size: 11px;}}"
             except:
                 quality = ""
+                style = ""
+                quality_tag = ""
+            try:
+                if quality == "Effect":
+                    tooltip = f"<b>{quality}</b>: {self.item_dict['Description']}"
+                else:
+                    tooltip = f"<b>{quality}</b>: {cons.QUALITIES[quality]['Description']}"
+            except:
+                tooltip = f"<b>{quality}"
 
             if count > 1:
                 layout = 1
@@ -235,9 +248,12 @@ class InventoryItem(QWidget):
                 parent_layout=self.quality_section.inner_layout(layout),
                 objectname=f"quality{count}",
                 class_group=self.widget_group,
-                icon=(f"{quality}.png", cons.WSIZE / 2, self.type_bg_color),
-                height=cons.WSIZE,
-                width=cons.WSIZE,
+                #icon=(f"{quality}.png", cons.WSIZE / 2, cons.BORDER_DARK),
+                height=20,
+                width=20,
+                text=quality_tag,
+                tooltip=tooltip,
+                stylesheet=style
             )
 
         #self.quality_section.inner_layout(1).setAlignment(Qt.AlignLeft)
@@ -264,7 +280,7 @@ class InventoryItem(QWidget):
                 text=dice,
                 objectname="item",
                 class_group=self.widget_group,
-                stylesheet=f"padding-left: 5px; padding-right: 5px; background-color: {cons.PRIMARY_LIGHTER}; color: {self.type_bg_color}; font-size: 12px; font-weight: bold; border: 1px solid {cons.BORDER}; border-radius: 6px;",
+                stylesheet=f"padding-left: 5px; padding-right: 5px; background-color: {cons.PRIMARY_LIGHTER}; color: {self.type_bg_color}; font-size: {cons.FONT_SMALL}; font-weight: bold; border: 1px solid {cons.BORDER}; border-radius: 6px;",
                 height=cons.WSIZE,
                 signal=self.roll_dice,
                 property=("roll",dice_type),
@@ -279,7 +295,7 @@ class InventoryItem(QWidget):
                 text=f"x {quantity}",
                 objectname="quantity",
                 class_group=self.widget_group,
-                stylesheet=f"padding-left: 5px; padding-right: 5px; background-color: {cons.BORDER}; color: {cons.PRIMARY_LIGHTER}; font-size: 12px; font-weight: bold; border-radius: 6px;",
+                stylesheet=f"padding-left: 5px; padding-right: 5px; background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_DARK}; font-size: {cons.FONT_SMALL}; font-weight: bold; border: 1px solid {cons.BORDER}; border-radius: 6px;",
                 height=cons.WSIZE,
                 signal=self.add_sub,
             )

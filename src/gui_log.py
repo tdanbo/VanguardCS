@@ -95,7 +95,7 @@ class CombatLogGUI(QWidget):
                 ),
                 class_group=self.widget_group,
                 size_policy=(QSizePolicy.Expanding, QSizePolicy.Expanding),
-                stylesheet=f"font-weight: bold; color: {cons.FONT_COLOR}; background-color: {cons.PRIMARY_LIGHTER}; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-top-right-radius: 6px;"
+                stylesheet=f"font-weight: bold; font-size: {cons.FONT_MID}; color: {cons.FONT_COLOR}; background-color: {cons.PRIMARY_LIGHTER}; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-top-right-radius: 6px;"
 
             )  
 
@@ -111,7 +111,7 @@ class CombatLogGUI(QWidget):
                     die_type[0]
                 ),
                 class_group=self.widget_group,
-                stylesheet=f"font-weight: bold; color: {cons.FONT_DARK}; background-color: {cons.PRIMARY_LIGHTER}; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;",
+                stylesheet=f"font-weight: bold; font-size: {cons.FONT_SMALL}; color: {cons.FONT_DARK}; background-color: {cons.PRIMARY_LIGHTER}; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;",
                 size_policy=(QSizePolicy.Expanding, QSizePolicy.Expanding)
             )     
 

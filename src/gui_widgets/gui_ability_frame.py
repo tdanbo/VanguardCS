@@ -116,7 +116,7 @@ class AbilityItem(QWidget):
             text=self.ability_dict["Name"],
             objectname=f"ability_name",
             class_group=self.widget_group,
-            stylesheet=f"font-size: 14px; font-weight: bold; color: {cons.FONT_LIGHT}",
+            stylesheet=f"font-size: {cons.FONT_LARGE}; font-weight: bold; color: {cons.FONT_LIGHT}",
             size_policy=(QSizePolicy.Fixed, QSizePolicy.Fixed)
         )
 
@@ -125,12 +125,13 @@ class AbilityItem(QWidget):
         self.type_label = Widget(
             widget_type=QLabel(),
             parent_layout = self.header_section.inner_layout(1),
-            text=self.ability_dict["Type"],
             objectname=f"ability_name",
             class_group=self.widget_group,
-            stylesheet=f"font-size: 10px; font-weight: bold; color: {cons.FONT_MEDIUM}",
+            stylesheet=f"font-size: {cons.FONT_SMALL}; font-weight: bold; color: {cons.FONT_MEDIUM}",
             size_policy=(QSizePolicy.Expanding, QSizePolicy.Fixed)
         )
+
+
 
         self.set_rank_novice = Widget(
             widget_type=QToolButton(),
@@ -141,7 +142,7 @@ class AbilityItem(QWidget):
             objectname=f"ability_novice",
             class_group=self.widget_group,
             signal=self.change_rank,
-            stylesheet = f"background-color: {self.type_bg_color}; color: {cons.PRIMARY_LIGHTER}; font-size: 11px; font-weight: bold; border: 1px solid {cons.FONT_MEDIUM}; border-radius: 6px;"
+            stylesheet = f"background-color: {self.type_bg_color}; color: {cons.PRIMARY_LIGHTER}; font-size: {cons.FONT_SMALL}; font-weight: bold; border: 1px solid {cons.FONT_MEDIUM}; border-radius: 6px;"
         )
 
         self.set_rank_adept = Widget(
@@ -153,7 +154,7 @@ class AbilityItem(QWidget):
             objectname=f"ability_adept",
             class_group=self.widget_group,
             signal=self.change_rank,
-            stylesheet=f"background-color: {cons.PRIMARY}; color: {cons.PRIMARY_LIGHTER}; font-size: 11px; border: 1px solid {cons.FONT_MEDIUM}; border-radius: 6px;",
+            stylesheet=f"background-color: {cons.PRIMARY}; color: {cons.PRIMARY_LIGHTER}; font-size: {cons.FONT_SMALL}; border: 1px solid {cons.FONT_MEDIUM}; border-radius: 6px;",
         )
 
         self.set_rank_master = Widget(
@@ -165,7 +166,7 @@ class AbilityItem(QWidget):
             objectname=f"ability_master",
             class_group=self.widget_group,
             signal=self.change_rank,
-            stylesheet=f"background-color: {cons.PRIMARY}; color: {cons.PRIMARY_LIGHTER}; font-size: 11px; border: 1px solid {cons.FONT_MEDIUM}; border-radius: 6px;",
+            stylesheet=f"background-color: {cons.PRIMARY}; color: {cons.PRIMARY_LIGHTER}; font-size: {cons.FONT_SMALL}; border: 1px solid {cons.FONT_MEDIUM}; border-radius: 6px;",
         )
 
         self.description = Widget(
@@ -174,7 +175,7 @@ class AbilityItem(QWidget):
             text=self.ability_dict["Description"],
             objectname=f"ability_description",
             class_group=self.widget_group,
-            stylesheet=f"font-size: 10px; color: {cons.DARK}; font-style: italic;",
+            stylesheet=f"font-size: {cons.FONT_SMALL}; color: {cons.DARK}; font-style: italic;",
             size_policy=(QSizePolicy.Expanding, QSizePolicy.Expanding),
             hidden=True
         )
@@ -184,6 +185,43 @@ class AbilityItem(QWidget):
         self.divider = Widget(
             widget_type=QFrame(),
             parent_layout = self.power_section.inner_layout(1),
+            height=1,
+            stylesheet=f"background-color: {cons.BORDER}",
+            class_group=self.section_group
+        )
+        self.category_section = Section(
+            outer_layout = QVBoxLayout(),
+            inner_layout = ("HBox", 3),
+            parent_layout = self.power_section.inner_layout(1),
+            spacing = 5,
+            class_group=self.section_group,
+            hidden=False,
+            stylesheet=f"background-color: {cons.PRIMARY_DARKER};",
+            group=True
+        )
+
+        self.category_rank = Widget(
+            widget_type=QPushButton(),
+            parent_layout = self.category_section.inner_layout(1),
+            text="",
+            class_group=self.widget_group,
+            width=50,
+            stylesheet=f"font-size: {cons.FONT_SMALL}; font-weight: bold; color: {cons.DARK}"
+        )
+
+        self.category_box = Widget(
+            widget_type=QLabel(),
+            parent_layout = self.category_section.inner_layout(1),
+            text=self.restyle_description(self.ability_dict["Type"]+", "+self.ability_dict["Tradition"]),
+            objectname=f"category_label",
+            class_group=self.widget_group,
+            size_policy=(QSizePolicy.Expanding, QSizePolicy.Expanding),
+            stylesheet=f"font-size: {cons.FONT_SMALL}; font-weight: bold; color: {cons.BORDER_DARK}"
+        )
+
+        self.divider = Widget(
+            widget_type=QFrame(),
+            parent_layout = self.category_section.outer_layout(),
             height=1,
             stylesheet=f"background-color: {cons.BORDER}",
             class_group=self.section_group
@@ -206,7 +244,7 @@ class AbilityItem(QWidget):
             text="NOVICE",
             class_group=self.widget_group,
             width=50,
-            stylesheet=f"font-size: 10px; font-weight: bold; color: {self.type_bg_color}"
+            stylesheet=f"font-size: {cons.FONT_SMALL}; font-weight: bold; color: {self.type_bg_color}"
         )
 
         self.novice_box = Widget(
@@ -247,7 +285,7 @@ class AbilityItem(QWidget):
             text="ADEPT",
             class_group=self.widget_group,
             width=50,
-            stylesheet=f"font-size: 10px; font-weight: bold; color: {self.type_bg_color}"
+            stylesheet=f"font-size: {cons.FONT_SMALL}; font-weight: bold; color: {self.type_bg_color}"
         )
 
         self.adept_box = Widget(
@@ -288,7 +326,7 @@ class AbilityItem(QWidget):
             text="MASTER",
             class_group=self.widget_group,
             width=50,
-            stylesheet=f"font-size: 10px; font-weight: bold; color: {self.type_bg_color}"
+            stylesheet=f"font-size: {cons.FONT_SMALL}; font-weight: bold; color: {self.type_bg_color}"
         )
 
         self.master_box = Widget(
@@ -339,9 +377,9 @@ class AbilityItem(QWidget):
         if self.ability_dict["Novice"] == "":
             self.novice_box.get_widget().setText(self.ability_dict["Description"])
 
-            self.set_rank_novice.get_widget().setStyleSheet(f"background-color: {self.type_bg_color}; color: {cons.PRIMARY_LIGHTER}; font-size: 11px; font-weight: bold; border: 1px solid {cons.FONT_MEDIUM}; border-radius: 6px;")
-            self.set_rank_adept.get_widget().setStyleSheet(f"background-color: {cons.DARK}; color: {cons.DARK}; font-size: 11px; border: 1px solid {cons.DARK}; border-radius: 6px;")
-            self.set_rank_master.get_widget().setStyleSheet(f"background-color: {cons.DARK}; color: {cons.DARK}; font-size: 11px; border: 1px solid {cons.DARK}; border-radius: 6px;")
+            self.set_rank_novice.get_widget().setStyleSheet(f"background-color: {self.type_bg_color}; color: {cons.PRIMARY_LIGHTER}; font-size: {cons.FONT_SMALL}; font-weight: bold; border: 1px solid {cons.FONT_MEDIUM}; border-radius: 6px;")
+            self.set_rank_adept.get_widget().setStyleSheet(f"background-color: {cons.DARK}; color: {cons.DARK}; font-size: {cons.FONT_SMALL}; border: 1px solid {cons.DARK}; border-radius: 6px;")
+            self.set_rank_master.get_widget().setStyleSheet(f"background-color: {cons.DARK}; color: {cons.DARK}; font-size: {cons.FONT_SMALL}; border: 1px solid {cons.DARK}; border-radius: 6px;")
 
             return
 
@@ -351,9 +389,9 @@ class AbilityItem(QWidget):
             self.master_section.setHidden(True)
             self.description.get_widget().setHidden(True)
 
-            self.set_rank_novice.get_widget().setStyleSheet(f"background-color: {self.type_bg_color}; color: {cons.PRIMARY_LIGHTER}; font-size: 11px; font-weight: bold; border: 1px solid {cons.FONT_MEDIUM}; border-radius: 6px;")
-            self.set_rank_adept.get_widget().setStyleSheet(f"background-color: {cons.DARK}; color: {cons.PRIMARY_LIGHTER}; font-size: 11px; border: 1px solid {cons.FONT_MEDIUM}; border-radius: 6px;")
-            self.set_rank_master.get_widget().setStyleSheet(f"background-color: {cons.DARK}; color: {cons.PRIMARY_LIGHTER}; font-size: 11px; border: 1px solid {cons.FONT_MEDIUM}; border-radius: 6px;")
+            self.set_rank_novice.get_widget().setStyleSheet(f"background-color: {self.type_bg_color}; color: {cons.PRIMARY_LIGHTER}; font-size: {cons.FONT_SMALL}; font-weight: bold; border: 1px solid {cons.FONT_MEDIUM}; border-radius: 6px;")
+            self.set_rank_adept.get_widget().setStyleSheet(f"background-color: {cons.DARK}; color: {cons.PRIMARY_LIGHTER}; font-size: {cons.FONT_SMALL}; border: 1px solid {cons.FONT_MEDIUM}; border-radius: 6px;")
+            self.set_rank_master.get_widget().setStyleSheet(f"background-color: {cons.DARK}; color: {cons.PRIMARY_LIGHTER}; font-size: {cons.FONT_SMALL}; border: 1px solid {cons.FONT_MEDIUM}; border-radius: 6px;")
 
         elif self.ability_dict["Rank"] == "Adept":
             self.novice_section.setHidden(False)
@@ -361,9 +399,9 @@ class AbilityItem(QWidget):
             self.master_section.setHidden(True)
             self.description.get_widget().setHidden(True)
 
-            self.set_rank_novice.get_widget().setStyleSheet(f"background-color: {self.type_bg_color}; color: {cons.PRIMARY_LIGHTER}; font-size: 11px; font-weight: bold; border: 1px solid {cons.FONT_MEDIUM}; border-radius: 6px;")
-            self.set_rank_adept.get_widget().setStyleSheet(f"background-color: {self.type_bg_color}; color: {cons.PRIMARY_LIGHTER}; font-size: 11px; font-weight: bold; border: 1px solid {cons.FONT_MEDIUM}; border-radius: 6px;")
-            self.set_rank_master.get_widget().setStyleSheet(f"background-color: {cons.DARK}; color: {cons.PRIMARY_LIGHTER}; font-size: 11px; border: 1px solid {cons.FONT_MEDIUM}; border-radius: 6px;")
+            self.set_rank_novice.get_widget().setStyleSheet(f"background-color: {self.type_bg_color}; color: {cons.PRIMARY_LIGHTER}; font-size: {cons.FONT_SMALL}; font-weight: bold; border: 1px solid {cons.FONT_MEDIUM}; border-radius: 6px;")
+            self.set_rank_adept.get_widget().setStyleSheet(f"background-color: {self.type_bg_color}; color: {cons.PRIMARY_LIGHTER}; font-size: {cons.FONT_SMALL}; font-weight: bold; border: 1px solid {cons.FONT_MEDIUM}; border-radius: 6px;")
+            self.set_rank_master.get_widget().setStyleSheet(f"background-color: {cons.DARK}; color: {cons.PRIMARY_LIGHTER}; font-size: {cons.FONT_SMALL}; border: 1px solid {cons.FONT_MEDIUM}; border-radius: 6px;")
 
         elif self.ability_dict["Rank"] == "Master":
             self.novice_section.setHidden(False)
@@ -371,9 +409,9 @@ class AbilityItem(QWidget):
             self.master_section.setHidden(False)
             self.description.get_widget().setHidden(True)
 
-            self.set_rank_novice.get_widget().setStyleSheet(f"background-color: {self.type_bg_color}; color: {cons.PRIMARY_LIGHTER}; font-size: 11px; font-weight: bold; border: 1px solid {cons.FONT_MEDIUM}; border-radius: 6px;")
-            self.set_rank_adept.get_widget().setStyleSheet(f"background-color: {self.type_bg_color}; color: {cons.PRIMARY_LIGHTER}; font-size: 11px; font-weight: bold; border: 1px solid {cons.FONT_MEDIUM}; border-radius: 6px;")
-            self.set_rank_master.get_widget().setStyleSheet(f"background-color: {self.type_bg_color}; color: {cons.PRIMARY_LIGHTER}; font-size: 11px; font-weight: bold; border: 1px solid {cons.FONT_MEDIUM}; border-radius: 6px;")
+            self.set_rank_novice.get_widget().setStyleSheet(f"background-color: {self.type_bg_color}; color: {cons.PRIMARY_LIGHTER}; font-size: {cons.FONT_SMALL}; font-weight: bold; border: 1px solid {cons.FONT_MEDIUM}; border-radius: 6px;")
+            self.set_rank_adept.get_widget().setStyleSheet(f"background-color: {self.type_bg_color}; color: {cons.PRIMARY_LIGHTER}; font-size: {cons.FONT_SMALL}; font-weight: bold; border: 1px solid {cons.FONT_MEDIUM}; border-radius: 6px;")
+            self.set_rank_master.get_widget().setStyleSheet(f"background-color: {self.type_bg_color}; color: {cons.PRIMARY_LIGHTER}; font-size: {cons.FONT_SMALL}; font-weight: bold; border: 1px solid {cons.FONT_MEDIUM}; border-radius: 6px;")
 
     def change_rank(self):
         rank = self.sender().objectName()
@@ -410,7 +448,7 @@ class AbilityItem(QWidget):
                     text=dice.lower(),
                     objectname="item",
                     class_group=self.widget_group,
-                    stylesheet=f"padding-left: 5px; padding-right: 5px; background-color: {cons.PRIMARY_LIGHTER}; color: {self.type_bg_color}; font-size: 11px; font-weight: bold; border: 1px solid {cons.BORDER}; border-radius: 6px;",
+                    stylesheet=f"padding-left: 5px; padding-right: 5px; background-color: {cons.PRIMARY_LIGHTER}; color: {self.type_bg_color}; font-size: {cons.FONT_SMALL}; font-weight: bold; border: 1px solid {cons.BORDER}; border-radius: 6px;",
                     height=cons.WSIZE,
                     signal=self.roll_dice,
                     property=("roll",self.ability_dict["Name"])

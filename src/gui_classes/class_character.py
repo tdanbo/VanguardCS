@@ -84,39 +84,43 @@ class Character:
         self.armor_slot = InventoryItem(self, 3, self.CHARACTER_DOC["equipment"]["off hand"], self.equipment_layout, equipment="OH")
         
     def set_stats(self):
-        for stat in cons.STATS:
+        for stat in cons.STATS+cons.SECONDARY_STATS:
             stat_base = self.CHARACTER_DOC["stats"][stat]
-            stat_mod = ModifyStat(self.CHARACTER_DOC["stats"][f"{stat} mod"]).find_integer()
+            stat_mod = ModifyStat(self.CHARACTER_DOC["mods"][f"{stat} mod"]).find_integer()
             stat_total = str(stat_base + stat_mod)
 
             # Set the base stat
             self.sheet_gui.findChild(QWidget, f"{stat}").setText(stat_total)
 
             # Set the modifier
-            self.sheet_gui.findChild(QWidget, f"{stat} mod").setText(self.CHARACTER_DOC["stats"][f"{stat} mod"])
-
-        self.sheet_gui.toughness_current.get_widget().setText(str(self.CHARACTER_DOC["TOUGHNESS"]))
-        self.sheet_gui.corruption_current.get_widget().setText(str(self.CHARACTER_DOC["CORRUPTION"]+self.CHARACTER_DOC["PERMANENT"]))
-        self.sheet_gui.corruption_permanent.get_widget().setText(str(self.CHARACTER_DOC["PERMANENT"]))
+            self.sheet_gui.findChild(QWidget, f"{stat} mod").setText(self.CHARACTER_DOC["mods"][f"{stat} mod"])
 
     def set_modifiers(self):
         for stat in cons.STATS:
-            self.sheet_gui.findChild(QWidget, f"{stat} mod").setText(str(self.CHARACTER_DOC["stats"][f"{stat} mod"]))
+            self.sheet_gui.findChild(QWidget, f"{stat} mod").setText(str(self.CHARACTER_DOC["mods"][f"{stat} mod"]))
 
         for stat in ["DEFENSE", "CASTING", "SNEAKING", "ATTACK"]:
-            self.inventory_gui.findChild(QWidget, f"{stat} mod").setText(str(self.CHARACTER_DOC[f"{stat} mod"]))
+            modifier = int(self.CHARACTER_DOC[f"{stat} mod"])
+            if modifier > 0:
+                modifier = f"+{modifier}"
+            
+            self.inventory_gui.findChild(QWidget, f"{stat} mod").setText(str(modifier))
 
     def set_calculated_stats(self):
-        strong = self.CHARACTER_DOC["stats"]["STRONG"]
-        max_toughness = 10 if strong < 10 else strong
-        pain_threshold = math.ceil(strong/2)
+        strong = int(self.sheet_gui.findChild(QWidget, "STRONG").text())
+        resolute = int(self.sheet_gui.findChild(QWidget, "RESOLUTE").text())
+
+        maximum_mod = ModifyStat(self.CHARACTER_DOC["mods"]["MAXIMUM mod"]).find_integer()
+        pain_mod = ModifyStat(self.CHARACTER_DOC["mods"]["PAIN mod"]).find_integer()
+        corruption_mod = ModifyStat(self.CHARACTER_DOC["mods"]["THRESHOLD mod"]).find_integer()
+
+        max_toughness = (10 if strong < 10 else strong)+maximum_mod
+        pain_threshold = math.ceil(strong/2)+pain_mod
 
         self.sheet_gui.toughness_max.get_widget().setText(str(max_toughness))
         self.sheet_gui.toughness_threshold.get_widget().setText(str(pain_threshold))
 
-        resolute = self.CHARACTER_DOC["stats"]["RESOLUTE"]
-
-        corruption_threshold = math.ceil(resolute/2)
+        corruption_threshold = math.ceil(resolute/2)+corruption_mod
         self.sheet_gui.corruption_threshold.get_widget().setText(f"{corruption_threshold} / {resolute}")
 
         self.inventory_gui.modifier_button.get_widget().setText("0")
@@ -126,8 +130,8 @@ class Character:
     def set_abilities(self):
         self.ability_layout = self.sheet_gui.ability_layout.inner_layout(1)
         func.clear_layout(self.ability_layout)
-        priority = {'abilities': 0, 'mystical_powers': 1, 'rituals': 2, 'boons': 3, 'burdens': 4}
-        self.sorted_list = sorted(self.CHARACTER_DOC["abilities"], key=lambda x: priority.get(x.get('Category', ''), len(priority)))
+        priority = {'Ability': 0, 'Mystical Power': 1, 'Ritual': 2, 'Boon': 3, 'Burden': 4}
+        self.sorted_list = sorted(self.CHARACTER_DOC["abilities"], key=lambda x: priority.get(x.get('Type', ''), len(priority)))
         for slot,item in enumerate(self.sorted_list):
             ability = AbilityItem(self,item,slot=slot)
             self.ability_layout.addWidget(ability)

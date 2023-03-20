@@ -38,7 +38,7 @@ class AddSub(QWidget):
             height = cons.WSIZE*1.5,
             class_group = self.widget_group,
             validator="numbers",
-            stylesheet= f"font-size: 15px; font-weight: bold; color: {cons.FONT_COLOR}; background-color: {cons.PRIMARY_LIGHTER}; border: 1px solid {cons.BORDER}; border-radius: 6px;"
+            stylesheet= f"font-size: {cons.FONT_MID}; font-weight: bold; color: {cons.FONT_COLOR}; background-color: {cons.PRIMARY_LIGHTER}; border: 1px solid {cons.BORDER}; border-radius: 6px;"
         )
 
         self.minus_widget = Widget(
@@ -50,7 +50,7 @@ class AddSub(QWidget):
             icon=("minus.png",cons.WSIZE,cons.BORDER),
             height = cons.WSIZE*1.5,
             signal=self.send_value,
-            stylesheet= f"font-size: 15px; font-weight: bold; color: {cons.FONT_COLOR}; background-color: {cons.PRIMARY_LIGHTER}; border: 1px solid {cons.BORDER}; border-radius: 6px;"
+            stylesheet= f"font-size: {cons.FONT_MID}; font-weight: bold; color: {cons.FONT_COLOR}; background-color: {cons.PRIMARY_LIGHTER}; border: 1px solid {cons.BORDER}; border-radius: 6px;"
         )
 
         self.plus_widget = Widget(
@@ -62,7 +62,7 @@ class AddSub(QWidget):
             size_policy = (QSizePolicy.Expanding , QSizePolicy.Expanding),
             height = cons.WSIZE*1.5,
             signal=self.send_value,
-            stylesheet= f"font-size: 15px; font-weight: bold; color: {cons.FONT_COLOR}; background-color: {cons.PRIMARY_LIGHTER}; border: 1px solid {cons.BORDER}; border-radius: 6px;"
+            stylesheet= f"font-size: {cons.FONT_MID}; font-weight: bold; color: {cons.FONT_COLOR}; background-color: {cons.PRIMARY_LIGHTER}; border: 1px solid {cons.BORDER}; border-radius: 6px;"
 
         )
 
@@ -107,6 +107,7 @@ class AddSub(QWidget):
             self.character.CHARACTER_DOC[self.doc_item] = new_value
     
         self.character.set_stats()
+        self.character.set_xp()
         self.character.set_inventory()
         self.character.save_document()
         self.close()

@@ -44,7 +44,7 @@ class CharacterSheetGUI(QWidget):
             title = "ABILITIES & POWERS",
             group = True,
             scroll=(True,"top"),
-            icon = ("plus.png", cons.WSIZE, cons.ICON_COLOR),
+            icon = ("plus.png", cons.WSIZE, cons.PRIMARY_LIGHTER),
             spacing=10,
             class_group=self.section_group,
             stylesheet=scroll_style
@@ -108,7 +108,7 @@ class CharacterSheetGUI(QWidget):
                 objectname=stat,
                 class_group=self.widget_group,
                 height=cons.WSIZE*1.5,
-                stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_COLOR}; font-size: 20px; font-weight: bold; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-top-right-radius: 6px;"
+                stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_COLOR}; font-size: {cons.FONT_LARGE}; font-weight: bold; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-top-right-radius: 6px;"
             )
 
             self.stat_button = Widget(
@@ -118,7 +118,7 @@ class CharacterSheetGUI(QWidget):
                 objectname=f"{stat} mod",
                 class_group=self.widget_group,
                 height=cons.WSIZE,
-                stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_DARK}; font-size: 10px; font-weight: bold; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;",
+                stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_DARK}; font-size: {cons.FONT_SMALL}; font-weight: bold; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;",
                 signal = self.modify_stat
             )
 
@@ -129,18 +129,18 @@ class CharacterSheetGUI(QWidget):
             objectname = "TOUGHNESS",
             class_group=self.widget_group,
             height=cons.WSIZE*1.5,
-            stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_COLOR}; font-size: 20px; font-weight: bold; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-top-right-radius: 6px;"
+            stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_COLOR}; font-size: {cons.FONT_LARGE}; font-weight: bold; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-top-right-radius: 6px;"
         )
 
         self.toughness_current_label= Widget(
             widget_type=QPushButton(),
             parent_layout=self.hp_layout.inner_layout(1),
-            objectname = "TOUGHNESS_mod",
+            objectname = "TOUGHNESS mod",
             text = "TOUGHNESS",
             class_group=self.widget_group,
             signal=self.modify_stat,
             height=cons.WSIZE,
-            stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_DARK}; font-size: 10px; font-weight: bold; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;"
+            stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_DARK}; font-size: {cons.FONT_SMALL}; font-weight: bold; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;"
         )
 
         self.toughness_max= Widget(
@@ -149,19 +149,19 @@ class CharacterSheetGUI(QWidget):
             objectname = "MAXIMUM",
             class_group=self.widget_group,
             height=cons.WSIZE*1.5,
-            stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_COLOR}; font-size: 20px; font-weight: bold; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-top-right-radius: 6px;"
+            stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_COLOR}; font-size: {cons.FONT_LARGE}; font-weight: bold; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-top-right-radius: 6px;"
 
         )
 
         self.toughness_max_mod= Widget(
             widget_type=QPushButton(),
             parent_layout=self.hp_layout.inner_layout(2),
-            objectname = "MAXIMUM_mod",
+            objectname = "MAXIMUM mod",
             text = "MAXIMUM",
             class_group=self.widget_group,
             signal=self.modify_stat,
             height=cons.WSIZE,
-            stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_DARK}; font-size: 10px; font-weight: bold; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;"
+            stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_DARK}; font-size: {cons.FONT_SMALL}; font-weight: bold; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;"
 
         )
 
@@ -171,19 +171,19 @@ class CharacterSheetGUI(QWidget):
             objectname = "PAIN",
             class_group=self.widget_group,
             height=cons.WSIZE*1.5,
-            stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_COLOR}; font-size: 20px; font-weight: bold; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-top-right-radius: 6px;"
+            stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_COLOR}; font-size: {cons.FONT_LARGE}; font-weight: bold; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-top-right-radius: 6px;"
 
         )
 
         self.toughness_threshold_mod= Widget(
             widget_type=QPushButton(),
             parent_layout=self.hp_layout.inner_layout(3),
-            objectname = "PAIN_mod",
+            objectname = "PAIN mod",
             text = "THRESHOLD",
             class_group=self.widget_group,
             signal=self.modify_stat,
             height=cons.WSIZE,
-            stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_DARK}; font-size: 10px; font-weight: bold; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;"
+            stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_DARK}; font-size: {cons.FONT_SMALL}; font-weight: bold; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;"
 
         )
 
@@ -194,7 +194,7 @@ class CharacterSheetGUI(QWidget):
             objectname = "CORRUPTION",
             class_group=self.widget_group,
             height=cons.WSIZE*1.5,
-            stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_COLOR}; font-size: 20px; font-weight: bold; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-top-right-radius: 6px;"
+            stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_COLOR}; font-size: {cons.FONT_LARGE}; font-weight: bold; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-top-right-radius: 6px;"
         )
 
         self.corruption_mod = Widget(
@@ -202,10 +202,10 @@ class CharacterSheetGUI(QWidget):
             parent_layout=self.corruption_layout.inner_layout(1),
             class_group=self.widget_group,
             text = "CORRUPTION",
-            objectname = "CORRUPTION_mod",
+            objectname = "CORRUPTION mod",
             signal = self.modify_stat,
             height=cons.WSIZE,
-            stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_DARK}; font-size: 10px; font-weight: bold; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;"
+            stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_DARK}; font-size: {cons.FONT_SMALL}; font-weight: bold; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;"
 
         )
 
@@ -216,7 +216,7 @@ class CharacterSheetGUI(QWidget):
             objectname = "PERMANENT",
             class_group=self.widget_group,
             height=cons.WSIZE*1.5,
-            stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_COLOR}; font-size: 20px; font-weight: bold; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-top-right-radius: 6px;"
+            stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_COLOR}; font-size: {cons.FONT_LARGE}; font-weight: bold; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-top-right-radius: 6px;"
         )
 
         self.corruption_permanent_mod = Widget(
@@ -224,10 +224,10 @@ class CharacterSheetGUI(QWidget):
             parent_layout=self.corruption_layout.inner_layout(2),
             class_group=self.widget_group,
             text = "PERMANENT",
-            objectname = "PERMANENT_mod",
+            objectname = "PERMANENT mod",
             signal = self.modify_stat,
             height=cons.WSIZE,
-            stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_DARK}; font-size: 10px; font-weight: bold; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;"
+            stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_DARK}; font-size: {cons.FONT_SMALL}; font-weight: bold; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;"
 
         )
 
@@ -237,7 +237,7 @@ class CharacterSheetGUI(QWidget):
             objectname = "THRESHOLD",
             class_group=self.widget_group,
             height=cons.WSIZE*1.5,
-            stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_COLOR}; font-size: 20px; font-weight: bold; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-top-right-radius: 6px;"
+            stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_COLOR}; font-size: {cons.FONT_LARGE}; font-weight: bold; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-top-right-radius: 6px;"
         )
 
         self.corruption_threshold_mod = Widget(
@@ -245,11 +245,10 @@ class CharacterSheetGUI(QWidget):
             parent_layout=self.corruption_layout.inner_layout(3),
             class_group=self.widget_group,
             text = "THRESHOLD",
-            objectname = "THRESHOLD_mod",
+            objectname = "THRESHOLD mod",
             signal = self.modify_stat,
             height=cons.WSIZE,
-            stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_DARK}; font-size: 10px; font-weight: bold; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;"
-
+            stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_DARK}; font-size: {cons.FONT_SMALL}; font-weight: bold; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;"
         )
 
         for widget in self.widget_group:
@@ -265,12 +264,12 @@ class CharacterSheetGUI(QWidget):
     def mousePressEvent(self, event): #this is a very specific event used to subtract values when right clicking on a widget
         if event.button() == Qt.RightButton:
             widget = self.childAt(event.pos())
-            if widget.objectName() in [stat+" mod" for stat in cons.STATS]:
+            if widget.objectName() in [stat+" mod" for stat in cons.STATS+cons.SECONDARY_STATS]:
                 string = widget.text()
                 ModifyStat(string).subtract_one(self.character, widget)
 
     def open_abilities(self):
-        self.abilities = AddNewAbility(self, self.character)
+        self.abilities = AddNewAbility(self.character)
         self.abilities.show()
 
     def modify_stat(self):

@@ -65,7 +65,7 @@ class CombatEntry(QWidget):
             widget_type=QPushButton(),
             parent_layout=self.item_section.inner_layout(2),
             class_group=self.widget_group,
-            stylesheet="font-size: 14px; font-weight: bold;",
+            stylesheet=f"font-size: {cons.FONT_MID}; font-weight: bold;",
             size_policy=(QSizePolicy.Expanding, QSizePolicy.Expanding),
         )
 
@@ -82,6 +82,7 @@ class CombatEntry(QWidget):
             parent_layout=self.item_section.inner_layout(2),
             class_group=self.widget_group,       
             size_policy=(QSizePolicy.Expanding, QSizePolicy.Expanding),
+            stylesheet=f"font-size: {cons.FONT_SMALL};",
         )
 
         self.result_label = Widget(
@@ -145,5 +146,5 @@ class CombatEntry(QWidget):
         func.set_icon(self.portrait.get_widget(),f"{self.character}.png","")
         self.portrait.get_widget().setToolTip(f"{self.character}")
 
-        style_c = f"background-color: {type_bg_color}; color: {cons.PRIMARY}; font-size: 20px; font-weight: bold; border: 1px solid {cons.BORDER}; border-radius: 6px;"
+        style_c = f"background-color: {type_bg_color}; color: {cons.PRIMARY}; font-size: {cons.FONT_LARGE}; font-weight: bold; border: 1px solid {cons.BORDER}; border-radius: 6px;"
         get_updater().call_latest(self.result_label.get_widget().setStyleSheet, style_c)

@@ -9,12 +9,11 @@ from template.section import Section
 from template.widget import Widget
 
 class AddNewAbility(QWidget):
-    def __init__(self, gui_sheet, csheet):
+    def __init__(self, character):
         super().__init__(None, Qt.WindowStaysOnTopHint)
         self.all_abilities = self.get_abilities()
 
-        self.gui_sheet = gui_sheet
-        self.character_sheet = csheet
+        self.character = character
 
         self.master_layout = QVBoxLayout()
         self.master_layout.setSpacing(5)
@@ -51,7 +50,7 @@ class AddNewAbility(QWidget):
             group=True,
             class_group=self.section_group,
             title="SEARCH",
-            icon=("search.png",cons.WSIZE,cons.ICON_COLOR),
+            icon=("search.png",cons.WSIZE,cons.PRIMARY_LIGHTER),
         )
 
         self.search_bar = Widget(
@@ -110,6 +109,7 @@ class AddNewAbility(QWidget):
                             search_string = self.search_bar.get_widget().text().lower()
                             strings = [
                                 self.all_abilities[category][item]["Name"],
+                                self.all_abilities[category][item]["Tradition"],
                                 self.all_abilities[category][item]["Description"],
                                 self.all_abilities[category][item]["Novice"],
                                 self.all_abilities[category][item]["Adept"],
@@ -132,7 +132,7 @@ class AddNewAbility(QWidget):
 
     def add_ability(self):
         self.ability_dict["Rank"] = "Master"
-        ability = AbilityItem(self.character_sheet,self.ability_dict, select=True)
+        ability = AbilityItem(self.character,self.ability_dict, select=True)
         self.feats_scroll.inner_layout(1).addWidget(ability)
 
     def get_abilities(self):

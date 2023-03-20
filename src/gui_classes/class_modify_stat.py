@@ -9,6 +9,7 @@ class ModifyStat:
         self.string = string
 
     def find_integer(self):
+        print(self.string)
         split = self.string.split(" ")
         self.string = split[0]
         if len(split) == 1:
@@ -32,9 +33,10 @@ class ModifyStat:
     
         widget.setText(new_value)
 
-        character.CHARACTER_DOC["stats"][stat_mod] = new_value
-        character.save_document()
+        character.CHARACTER_DOC["mods"][stat_mod] = new_value
         character.set_stats()
+        character.set_calculated_stats()
+        character.save_document()
 
     def subtract_one(self, character, widget):
         stat_mod = widget.objectName()
@@ -47,6 +49,7 @@ class ModifyStat:
 
         widget.setText(new_value)
 
-        character.CHARACTER_DOC["stats"][stat_mod] = new_value
-        character.save_document()
+        character.CHARACTER_DOC["mods"][stat_mod] = new_value
         character.set_stats()
+        character.set_calculated_stats()
+        character.save_document()
