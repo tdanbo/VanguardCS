@@ -31,6 +31,7 @@ class CharacterSheetGUI(QWidget):
             parent_layout = self.master_layout,
             spacing=10,
             class_group = self.section_group,
+            height=100
         )
 
         scroll_style = f"QScrollBar {{background-color: {cons.PRIMARY}; width: 6px;}}"\
@@ -69,6 +70,7 @@ class CharacterSheetGUI(QWidget):
             spacing = 3,
             class_group = self.section_group,
             title = "STATS",
+            height=100
         )
 
         self.stat_layout.get_title()[1].setAlignment(Qt.AlignCenter)

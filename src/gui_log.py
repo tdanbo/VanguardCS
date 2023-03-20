@@ -53,7 +53,7 @@ class CombatLogGUI(QWidget):
             group = True,
             spacing = 3,	
             class_group = self.section_group,
-            height=98
+            height=100
         )
 
         self.log_dice.get_title()[1].setAlignment(Qt.AlignCenter)

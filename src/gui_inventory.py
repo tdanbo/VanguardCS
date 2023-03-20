@@ -37,7 +37,8 @@ class InventoryGUI(QWidget):
             title = "Test",
             icon = ("plus.png",cons.WSIZE/2,cons.FONT_COLOR),
             class_group = self.section_group,
-            spacing=3
+            spacing=3,
+            height=100
         )
 
         self.portrait_layout.get_title()[1].setText("")
@@ -171,7 +172,7 @@ class InventoryGUI(QWidget):
             parent_layout = self.master_layout,
             class_group = self.section_group,
             spacing=3,
-            height=98,
+            height=100,
         )
             
         self.active_section = Section(
