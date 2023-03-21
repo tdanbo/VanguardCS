@@ -14,6 +14,9 @@ from gui_classes.class_modify_stat import ModifyStat
 class Character:
     def __init__(self):
         print("Character class initialized")
+        self.active_modifier = 0
+        self.base_modifier = 0
+
     def load_document(self, character_name):
         self.character_name = character_name
         if self.character_name == "":
@@ -29,9 +32,6 @@ class Character:
         # Set the character portrait
         func.set_icon(self.inventory_gui.portrait.get_widget(),f"{self.character_name}.png","")
 
-        # Set character stats
-        self.set_stats()
-
         # Set character inventory
         self.set_inventory()
 
@@ -43,6 +43,9 @@ class Character:
 
         # Set character equipment
         self.set_stats()
+
+        # Set secondary stats
+        self.set_secondary_stats()
 
         # Set character modifiers
         self.set_modifiers()
@@ -84,7 +87,19 @@ class Character:
         self.armor_slot = InventoryItem(self, 3, self.CHARACTER_DOC["equipment"]["off hand"], self.equipment_layout, equipment="OH")
         
     def set_stats(self):
-        for stat in cons.STATS+cons.SECONDARY_STATS:
+        for stat in cons.STATS:
+            stat_base = self.CHARACTER_DOC["stats"][stat]
+            stat_mod = ModifyStat(self.CHARACTER_DOC["mods"][f"{stat} mod"]).find_integer()
+            stat_total = str(stat_base + stat_mod + self.active_modifier + self.base_modifier)
+
+            # Set the base stat
+            self.sheet_gui.findChild(QWidget, f"{stat}").setText(stat_total)
+
+            # Set the modifier
+            self.sheet_gui.findChild(QWidget, f"{stat} mod").setText(self.CHARACTER_DOC["mods"][f"{stat} mod"])
+
+    def set_secondary_stats(self):
+        for stat in cons.SECONDARY_STATS:
             stat_base = self.CHARACTER_DOC["stats"][stat]
             stat_mod = ModifyStat(self.CHARACTER_DOC["mods"][f"{stat} mod"]).find_integer()
             stat_total = str(stat_base + stat_mod)
@@ -129,7 +144,7 @@ class Character:
         self.sheet_gui.corruption_current.get_widget().setText(str(corruption+permanent))
 
 
-        self.inventory_gui.modifier_button.get_widget().setText("0")
+        self.inventory_gui.modifier_mod.get_widget().setText("0")
 
         
 

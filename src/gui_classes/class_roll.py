@@ -11,9 +11,9 @@ class DiceRoll:
     def __init__(self, widget, character_name, roll_type, dice, check=0, character=None, ammo=False):
 
         self.character = character
-        self.modifier_widget = self.character.inventory_gui.modifier_button.get_widget()
+        self.modifier_widget = self.character.inventory_gui.modifier_mod.get_widget()
         self.dice = dice
-        self.modifier = int(self.modifier_widget.text())
+        self.modifier = 0
         self.check = check
         self.roll_type = roll_type
         self.ammo = ammo
@@ -24,6 +24,7 @@ class DiceRoll:
         self.entry  = {
             "Character": character_name,
             "Type": self.roll_type,
+            "Check": self.check,
             "Dice": dice,
             "Modifier": self.modifier,
             "Result": "",
@@ -90,6 +91,8 @@ class DiceRoll:
         self.set_time()
 
         self.save_to_database()
+        self.character.base_modifier = 0
+        self.character.set_stats()
 
     def subtract_ammo(self):
         has_ammo = False
@@ -127,7 +130,6 @@ class DiceRoll:
         stylesheet_button  = f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_COLOR}; font-size: {cons.FONT_LARGE}; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;"
 
         if atk_mod.isChecked():
-            self.modifier += int(atk_value.text())
             atk_mod.setChecked(False)
             self.roll_type = "Attack"
             atk_mod.setStyleSheet(stylesheet_button)
@@ -135,7 +137,6 @@ class DiceRoll:
             return
         
         if def_mod.isChecked():
-            self.modifier += int(def_value.text())
             def_mod.setChecked(False)
             self.roll_type = "Defense"
             def_mod.setStyleSheet(stylesheet_button)
@@ -143,7 +144,6 @@ class DiceRoll:
             return
         
         if cas_mod.isChecked():
-            self.modifier += int(cas_value.text())
             cas_mod.setChecked(False)
             self.roll_type = "Casting"
             cas_mod.setStyleSheet(stylesheet_button)
@@ -151,7 +151,6 @@ class DiceRoll:
             return
         
         if sne_mod.isChecked():
-            self.modifier += int(sne_value.text())
             sne_mod.setChecked(False)
             self.roll_type = "Sneaking"
             sne_mod.setStyleSheet(stylesheet_button)
@@ -163,7 +162,4 @@ class DiceRoll:
         self.entry["Time"] = datetime.datetime.now().strftime("%H:%M:%S")
 
     def save_to_database(self):
-        self.client = pymongo.MongoClient(cons.CONNECT)
-        self.db = self.client ["dnd"]
-        self.collection = self.db["combatlog"]
-        self.collection.insert_one(self.entry)
+        cons.COMBAT_LOG.insert_one(self.entry)

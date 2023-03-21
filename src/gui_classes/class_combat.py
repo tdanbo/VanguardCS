@@ -15,17 +15,15 @@ class CombatLog:
         combat_log_gui
     ):
         self.combat_log_gui = combat_log_gui
-        self.client = pymongo.MongoClient(cons.CONNECT)
-        self.db = self.client ["dnd"]
-        self.collection = self.db["combatlog"]
-
+        print("Combat Log Initialized")
+        
     def get_log(self):
-        doc = self.collection.find().sort([("_id", -1)]).limit(21)
+        doc = cons.COMBAT_LOG.find().sort([("_id", -1)]).limit(21)
         json_doc = json.loads(json_util.dumps(doc))
         return list(json_doc)
         
     def get_collection(self):
-        return self.collection
+        return cons.COMBAT_LOG
 
     def start_watching(self):
         self.running = True
@@ -37,7 +35,7 @@ class CombatLog:
         
     def watch_collection(self):
         while self.running:
-            with self.collection.watch() as change_stream:
+            with cons.COMBAT_LOG.watch() as change_stream:
                 for update_doc in change_stream:
                     self.update_combat_log()   
         

@@ -476,27 +476,3 @@ class AbilityItem(QWidget):
             self.dice = self.sender().text()
 
         rolling_dice = DiceRoll(self.sender(),self.character_name,self.roll_type.capitalize(), self.dice, check = self.check, character=self.character).roll()
-
-def get_abilities(category, name):
-    all_equipment = {}
-    client = pymongo.MongoClient(cons.CONNECT)
-    # get a list of collection names
-    db = client["abilities"]
-    collection_names = db.list_collection_names()
-    for coll in collection_names:
-        # get a collection object
-        collection = db[coll]
-        document = collection.find_one()
-        all_equipment[coll] = document
-    
-    ability_dict = all_equipment[category][name]
-    ability_dict["Category"] = category
-
-    return ability_dict
-
-if __name__ == "__main__":
-    app = QApplication()
-    ability = get_abilities("abilities","Backstab")
-    window = AbilityItem(ability)
-    window.show()
-    app.exec_()

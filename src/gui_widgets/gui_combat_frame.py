@@ -119,6 +119,7 @@ class CombatEntry(QWidget):
     def update_widget(self,entry):
         self.character = entry["Character"]
         self.type = entry["Type"]
+        self.check = entry["Check"]
         self.dice = entry["Dice"]
         self.result = entry["Result"]
         self.modifier= str(entry["Modifier"])
@@ -132,10 +133,10 @@ class CombatEntry(QWidget):
         else:
             type_bg_color = color_type[self.type.upper()]   
 
-        if int(self.modifier) >= 0:
-            self.item.get_widget().setText("+"+self.modifier+" "+self.type)
+        if int(self.check) == 0:
+            self.item.get_widget().setText(self.type)
         else:
-            self.item.get_widget().setText(self.modifier+" "+self.type)
+            self.item.get_widget().setText(f"{self.check} {self.type}")
             
         #self.item_label.get_widget().setText(self.character)
         result_widget = self.result_label.get_widget()

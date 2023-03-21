@@ -69,6 +69,7 @@ WHITE = "#bfb6ac"
 
 ACTIVE_COLOR = {
     "ATTACK": RED,
+    "DAMAGE": RED,
     "ABILITY": RED,
     "MELEE": RED,
     "RANGED": RED,
@@ -107,6 +108,7 @@ BORDER_LIGHT = "#ccbda5"
 BORDER = "#b3a691"
 BORDER_DARK = "#998e7c"
 
+#READING DATABASE
 client = pymongo.MongoClient(CONNECT)
 QUALITIES = client["equipment"]["quality"].find_one()
 
@@ -117,3 +119,14 @@ for name in collection_names:
     collection = db[name]
     document = collection.find_one()
     ABILITIES[name] = document
+
+EQUIPMENT = {}
+db = client["equipment"]
+collection_names = db.list_collection_names()
+for name in collection_names:
+    collection = db[name]
+    document = collection.find_one()
+    EQUIPMENT[name] = document
+
+db = client ["dnd"]
+COMBAT_LOG = db["combatlog"]

@@ -12,6 +12,8 @@ import pymongo
 from gui_classes.class_character import Character
 
 from gui_classes.class_roll import DiceRoll
+from gui_classes.class_modify_roll import ModifyRoll
+
 from gui_widgets.gui_new_char_frame import NewCharacter
 from gui_widgets.gui_add_sub import AddSub
 
@@ -196,7 +198,6 @@ class InventoryGUI(QWidget):
                 class_group=self.widget_group,
                 size_policy=(QSizePolicy.Expanding, QSizePolicy.Expanding),
                 stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_COLOR}; font-size: {cons.FONT_MID}; font-weight: bold; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-top-right-radius: 6px;",
-                signal=self.check_modifier,
                 checkable=True,
                 checked=False,
             )
@@ -211,7 +212,7 @@ class InventoryGUI(QWidget):
                 checkable=True,
                 checked=False,
                 objectname=f"{stat} button",
-                signal=self.check_modifier,
+                signal=self.change_active_modifier,
             )
 
         self.modifier_section = Section(
@@ -227,23 +228,23 @@ class InventoryGUI(QWidget):
 
         self.modifier_section.get_title()[1].setAlignment(Qt.AlignCenter)
 
-        self.modifier_button = Widget(
+        self.modifier_mod = Widget(
             widget_type=QPushButton(),
             parent_layout = self.modifier_section.inner_layout(1),
-            objectname="modifier",
+            objectname="MODIFIER mod",
             class_group=self.widget_group,
             stylesheet=f"background-color: {cons.FONT_COLOR}; color: {cons.FONT_LIGHT}; font-size: {cons.FONT_MID}; font-weight: bold; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-top-right-radius: 6px;",
             size_policy=(QSizePolicy.Expanding, QSizePolicy.Expanding),
             signal = lambda: self.adjust_modifier("add")
         )
 
-        self.modifier_label = Widget(
+        self.modifier_button = Widget(
             widget_type=QToolButton(),
             parent_layout=self.modifier_section.inner_layout(1),
             icon=(f"Modifier.png","",cons.PRIMARY_LIGHTER,cons.WSIZE),
             class_group=self.widget_group,
             size_policy=(QSizePolicy.Expanding, QSizePolicy.Expanding),
-            objectname="modifier button",
+            objectname="MODIFIER button",
             stylesheet=f"background-color: {cons.FONT_COLOR}; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;",
             signal = lambda: self.adjust_modifier("add")
         )
@@ -363,7 +364,7 @@ class InventoryGUI(QWidget):
     def mousePressEvent(self, event): #this is a very specific event used to subtract values when right clicking on a widget
         if event.button() == Qt.RightButton:
             widget = self.childAt(event.pos())
-            if widget.objectName() in ["modifier","modifier button"]:
+            if widget.objectName() in ["MODIFIER button","MODIFIER mod"]:
                 self.adjust_modifier("subtract")
 
     def load_character(self):
@@ -403,41 +404,13 @@ class InventoryGUI(QWidget):
         add_sub_gui = AddSub(self.character, self.sender(), doc_item = doc_string)
         add_sub_gui.show()
 
-    def check_modifier(self):
-        mod = self.sender().objectName().split(" ")[0]
-        print(mod)
-
-        type_color = cons.ACTIVE_COLOR[mod]
-        current_mod = self.findChild(QWidget, mod+" mod")
-        current_button = self.findChild(QWidget, mod+" button")
-
-        for button in ["ATTACK mod","DEFENSE mod","CASTING mod","SNEAKING mod"]:
-            if button != current_mod.objectName():
-                mod_widget = self.findChild(QWidget, button)
-                mod_widget.setChecked(False)
-                stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_COLOR}; font-size: {cons.FONT_MID}; font-weight: bold; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-top-right-radius: 6px;"
-                mod_widget.setStyleSheet(stylesheet)
-
-        for mod in ["ATTACK button","DEFENSE button","CASTING button","SNEAKING button"]:
-            if mod != current_button.objectName():
-                mod_widget = self.findChild(QWidget, mod)
-                mod_widget.setChecked(False)
-                stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_COLOR}; font-size: {cons.FONT_MID}; font-weight: bold; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;"
-                mod_widget.setStyleSheet(stylesheet)
-
-
-        if self.sender().isChecked():
-            current_button.setStyleSheet(f"background-color: {type_color}; color: {cons.PRIMARY_LIGHTER}; font-size: {cons.FONT_MID}; font-weight: bold; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;")
-            current_mod.setStyleSheet(f"background-color: {type_color}; color: {cons.PRIMARY_LIGHTER}; font-size: {cons.FONT_MID}; font-weight: bold; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-top-right-radius: 6px;")
-            current_mod.setChecked(True)
-            current_button.setChecked(True)
-        else:
-            current_button.setStyleSheet(f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_COLOR}; font-size: {cons.FONT_MID}; font-weight: bold; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;")
-            current_mod.setStyleSheet(f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_COLOR}; font-size: {cons.FONT_MID}; font-weight: bold; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-top-right-radius: 6px;")
-            current_mod.setChecked(False)
-            current_button.setChecked(False)
+    def change_active_modifier(self):
+        print("Change Active")
+        print(self.sender().objectName())
+        ModifyRoll(self.character).change_active(self.sender())
+        
     def adjust_modifier(self, adjust):
-        current_value = int(self.modifier_button.get_widget().text())
+        current_value = int(self.modifier_mod.get_widget().text())
         if adjust == "add":
             current_value += 1
         else:
@@ -445,7 +418,9 @@ class InventoryGUI(QWidget):
         
         if current_value > 0:
             current_value = f"+{current_value}"
-        self.modifier_button.get_widget().setText(str(current_value))   
+
+        self.modifier_mod.get_widget().setText(str(current_value))
+        ModifyRoll(self.character).run_set_stats()
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)

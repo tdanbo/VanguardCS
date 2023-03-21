@@ -94,7 +94,7 @@ class InventoryItem(QWidget):
 
         print(item_string, item_slot)
 
-        self.all_equipment = self.get_equipment()
+        self.all_equipment = cons.EQUIPMENT
         if item_string != "":
             for category in self.all_equipment:
                 for item in self.all_equipment[category]:
@@ -137,19 +137,6 @@ class InventoryItem(QWidget):
             "Quality":[]
         }
         return item
-
-    def get_equipment(self):
-        all_equipment = {}
-        client = pymongo.MongoClient(cons.CONNECT)
-        # get a list of collection names
-        db = client["equipment"]
-        collection_names = db.list_collection_names()
-        for name in collection_names:
-            # get a collection object
-            collection = db[name]
-            document = collection.find_one()
-            all_equipment[name] = document
-        return all_equipment
 
     def make_item(self, item_dict):
         self.item_dict = item_dict
