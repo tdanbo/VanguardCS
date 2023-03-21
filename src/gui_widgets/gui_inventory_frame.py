@@ -478,16 +478,16 @@ class InventoryItem(QWidget):
         mh = self.character.CHARACTER_DOC["equipment"]["main hand"]
         if mh != {}:
             if mh["Name"] in ["Shield", "Buckler"]:
-                defense -= 1
+                defense += 1
             elif mh["Name"] == "Steel Shield":
-                defense -= 2
+                defense += 2
 
         oh = self.character.CHARACTER_DOC["equipment"]["off hand"]
         if oh != {}:
             if oh["Name"] in ["Shield", "Buckler"]:
-                defense -= 1
+                defense += 1
             elif oh["Name"] == "Steel Shield":
-                defense -= 2
+                defense += 2
 
         self.character.CHARACTER_DOC["DEFENSE mod"] = defense
         self.character.CHARACTER_DOC["CASTING mod"] = casting

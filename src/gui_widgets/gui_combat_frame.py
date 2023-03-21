@@ -122,22 +122,23 @@ class CombatEntry(QWidget):
         else:
             type_bg_color = color_type[self.active.upper()]
 
-        self.item.get_widget().setText(self.active.title())
+        get_updater().call_latest(self.item.get_widget().setText, self.active.title())
         if self.check == 0:
-            self.result_message_label.get_widget().setText(f"{self.type}")
+            get_updater().call_latest(self.result_message_label.get_widget().setText, self.type)
         else:
-            self.result_message_label.get_widget().setText(
-                f"{self.check} {self.type.title()}"
-            )
+            result = f"{self.check} {self.type.title()}"
+            get_updater().call_latest(self.result_message_label.get_widget().setText, result)
+
         #  ({self.result_message}) Removed success/fail message
 
         # self.item_label.get_widget().setText(self.character)
         result_widget = self.result_label.get_widget()
-        result_widget.setText(str(self.result))
+        get_updater().call_latest(result_widget.setText, str(self.result))
         result_widget.setToolTip(f"{self.result_breakdown}")
 
         func.set_icon(self.portrait.get_widget(), f"{self.character}.png", "")
         self.portrait.get_widget().setToolTip(f"{self.character}")
 
         style_c = f"background-color: {type_bg_color}; color: {cons.PRIMARY}; font-size: {cons.FONT_LARGE}; font-weight: bold; border: 1px solid {cons.BORDER}; border-radius: 6px;"
+
         get_updater().call_latest(self.result_label.get_widget().setStyleSheet, style_c)
