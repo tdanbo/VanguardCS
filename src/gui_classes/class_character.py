@@ -11,9 +11,11 @@ from gui_widgets.gui_inventory_frame import InventoryItem
 from gui_widgets.gui_ability_frame import AbilityItem
 from gui_classes.class_modify_stat import ModifyStat
 
+
 class Character:
     def __init__(self):
         print("Character class initialized")
+        self.active_modifier_name = ""
         self.active_modifier = 0
         self.base_modifier = 0
 
@@ -23,14 +25,18 @@ class Character:
             return
 
         self.client = pymongo.MongoClient(cons.CONNECT)
-        self.db = self.client ["dnd"]
+        self.db = self.client["dnd"]
         self.collection = self.db["characters"]
 
         self.query = {"character": self.character_name}
         self.CHARACTER_DOC = self.collection.find_one(self.query)
 
+        print(character_name)
+
         # Set the character portrait
-        func.set_icon(self.inventory_gui.portrait.get_widget(),f"{self.character_name}.png","")
+        func.set_icon(
+            self.inventory_gui.portrait.get_widget(), f"{self.character_name}.png", ""
+        )
 
         # Set character inventory
         self.set_inventory()
@@ -53,7 +59,7 @@ class Character:
         # Set character calculated stats
         self.set_calculated_stats()
 
-        #Set character xp
+        # Set character xp
         self.set_xp()
 
         # Set calculated stats
@@ -66,95 +72,154 @@ class Character:
     def set_inventory(self):
         self.inventory_layout = self.inventory_gui.inventory_scroll.inner_layout(1)
         func.clear_layout(self.inventory_layout)
-        priority = {'melee': 0, 'ranged': 1, 'armor': 2, 'ammunition': 3, 'elixirs': 4, 'treasure': 5, 'misc': 6}
-        sorted_list = sorted(self.CHARACTER_DOC["inventory"], key=lambda x: priority.get(x.get('Category', ''), len(priority)))
+        priority = {
+            "melee": 0,
+            "ranged": 1,
+            "armor": 2,
+            "ammunition": 3,
+            "elixirs": 4,
+            "treasure": 5,
+            "misc": 6,
+        }
+        sorted_list = sorted(
+            self.CHARACTER_DOC["inventory"],
+            key=lambda x: priority.get(x.get("Category", ""), len(priority)),
+        )
         self.CHARACTER_DOC["inventory"] = sorted_list
 
-        for count in range(20,-1,-1):
+        for count in range(20, -1, -1):
             try:
                 item_dict = self.CHARACTER_DOC["inventory"][count]
             except:
                 item_dict = {}
-            
-            item_widget = InventoryItem(self, count, item_dict, self.inventory_layout )
+
+            item_widget = InventoryItem(self, count, item_dict, self.inventory_layout)
 
     def set_equipment(self):
         self.equipment_layout = self.inventory_gui.equipment_layout.inner_layout(1)
         func.clear_layout(self.equipment_layout)
 
-        self.mainhand_slot = InventoryItem(self, 1, self.CHARACTER_DOC["equipment"]["armor"], self.equipment_layout, equipment="AR")
-        self.offhand_slot = InventoryItem(self, 2, self.CHARACTER_DOC["equipment"]["main hand"], self.equipment_layout, equipment="MH")
-        self.armor_slot = InventoryItem(self, 3, self.CHARACTER_DOC["equipment"]["off hand"], self.equipment_layout, equipment="OH")
-        
+        self.mainhand_slot = InventoryItem(
+            self,
+            1,
+            self.CHARACTER_DOC["equipment"]["armor"],
+            self.equipment_layout,
+            equipment="AR",
+        )
+        self.offhand_slot = InventoryItem(
+            self,
+            2,
+            self.CHARACTER_DOC["equipment"]["main hand"],
+            self.equipment_layout,
+            equipment="MH",
+        )
+        self.armor_slot = InventoryItem(
+            self,
+            3,
+            self.CHARACTER_DOC["equipment"]["off hand"],
+            self.equipment_layout,
+            equipment="OH",
+        )
+
     def set_stats(self):
         for stat in cons.STATS:
             stat_base = self.CHARACTER_DOC["stats"][stat]
-            stat_mod = ModifyStat(self.CHARACTER_DOC["mods"][f"{stat} mod"]).find_integer()
-            stat_total = str(stat_base + stat_mod + self.active_modifier + self.base_modifier)
+            stat_mod = ModifyStat(
+                self.CHARACTER_DOC["mods"][f"{stat} mod"]
+            ).find_integer()
+            stat_total = str(
+                stat_base + stat_mod + self.active_modifier + self.base_modifier
+            )
 
             # Set the base stat
             self.sheet_gui.findChild(QWidget, f"{stat}").setText(stat_total)
 
             # Set the modifier
-            self.sheet_gui.findChild(QWidget, f"{stat} mod").setText(self.CHARACTER_DOC["mods"][f"{stat} mod"])
+            self.sheet_gui.findChild(QWidget, f"{stat} mod").setText(
+                self.CHARACTER_DOC["mods"][f"{stat} mod"]
+            )
 
     def set_secondary_stats(self):
         for stat in cons.SECONDARY_STATS:
             stat_base = self.CHARACTER_DOC["stats"][stat]
-            stat_mod = ModifyStat(self.CHARACTER_DOC["mods"][f"{stat} mod"]).find_integer()
+            stat_mod = ModifyStat(
+                self.CHARACTER_DOC["mods"][f"{stat} mod"]
+            ).find_integer()
             stat_total = str(stat_base + stat_mod)
 
             # Set the base stat
             self.sheet_gui.findChild(QWidget, f"{stat}").setText(stat_total)
 
             # Set the modifier
-            self.sheet_gui.findChild(QWidget, f"{stat} mod").setText(self.CHARACTER_DOC["mods"][f"{stat} mod"])
+            self.sheet_gui.findChild(QWidget, f"{stat} mod").setText(
+                self.CHARACTER_DOC["mods"][f"{stat} mod"]
+            )
+
+            print(stat)
+            print(stat_base)
 
     def set_modifiers(self):
         for stat in cons.STATS:
-            self.sheet_gui.findChild(QWidget, f"{stat} mod").setText(str(self.CHARACTER_DOC["mods"][f"{stat} mod"]))   
+            self.sheet_gui.findChild(QWidget, f"{stat} mod").setText(
+                str(self.CHARACTER_DOC["mods"][f"{stat} mod"])
+            )
 
-        for stat in ["DEFENSE", "CASTING", "SNEAKING", "ATTACK"]:
+        for stat in ["DEFENSE", "CASTING", "SKILL", "SNEAKING", "ATTACK"]:
             modifier = int(self.CHARACTER_DOC[f"{stat} mod"])
             if modifier > 0:
                 modifier = f"+{modifier}"
-            
+
             self.inventory_gui.findChild(QWidget, f"{stat} mod").setText(str(modifier))
+
+        if self.inventory_gui.modifier_mod.get_widget().text() == "":
+            self.inventory_gui.modifier_mod.get_widget().setText("0")
 
     def set_calculated_stats(self):
         strong = int(self.sheet_gui.findChild(QWidget, "STRONG").text())
         resolute = int(self.sheet_gui.findChild(QWidget, "RESOLUTE").text())
 
-        maximum_mod = ModifyStat(self.CHARACTER_DOC["mods"]["MAXIMUM mod"]).find_integer()
+        maximum_mod = ModifyStat(
+            self.CHARACTER_DOC["mods"]["MAXIMUM mod"]
+        ).find_integer()
         pain_mod = ModifyStat(self.CHARACTER_DOC["mods"]["PAIN mod"]).find_integer()
-        corruption_mod = ModifyStat(self.CHARACTER_DOC["mods"]["THRESHOLD mod"]).find_integer()
+        corruption_mod = ModifyStat(
+            self.CHARACTER_DOC["mods"]["THRESHOLD mod"]
+        ).find_integer()
 
-        max_toughness = (10 if strong < 10 else strong)+maximum_mod
-        pain_threshold = math.ceil(strong/2)+pain_mod
+        max_toughness = (10 if strong < 10 else strong) + maximum_mod
+        pain_threshold = math.ceil(strong / 2) + pain_mod
 
         self.sheet_gui.toughness_max.get_widget().setText(str(max_toughness))
         self.sheet_gui.toughness_threshold.get_widget().setText(str(pain_threshold))
 
-        corruption_threshold = math.ceil(resolute/2)+corruption_mod
-        self.sheet_gui.corruption_threshold.get_widget().setText(f"{corruption_threshold} / {resolute}")
+        corruption_threshold = math.ceil(resolute / 2) + corruption_mod
+        self.sheet_gui.corruption_threshold.get_widget().setText(
+            f"{corruption_threshold} / {resolute}"
+        )
 
         # set total corruption
         corruption = int(self.sheet_gui.corruption_current.get_widget().text())
         permanent = int(self.sheet_gui.corruption_permanent.get_widget().text())
-        self.sheet_gui.corruption_current.get_widget().setText(str(corruption+permanent))
-
-
-        self.inventory_gui.modifier_mod.get_widget().setText("0")
-
-        
+        self.sheet_gui.corruption_current.get_widget().setText(
+            str(corruption + permanent)
+        )
 
     def set_abilities(self):
         self.ability_layout = self.sheet_gui.ability_layout.inner_layout(1)
         func.clear_layout(self.ability_layout)
-        priority = {'Ability': 0, 'Mystical Power': 1, 'Ritual': 2, 'Boon': 3, 'Burden': 4}
-        self.sorted_list = sorted(self.CHARACTER_DOC["abilities"], key=lambda x: priority.get(x.get('Type', ''), len(priority)))
-        for slot,item in enumerate(self.sorted_list):
-            ability = AbilityItem(self,item,slot=slot)
+        priority = {
+            "Ability": 0,
+            "Mystical Power": 1,
+            "Ritual": 2,
+            "Boon": 3,
+            "Burden": 4,
+        }
+        self.sorted_list = sorted(
+            self.CHARACTER_DOC["abilities"],
+            key=lambda x: priority.get(x.get("Type", ""), len(priority)),
+        )
+        for slot, item in enumerate(self.sorted_list):
+            ability = AbilityItem(self, item, slot=slot)
             self.ability_layout.addWidget(ability)
         filler_widget = QWidget()
         filler_widget.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
@@ -171,11 +236,13 @@ class Character:
             elif ability["Rank"] == "Master":
                 earned_experience += 60
 
-        total_experience = self.CHARACTER_DOC["total experience"]        
-        self.CHARACTER_DOC["character experience"] = earned_experience
+        total_experience = self.CHARACTER_DOC["TOTALXP"]
+        self.CHARACTER_DOC["XP"] = earned_experience
 
         self.inventory_gui.experience.get_widget().setText(str(earned_experience))
-        self.inventory_gui.unspent_experience.get_widget().setText(str(total_experience-earned_experience))
+        self.inventory_gui.unspent_experience.get_widget().setText(
+            str(total_experience - earned_experience)
+        )
 
     def set_inventory_gui(self, inventory_gui=None):
         self.inventory_gui = inventory_gui
@@ -185,4 +252,3 @@ class Character:
 
     # def set_combat_gui(self, combat_gui=None):
     #     self.combat_gui = combat_gui
-

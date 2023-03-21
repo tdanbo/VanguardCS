@@ -13,6 +13,7 @@ from gui_classes.class_modify_stat import ModifyStat
 
 from gui_widgets.gui_add_sub import AddSub
 
+
 class InventoryItem(QWidget):
     def __init__(self, character, count, item_dict, layout, equipment=""):
         super().__init__()
@@ -31,7 +32,7 @@ class InventoryItem(QWidget):
         if count % 2 == 0:
             self.bg_color = cons.PRIMARY
         else:
-            self.bg_color = cons.PRIMARY_DARKER             
+            self.bg_color = cons.PRIMARY_DARKER
 
         self.item_section = Section(
             outer_layout=QHBoxLayout(),
@@ -41,7 +42,7 @@ class InventoryItem(QWidget):
             spacing=0,
             group=True,
             stylesheet=f"background-color: {self.bg_color};",
-            content_margin=(0,0,0,0)       
+            content_margin=(0, 0, 0, 0),
         )
 
         self.item_section.inner_layout(1).setContentsMargins(0, 0, 0, 0)
@@ -58,13 +59,13 @@ class InventoryItem(QWidget):
             class_group=self.widget_group,
             stylesheet=f"font-size: {cons.FONT_MID}; font-weight: bold;",
             height=cons.WSIZE,
-            signal=self.get_item
+            signal=self.get_item,
         )
 
         # CREATING EMPTY OR POPULATED ITEM WIDGET
         if item_dict == {}:
             self.type_bg_color = self.bg_color
-            pass # Setting up empty item
+            pass  # Setting up empty item
         else:
             self.make_item(item_dict)
 
@@ -131,11 +132,7 @@ class InventoryItem(QWidget):
         self.character.save_document()
 
     def misc_item(self):
-        item = {
-            "Quantity":1,
-            "Type":"Misc",
-            "Quality":[]
-        }
+        item = {"Quantity": 1, "Type": "Misc", "Quality": []}
         return item
 
     def make_item(self, item_dict):
@@ -162,8 +159,8 @@ class InventoryItem(QWidget):
                     parent_layout=self.item_section.inner_layout(2),
                     class_group=self.widget_group,
                     width=7,
-                    stylesheet=f"QPushButton {{ background-color: {cons.BORDER_LIGHT}; }}"\
-                               f"QPushButton:hover {{ background-color: {self.type_bg_color}; }}",
+                    stylesheet=f"QPushButton {{ background-color: {cons.BORDER_LIGHT}; }}"
+                    f"QPushButton:hover {{ background-color: {self.type_bg_color}; }}",
                     size_policy=(QSizePolicy.Fixed, QSizePolicy.Expanding),
                     objectname=f"{self.equipment}_EQUIPPED",
                     signal=self.prepare_equip_item,
@@ -176,8 +173,8 @@ class InventoryItem(QWidget):
                         parent_layout=self.item_section.inner_layout(2),
                         class_group=self.widget_group,
                         width=7,
-                        stylesheet=f"QPushButton {{ background-color: {cons.BORDER_LIGHT}; }}"\
-                                   f"QPushButton:hover {{ background-color: {self.type_bg_color}; }}",
+                        stylesheet=f"QPushButton {{ background-color: {cons.BORDER_LIGHT}; }}"
+                        f"QPushButton:hover {{ background-color: {self.type_bg_color}; }}",
                         size_policy=(QSizePolicy.Fixed, QSizePolicy.Expanding),
                         objectname=state,
                         signal=self.prepare_equip_item,
@@ -195,7 +192,6 @@ class InventoryItem(QWidget):
 
         # If item has qualities
 
-
         self.item_label = Widget(
             widget_type=QLineEdit(),
             parent_layout=self.item_section.inner_layout(4),
@@ -203,8 +199,8 @@ class InventoryItem(QWidget):
             objectname="item",
             class_group=self.section_group,
             height=cons.WSIZE,
-            stylesheet=f"color: {self.type_bg_color}; font-size: {cons.FONT_SMALL}; font-weight: bold;",  
-            enabled=False,  
+            stylesheet=f"color: {self.type_bg_color}; font-size: {cons.FONT_SMALL}; font-weight: bold;",
+            enabled=False,
         )
 
         qualities = self.item_dict["Quality"]
@@ -216,13 +212,14 @@ class InventoryItem(QWidget):
             spacing=2,
         )
 
-
         for count in range(4):
             try:
                 quality = qualities[count]
                 quality_tag = quality[:2]
-                style = f"QToolButton {{background-color: {cons.BORDER_LIGHT}; color: {self.type_bg_color}; font-weight: bold; font-size: 10px; border-radius: 6px;}}"\
-                        f"QToolTip {{background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_DARK}; font-size: 11px;}}"
+                style = (
+                    f"QToolButton {{background-color: {cons.BORDER_LIGHT}; color: {self.type_bg_color}; font-weight: bold; font-size: 10px; border-radius: 6px;}}"
+                    f"QToolTip {{background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_DARK}; font-size: 11px;}}"
+                )
             except:
                 quality = ""
                 style = ""
@@ -231,7 +228,9 @@ class InventoryItem(QWidget):
                 if quality == "Effect":
                     tooltip = f"<b>{quality}</b>: {self.item_dict['Description']}"
                 else:
-                    tooltip = f"<b>{quality}</b>: {cons.QUALITIES[quality]['Description']}"
+                    tooltip = (
+                        f"<b>{quality}</b>: {cons.QUALITIES[quality]['Description']}"
+                    )
             except:
                 tooltip = f"<b>{quality}"
 
@@ -245,17 +244,15 @@ class InventoryItem(QWidget):
                 parent_layout=self.quality_section.inner_layout(layout),
                 objectname=f"quality{count}",
                 class_group=self.widget_group,
-                #icon=(f"{quality}.png", cons.WSIZE / 2, cons.BORDER_DARK),
+                # icon=(f"{quality}.png", cons.WSIZE / 2, cons.BORDER_DARK),
                 height=20,
                 width=20,
                 text=quality_tag,
                 tooltip=tooltip,
-                stylesheet=style
+                stylesheet=style,
             )
 
-        #self.quality_section.inner_layout(1).setAlignment(Qt.AlignLeft)
-
-
+        # self.quality_section.inner_layout(1).setAlignment(Qt.AlignLeft)
 
         # If item has a roll
 
@@ -269,7 +266,7 @@ class InventoryItem(QWidget):
 
         if "Roll" in self.item_dict:
             dice_type = self.item_dict["Roll"][0]
-            dice = self.item_dict["Roll"][1]
+            dice = self.item_dict["Roll"][1].replace("D", "d")
 
             self.item_dice = Widget(
                 widget_type=QToolButton(),
@@ -280,7 +277,7 @@ class InventoryItem(QWidget):
                 stylesheet=f"padding-left: 5px; padding-right: 5px; background-color: {cons.PRIMARY_LIGHTER}; color: {self.type_bg_color}; font-size: {cons.FONT_SMALL}; font-weight: bold; border: 1px solid {cons.BORDER}; border-radius: 6px;",
                 height=cons.WSIZE,
                 signal=self.roll_dice,
-                property=("roll",dice_type),
+                property=("roll", dice_type),
             )
 
         elif "Quantity" in self.item_dict:
@@ -304,7 +301,6 @@ class InventoryItem(QWidget):
             class_group=self.widget_group,
             width=7,
             stylesheet=f"background-color: {self.type_bg_color}",
-            
         )
 
         self.roll_section.inner_layout(1).setAlignment(Qt.AlignRight)
@@ -314,26 +310,34 @@ class InventoryItem(QWidget):
         self.item_label.get_widget().setAlignment(Qt.AlignTop)
 
     def add_sub(self):
-        add_sub_gui = AddSub(self.character, self.sender(), doc_item = self.count, item=True)
+        add_sub_gui = AddSub(
+            self.character, self.sender(), doc_item=self.count, item=True
+        )
         add_sub_gui.show()
 
     def roll_dice(self):
         self.character_name = self.character.character_name
-        self.roll_type = self.sender().property("roll") 
 
-        if self.roll_type in cons.STATS:
-            self.check = int(self.sender().text())
-            self.dice = "1d20"
-        else:
-            self.check = 0
-            self.dice = self.sender().text()
+        self.check = 0
+        self.dice = self.sender().text()
+
+        self.character.active_modifier_name = self.sender().property("roll")
+        self.roll_type = f"{self.dice} {self.name}"
 
         if self.item_type == "Ranged Weapon":
             needs_ammo = True
         else:
             needs_ammo = False
 
-        rolling_dice = DiceRoll(self.sender(),self.character_name,self.roll_type.capitalize(), self.dice, check = self.check, character=self.character, ammo=needs_ammo).roll()
+        rolling_dice = DiceRoll(
+            self.sender(),
+            self.character_name,
+            self.roll_type,
+            self.dice,
+            check=self.check,
+            character=self.character,
+            ammo=needs_ammo,
+        ).roll()
 
     def prepare_equip_item(self):
         print("EQUIP")
@@ -355,9 +359,13 @@ class InventoryItem(QWidget):
             self.character.CHARACTER_DOC["inventory"].pop(self.count)
 
             if self.character.CHARACTER_DOC["equipment"]["main hand"] != {}:
-                self.character.CHARACTER_DOC["inventory"].append(self.character.CHARACTER_DOC["equipment"]["main hand"])
+                self.character.CHARACTER_DOC["inventory"].append(
+                    self.character.CHARACTER_DOC["equipment"]["main hand"]
+                )
             if self.character.CHARACTER_DOC["equipment"]["off hand"] != {}:
-                self.character.CHARACTER_DOC["inventory"].append(self.character.CHARACTER_DOC["equipment"]["off hand"])
+                self.character.CHARACTER_DOC["inventory"].append(
+                    self.character.CHARACTER_DOC["equipment"]["off hand"]
+                )
 
             self.character.CHARACTER_DOC["equipment"]["main hand"] = self.item_dict
             self.character.CHARACTER_DOC["equipment"]["off hand"] = {}
@@ -366,9 +374,11 @@ class InventoryItem(QWidget):
 
         elif self.equip_button_type == "MH":
             self.character.CHARACTER_DOC["inventory"].pop(self.count)
-            
+
             if self.character.CHARACTER_DOC["equipment"]["main hand"] != {}:
-                self.character.CHARACTER_DOC["inventory"].append(self.character.CHARACTER_DOC["equipment"]["main hand"])
+                self.character.CHARACTER_DOC["inventory"].append(
+                    self.character.CHARACTER_DOC["equipment"]["main hand"]
+                )
 
             self.character.CHARACTER_DOC["equipment"]["main hand"] = self.item_dict
 
@@ -376,9 +386,11 @@ class InventoryItem(QWidget):
 
         elif self.equip_button_type == "OH":
             self.character.CHARACTER_DOC["inventory"].pop(self.count)
-            
+
             if self.character.CHARACTER_DOC["equipment"]["off hand"] != {}:
-                self.character.CHARACTER_DOC["inventory"].append(self.character.CHARACTER_DOC["equipment"]["off hand"])
+                self.character.CHARACTER_DOC["inventory"].append(
+                    self.character.CHARACTER_DOC["equipment"]["off hand"]
+                )
 
             self.character.CHARACTER_DOC["equipment"]["off hand"] = self.item_dict
 
@@ -386,14 +398,16 @@ class InventoryItem(QWidget):
 
         elif self.equip_button_type == "AR":
             self.character.CHARACTER_DOC["inventory"].pop(self.count)
-            
+
             if self.character.CHARACTER_DOC["equipment"]["armor"] != {}:
-                self.character.CHARACTER_DOC["inventory"].append(self.character.CHARACTER_DOC["equipment"]["armor"])
+                self.character.CHARACTER_DOC["inventory"].append(
+                    self.character.CHARACTER_DOC["equipment"]["armor"]
+                )
 
             self.character.CHARACTER_DOC["equipment"]["armor"] = self.item_dict
 
             self.equip_button.setObjectName("AR_EQUIPPED")
-        
+
         self.set_impeding()
         self.character.set_inventory()
         self.character.set_equipment()
@@ -402,22 +416,30 @@ class InventoryItem(QWidget):
 
     def unequip_item(self):
         if self.equip_button_type == "2H_EQUIPPED":
-            self.character.CHARACTER_DOC["inventory"].append(self.character.CHARACTER_DOC["equipment"]["main hand"])
+            self.character.CHARACTER_DOC["inventory"].append(
+                self.character.CHARACTER_DOC["equipment"]["main hand"]
+            )
             self.character.CHARACTER_DOC["equipment"]["main hand"] = {}
             self.equip_button.setObjectName("2H")
 
         elif self.equip_button_type == "MH_EQUIPPED":
-            self.character.CHARACTER_DOC["inventory"].append(self.character.CHARACTER_DOC["equipment"]["main hand"])
+            self.character.CHARACTER_DOC["inventory"].append(
+                self.character.CHARACTER_DOC["equipment"]["main hand"]
+            )
             self.character.CHARACTER_DOC["equipment"]["main hand"] = {}
             self.equip_button.setObjectName("MH")
 
         elif self.equip_button_type == "OH_EQUIPPED":
-            self.character.CHARACTER_DOC["inventory"].append(self.character.CHARACTER_DOC["equipment"]["off hand"])
+            self.character.CHARACTER_DOC["inventory"].append(
+                self.character.CHARACTER_DOC["equipment"]["off hand"]
+            )
             self.character.CHARACTER_DOC["equipment"]["off hand"] = {}
             self.equip_button.setObjectName("OH")
 
         elif self.equip_button_type == "AR_EQUIPPED":
-            self.character.CHARACTER_DOC["inventory"].append(self.character.CHARACTER_DOC["equipment"]["armor"])
+            self.character.CHARACTER_DOC["inventory"].append(
+                self.character.CHARACTER_DOC["equipment"]["armor"]
+            )
             self.character.CHARACTER_DOC["equipment"]["armor"] = {}
             self.equip_button.setObjectName("AR")
 
@@ -433,7 +455,9 @@ class InventoryItem(QWidget):
         speed = 0
         armor = self.character.CHARACTER_DOC["equipment"]["armor"]
         if armor != {}:
-            impeding = [quality for quality in armor["Quality"] if "Impeding" in quality][0]
+            impeding = [
+                quality for quality in armor["Quality"] if "Impeding" in quality
+            ][0]
             value = ModifyStat(impeding).find_integer()
             speed += value
             defense += value
@@ -441,20 +465,18 @@ class InventoryItem(QWidget):
 
         mh = self.character.CHARACTER_DOC["equipment"]["main hand"]
         if mh != {}:
-            if mh["Name"] in ["Shield","Buckler"]:
+            if mh["Name"] in ["Shield", "Buckler"]:
                 defense -= 1
             elif mh["Name"] == "Steel Shield":
                 defense -= 2
 
         oh = self.character.CHARACTER_DOC["equipment"]["off hand"]
         if oh != {}:
-            if oh["Name"] in ["Shield","Buckler"]:
+            if oh["Name"] in ["Shield", "Buckler"]:
                 defense -= 1
             elif oh["Name"] == "Steel Shield":
                 defense -= 2
 
-
         self.character.CHARACTER_DOC["DEFENSE mod"] = defense
         self.character.CHARACTER_DOC["CASTING mod"] = casting
         self.character.CHARACTER_DOC["SNEAKING mod"] = speed
-

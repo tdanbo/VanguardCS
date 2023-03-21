@@ -2,54 +2,105 @@ from PySide2.QtWidgets import *
 from PySide2.QtGui import *
 from PySide2.QtCore import *
 
+import constants as cons
+
+
 class ModifyRoll:
-    def __init__ (self, character):
+    def __init__(self, character):
         self.character = character
 
     def change_active(self, widget):
         self.widget = widget
 
         self.modifier_type = self.widget.objectName().split(" ")[0]
-        self.modifier_widget = self.character.inventory_gui.findChild(QWidget, f"{self.modifier_type} mod")
+        self.modifier_widget = self.character.inventory_gui.findChild(
+            QWidget, f"{self.modifier_type} mod"
+        )
         self.modifier = int(self.modifier_widget.text())
 
-
-        self.character.active_modifier = self.modifier
+        if self.widget.isChecked():
+            self.character.active_modifier = self.modifier
+            self.character.active_modifier_name = self.modifier_type
+        else:
+            self.character.active_modifier = 0
+            self.character.active_modifier_name = ""
+        set_active_style = self.active_style()
         self.run_set_stats()
 
     def run_set_stats(self):
-        self.base_modifier = int(self.character.inventory_gui.modifier_mod.get_widget().text())
+        self.base_modifier = int(
+            self.character.inventory_gui.modifier_mod.get_widget().text()
+        )
         self.character.base_modifier = self.base_modifier
         self.character.set_stats()
 
-        # print(mod)
+    def active_style(self):
+        type_color = cons.ACTIVE_COLOR[self.modifier_type]
+        checked_style = f"background-color: {type_color}; color: {cons.PRIMARY_LIGHTER}; font-size: {cons.FONT_SMALL}; font-weight: bold; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;"
 
-        # type_color = cons.ACTIVE_COLOR[mod]
-        # current_mod = self.findChild(QWidget, mod+" mod")
-        # current_button = self.findChild(QWidget, mod+" button")
+        state = self.widget.isChecked()
 
-        # for button in ["ATTACK mod","DEFENSE mod","CASTING mod","SNEAKING mod"]:
-        #     if button != current_mod.objectName():
-        #         mod_widget = self.findChild(QWidget, button)
-        #         mod_widget.setChecked(False)
-        #         stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_COLOR}; font-size: {cons.FONT_MID}; font-weight: bold; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-top-right-radius: 6px;"
-        #         mod_widget.setStyleSheet(stylesheet)
+        self.clear_style()
 
-        # for mod in ["ATTACK button","DEFENSE button","CASTING button","SNEAKING button"]:
-        #     if mod != current_button.objectName():
-        #         mod_widget = self.findChild(QWidget, mod)
-        #         mod_widget.setChecked(False)
-        #         stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_COLOR}; font-size: {cons.FONT_MID}; font-weight: bold; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;"
-        #         mod_widget.setStyleSheet(stylesheet)
+        if state:
+            self.widget.setStyleSheet(checked_style)
+            self.widget.setChecked(True)
 
+            for button in cons.STATS:
+                button_widget = self.character.sheet_gui.findChild(
+                    QWidget, f"{button} mod"
+                )
+                button_widget.setStyleSheet(checked_style)
 
-        # if self.sender().isChecked():
-        #     current_button.setStyleSheet(f"background-color: {type_color}; color: {cons.PRIMARY_LIGHTER}; font-size: {cons.FONT_MID}; font-weight: bold; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;")
-        #     current_mod.setStyleSheet(f"background-color: {type_color}; color: {cons.PRIMARY_LIGHTER}; font-size: {cons.FONT_MID}; font-weight: bold; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-top-right-radius: 6px;")
-        #     current_mod.setChecked(True)
-        #     current_button.setChecked(True)
-        # else:
-        #     current_button.setStyleSheet(f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_COLOR}; font-size: {cons.FONT_MID}; font-weight: bold; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;")
-        #     current_mod.setStyleSheet(f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_COLOR}; font-size: {cons.FONT_MID}; font-weight: bold; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-top-right-radius: 6px;")
-        #     current_mod.setChecked(False)
-        #     current_button.setChecked(False)
+            self.character.inventory_gui.modifier_mod.get_widget().setStyleSheet(
+                f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_COLOR}; font-size: {cons.FONT_MID}; font-weight: bold; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-top-right-radius: 6px;"
+            )
+
+            self.character.inventory_gui.modifier_button.get_widget().setStyleSheet(
+                checked_style
+            )
+
+            self.character.inventory_gui.modifier_mod.get_widget().setEnabled(True)
+            self.character.inventory_gui.modifier_button.get_widget().setEnabled(True)
+
+    def clear_style(self):
+        unchecked_style = f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_DARK}; font-size: {cons.FONT_SMALL}; font-weight: bold; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;"
+        for button in [
+            "ATTACK",
+            "DEFENSE",
+            "CASTING",
+            "SKILL",
+            "SNEAKING",
+        ] + cons.STATS:
+            if button in cons.STATS:
+                button_widget = self.character.sheet_gui.findChild(
+                    QWidget, f"{button} mod"
+                )
+            else:
+                button_widget = self.character.inventory_gui.findChild(
+                    QWidget, f"{button} button"
+                )
+                button_widget.setChecked(False)
+
+            button_widget.setStyleSheet(unchecked_style)
+
+        for button in cons.STATS:
+            button_widget = self.character.sheet_gui.findChild(QWidget, f"{button} mod")
+            button_widget.setStyleSheet(unchecked_style)
+
+        # Resetting the base modifier
+        base_modifier_widget = self.character.inventory_gui.modifier_mod.get_widget()
+        base_button_widget = self.character.inventory_gui.modifier_button.get_widget()
+
+        base_modifier_widget.setEnabled(False)
+        base_button_widget.setEnabled(False)
+
+        base_modifier_widget.setStyleSheet(
+            f"background-color: {cons.PRIMARY_DARKER}; color: {cons.FONT_MEDIUM}; font-size: {cons.FONT_MID}; font-weight: bold; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-top-right-radius: 6px;"
+        )
+
+        base_button_widget.setStyleSheet(
+            f"background-color: {cons.PRIMARY_DARKER}; color: {cons.FONT_MEDIUM}; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;"
+        )
+
+        # self.character.active_modifier_name = ""

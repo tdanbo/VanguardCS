@@ -7,22 +7,40 @@ from PySide2.QtWidgets import *
 from PySide2.QtGui import *
 from PySide2.QtCore import *
 
+from gui_classes.class_modify_roll import ModifyRoll
+
+
 class DiceRoll:
-    def __init__(self, widget, character_name, roll_type, dice, check=0, character=None, ammo=False):
+    def __init__(
+        self,
+        widget,
+        character_name,
+        roll_type,
+        dice,
+        check=0,
+        character=None,
+        ammo=False,
+    ):
 
         self.character = character
         self.modifier_widget = self.character.inventory_gui.modifier_mod.get_widget()
+        print("roll")
+        print(self.character.active_modifier_name)
+        self.roll_type = roll_type
+        self.active_type = (
+            self.character.active_modifier_name
+            if not self.character.active_modifier_name == ""
+            else "Custom"
+        )
         self.dice = dice
         self.modifier = 0
         self.check = check
-        self.roll_type = roll_type
         self.ammo = ammo
         self.widget = widget
 
-        self.check_active_modifiers()
-
-        self.entry  = {
+        self.entry = {
             "Character": character_name,
+            "Active": self.active_type,
             "Type": self.roll_type,
             "Check": self.check,
             "Dice": dice,
@@ -42,7 +60,7 @@ class DiceRoll:
                 # stylesheet=f"padding-left: 5px; padding-right: 5px; background-color: {cons.PRIMARY_LIGHTER}; color: {cons.PRIMARY_DARKER}; font-size: {cons.FONT_SMALL}; font-weight: bold; border: 1px solid {cons.BORDER}; border-radius: 6px;"
                 # self.widget.setStyleSheet(stylesheet)
             else:
-                stylesheet=f"padding-left: 5px; padding-right: 5px; background-color: {cons.PRIMARY_LIGHTER}; color: {cons.PRIMARY_DARKER}; font-size: {cons.FONT_SMALL}; font-weight: bold; border: 1px solid {cons.BORDER}; border-radius: 6px;"
+                stylesheet = f"padding-left: 5px; padding-right: 5px; background-color: {cons.PRIMARY_LIGHTER}; color: {cons.PRIMARY_DARKER}; font-size: {cons.FONT_SMALL}; font-weight: bold; border: 1px solid {cons.BORDER}; border-radius: 6px;"
                 self.widget.setStyleSheet(stylesheet)
                 return
 
@@ -69,13 +87,15 @@ class DiceRoll:
                 dice_roll += roll
                 dice_breakdown.append(roll)
 
-            self.breakdown = '+'.join(str(num) for num in dice_breakdown)
-            self.full_breakdown = f"{single_dice} = {self.breakdown} modified {self.modifier}"
+            self.breakdown = "+".join(str(num) for num in dice_breakdown)
+            self.full_breakdown = (
+                f"{single_dice} = {self.breakdown} modified {self.modifier}"
+            )
             breakdowns.append(self.full_breakdown)
 
         joined_breakdowns = "\n".join(breakdowns)
 
-        self.result = dice_roll + self.modifier      
+        self.result = dice_roll + self.modifier
 
         self.entry["Result"] = self.result
 
@@ -90,8 +110,12 @@ class DiceRoll:
             self.check_roll()
         self.set_time()
 
+        # Cleanup
         self.save_to_database()
         self.character.base_modifier = 0
+        self.character.active_modifier = 0
+        self.character.active_modifier_name = ""
+        ModifyRoll(self.character).clear_style()
         self.character.set_stats()
 
     def subtract_ammo(self):
@@ -100,7 +124,9 @@ class DiceRoll:
             if item != {}:
                 if self.character.CHARACTER_DOC["equipment"][value]["Type"] == "Arrow":
                     if self.character.CHARACTER_DOC["equipment"][value]["Quantity"] > 0:
-                        self.character.CHARACTER_DOC["equipment"][value]["Quantity"] -= 1
+                        self.character.CHARACTER_DOC["equipment"][value][
+                            "Quantity"
+                        ] -= 1
                         self.character.set_equipment()
                         self.character.save_document()
                         has_ammo = True
@@ -113,50 +139,6 @@ class DiceRoll:
             self.entry["Result Message"] = "Success"
         else:
             self.entry["Result Message"] = "Failed"
-
-    def check_active_modifiers(self):
-        atk_value = self.character.inventory_gui.findChild(QWidget, "ATTACK mod")
-        def_value = self.character.inventory_gui.findChild(QWidget, "DEFENSE mod")
-        cas_value = self.character.inventory_gui.findChild(QWidget, "CASTING mod")
-        sne_value = self.character.inventory_gui.findChild(QWidget, "SNEAKING mod")
-
-        atk_mod = self.character.inventory_gui.findChild(QWidget, "ATTACK button")
-        def_mod = self.character.inventory_gui.findChild(QWidget, "DEFENSE button")
-        cas_mod = self.character.inventory_gui.findChild(QWidget, "CASTING button")
-        sne_mod = self.character.inventory_gui.findChild(QWidget, "SNEAKING button")
-
-        
-        stylesheet_mod = f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_COLOR}; font-size: {cons.FONT_LARGE}; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-top-right-radius: 6px;"
-        stylesheet_button  = f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_COLOR}; font-size: {cons.FONT_LARGE}; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;"
-
-        if atk_mod.isChecked():
-            atk_mod.setChecked(False)
-            self.roll_type = "Attack"
-            atk_mod.setStyleSheet(stylesheet_button)
-            atk_value.setStyleSheet(stylesheet_mod)
-            return
-        
-        if def_mod.isChecked():
-            def_mod.setChecked(False)
-            self.roll_type = "Defense"
-            def_mod.setStyleSheet(stylesheet_button)
-            def_value.setStyleSheet(stylesheet_mod)
-            return
-        
-        if cas_mod.isChecked():
-            cas_mod.setChecked(False)
-            self.roll_type = "Casting"
-            cas_mod.setStyleSheet(stylesheet_button)
-            cas_value.setStyleSheet(stylesheet_mod)
-            return
-        
-        if sne_mod.isChecked():
-            sne_mod.setChecked(False)
-            self.roll_type = "Sneaking"
-            sne_mod.setStyleSheet(stylesheet_button)
-            sne_value.setStyleSheet(stylesheet_mod)
-            return
-
 
     def set_time(self):
         self.entry["Time"] = datetime.datetime.now().strftime("%H:%M:%S")

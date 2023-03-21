@@ -53,10 +53,10 @@ SECONDARY_STATS = [
     "PAIN",
     "CORRUPTION",
     "PERMANENT",
-    "THRESHOLD"
+    "THRESHOLD",
 ]
 
-#ARMOR = ["armor"]
+# ARMOR = ["armor"]
 
 # func.create_folder(LOCAL_DIRECTORY)
 
@@ -81,17 +81,19 @@ ACTIVE_COLOR = {
     "ELIXIRS": PURPLE,
     "SNEAKING": GREEN,
     "AMMUNITION": GREEN,
-    "TEST":YELLOW,
+    "TEST": YELLOW,
+    "SKILL": YELLOW,
     "TREASURE": YELLOW,
-    "MISC": WHITE
+    "MISC": WHITE,
 }
 
-#PRIMARY_DARKER = "#e1ddcd"
 PRIMARY_DARKER = "#dbd7c8"
 PRIMARY = "#f0e8d9"
 PRIMARY_LIGHTER = "#f1efe9"
+BORDER_LIGHT = "#ccbda5"
+BORDER = "#b3a691"
+BORDER_DARK = "#998e7c"
 
-#DARK = "#231f20"
 DARK = "#262223"
 
 
@@ -104,11 +106,16 @@ FONT_MEDIUM = "#4d473e"
 FONT_DARK = "#282425"
 FONT_COLOR = "#864433"
 
-BORDER_LIGHT = "#ccbda5"
-BORDER = "#b3a691"
-BORDER_DARK = "#998e7c"
 
-#READING DATABASE
+# DARK MODE
+# PRIMARY_DARKER = "#2d2d2d"
+# PRIMARY = "#373737"
+# PRIMARY_LIGHTER = "#32393d"
+# BORDER_LIGHT = "#2d2d2d"
+# BORDER = "#2d2d2d"
+# BORDER_DARK = "#2d2d2d"
+
+# READING DATABASE
 client = pymongo.MongoClient(CONNECT)
 QUALITIES = client["equipment"]["quality"].find_one()
 
@@ -128,5 +135,5 @@ for name in collection_names:
     document = collection.find_one()
     EQUIPMENT[name] = document
 
-db = client ["dnd"]
+db = client["dnd"]
 COMBAT_LOG = db["combatlog"]

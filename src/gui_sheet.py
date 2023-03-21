@@ -13,6 +13,7 @@ from gui_widgets.gui_add_sub import AddSub
 
 import sys
 
+
 class CharacterSheetGUI(QWidget):
     def __init__(self, character):
         super().__init__()
@@ -20,97 +21,96 @@ class CharacterSheetGUI(QWidget):
         self.character = character
 
         self.master_layout = QVBoxLayout()
-        self.master_layout.setContentsMargins(0,0,0,0)
+        self.master_layout.setContentsMargins(0, 0, 0, 0)
         self.master_layout.setSpacing(0)
         self.section_group = []
         self.widget_group = []
 
         self.character_basic = Section(
-            outer_layout = QVBoxLayout(),
-            inner_layout = ("HBox", 1),
-            parent_layout = self.master_layout,
-            spacing=10,
-            class_group = self.section_group,
-            height=100
-        )
-
-        scroll_style = f"QScrollBar {{background-color: {cons.PRIMARY}; width: 6px;}}"\
-                       f"QWidget {{background-color: {cons.PRIMARY};}}"\
-                       f"QScrollBar::handle:vertical {{background-color: {cons.BORDER}; width: 6px; min-height: 20px; border: none; outline: none;}}"\
-
-        self.ability_layout = Section(
-            outer_layout = QVBoxLayout(),
-            inner_layout = ("VBox", 1),
-            parent_layout = self.master_layout,
-            title = "ABILITIES & POWERS",
-            group = True,
-            scroll=(True,"top"),
-            icon = ("plus.png", cons.WSIZE, cons.PRIMARY_LIGHTER),
+            outer_layout=QVBoxLayout(),
+            inner_layout=("HBox", 1),
+            parent_layout=self.master_layout,
             spacing=10,
             class_group=self.section_group,
-            stylesheet=scroll_style
+            height=100,
         )
-        
+
+        scroll_style = (
+            f"QScrollBar {{background-color: {cons.PRIMARY}; width: 6px;}}"
+            f"QWidget {{background-color: {cons.PRIMARY};}}"
+            f"QScrollBar::handle:vertical {{background-color: {cons.BORDER}; width: 6px; min-height: 20px; border: none; outline: none;}}"
+        )
+        self.ability_layout = Section(
+            outer_layout=QVBoxLayout(),
+            inner_layout=("VBox", 1),
+            parent_layout=self.master_layout,
+            title="ABILITIES & POWERS",
+            group=True,
+            scroll=(True, "top"),
+            icon=("plus.png", cons.WSIZE, cons.PRIMARY_LIGHTER),
+            spacing=10,
+            class_group=self.section_group,
+            stylesheet=scroll_style,
+        )
+
         self.ability_layout.get_title()[0].clicked.connect(self.open_abilities)
         self.ability_layout.get_title()[1].setAlignment(Qt.AlignCenter)
 
         self.top_layout = Section(
-            outer_layout = QHBoxLayout(),
-            inner_layout = ("HBox", 2),
-            parent_layout = self.master_layout,
-            spacing = 5,
-            class_group = self.section_group
+            outer_layout=QHBoxLayout(),
+            inner_layout=("HBox", 2),
+            parent_layout=self.master_layout,
+            spacing=5,
+            class_group=self.section_group,
         )
 
         self.stat_layout = Section(
-            outer_layout = QHBoxLayout(),
-            inner_layout = ("VBox", 9),
-            parent_layout = self.top_layout.inner_layout(2),
-            group = True,
-            spacing = 3,
-            class_group = self.section_group,
-            title = "STATS",
-            height=100
+            outer_layout=QHBoxLayout(),
+            inner_layout=("VBox", 9),
+            parent_layout=self.top_layout.inner_layout(2),
+            group=True,
+            spacing=3,
+            class_group=self.section_group,
+            title="STATS",
+            height=100,
         )
 
         self.stat_layout.get_title()[1].setAlignment(Qt.AlignCenter)
 
         self.hp_layout = Section(
-            outer_layout = QHBoxLayout(),
-            inner_layout = ("VBox", 3),
-            parent_layout = self.character_basic.inner_layout(1),
-            group = True,
-            title = "TOUGHNESS",
-            spacing = 3,
-            class_group=self.section_group
+            outer_layout=QHBoxLayout(),
+            inner_layout=("VBox", 3),
+            parent_layout=self.character_basic.inner_layout(1),
+            group=True,
+            title="TOUGHNESS",
+            spacing=3,
+            class_group=self.section_group,
         )
 
         self.hp_layout.get_title()[1].setAlignment(Qt.AlignCenter)
 
         self.corruption_layout = Section(
-            outer_layout = QHBoxLayout(),
-            inner_layout = ("VBox", 3),
-            parent_layout = self.character_basic.inner_layout(1),
-            group = True,
-            title = "CORRUPTION",
-            spacing = 3,
-            class_group=self.section_group
+            outer_layout=QHBoxLayout(),
+            inner_layout=("VBox", 3),
+            parent_layout=self.character_basic.inner_layout(1),
+            group=True,
+            title="CORRUPTION",
+            spacing=3,
+            class_group=self.section_group,
         )
 
         self.corruption_layout.get_title()[1].setAlignment(Qt.AlignCenter)
 
-
-        #Below is all the widgets used in the character sheet
-        for number,stat in enumerate(cons.STATS):
+        # Below is all the widgets used in the character sheet
+        for number, stat in enumerate(cons.STATS):
             self.stat_button = Widget(
                 widget_type=QPushButton(),
-                parent_layout = self.stat_layout.inner_layout(number),
-                signal=self.roll_dice,
-                property=("roll",stat),
+                parent_layout=self.stat_layout.inner_layout(number),
+                signal=self.modify_stat,
                 objectname=stat,
                 class_group=self.widget_group,
-                height=cons.WSIZE*1.5,
-                stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_COLOR}; font-size: {cons.FONT_LARGE}; font-weight: bold; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-top-right-radius: 6px;"
+                height=cons.WSIZE * 1.3,
+                stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_COLOR}; font-size: {cons.FONT_LARGE}; font-weight: bold; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-top-right-radius: 6px;",
             )
 
             self.stat_button = Widget(
@@ -119,138 +119,133 @@ class CharacterSheetGUI(QWidget):
                 text=stat,
                 objectname=f"{stat} mod",
                 class_group=self.widget_group,
-                height=cons.WSIZE,
+                height=cons.WSIZE * 1.3,
                 stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_DARK}; font-size: {cons.FONT_SMALL}; font-weight: bold; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;",
-                signal = self.modify_stat
+                signal=self.roll_dice,
+                property=("roll", stat),
             )
 
-        self.toughness_current= Widget(
+        self.toughness_current = Widget(
             widget_type=QPushButton(),
             parent_layout=self.hp_layout.inner_layout(1),
+            objectname="TOUGHNESS",
+            class_group=self.widget_group,
+            height=cons.WSIZE * 1.50,
+            stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_COLOR}; font-size: {cons.FONT_LARGE}; font-weight: bold; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-top-right-radius: 6px;",
+            signal=self.modify_stat,
+        )
+
+        self.toughness_current_label = Widget(
+            widget_type=QPushButton(),
+            parent_layout=self.hp_layout.inner_layout(1),
+            objectname="TOUGHNESS mod",
+            text="TOUGHNESS",
+            class_group=self.widget_group,
+            height=cons.WSIZE,
+            stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_DARK}; font-size: {cons.FONT_SMALL}; font-weight: bold; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;",
             signal=self.add_sub,
-            objectname = "TOUGHNESS",
-            class_group=self.widget_group,
-            height=cons.WSIZE*1.5,
-            stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_COLOR}; font-size: {cons.FONT_LARGE}; font-weight: bold; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-top-right-radius: 6px;"
         )
 
-        self.toughness_current_label= Widget(
-            widget_type=QPushButton(),
-            parent_layout=self.hp_layout.inner_layout(1),
-            objectname = "TOUGHNESS mod",
-            text = "TOUGHNESS",
-            class_group=self.widget_group,
-            signal=self.modify_stat,
-            height=cons.WSIZE,
-            stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_DARK}; font-size: {cons.FONT_SMALL}; font-weight: bold; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;"
-        )
-
-        self.toughness_max= Widget(
+        self.toughness_max = Widget(
             widget_type=QPushButton(),
             parent_layout=self.hp_layout.inner_layout(2),
-            objectname = "MAXIMUM",
+            objectname="MAXIMUM",
             class_group=self.widget_group,
-            height=cons.WSIZE*1.5,
-            stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_COLOR}; font-size: {cons.FONT_LARGE}; font-weight: bold; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-top-right-radius: 6px;"
-
+            height=cons.WSIZE * 1.5,
+            stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_COLOR}; font-size: {cons.FONT_LARGE}; font-weight: bold; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-top-right-radius: 6px;",
+            signal=self.modify_stat,
         )
 
-        self.toughness_max_mod= Widget(
+        self.toughness_max_mod = Widget(
             widget_type=QPushButton(),
             parent_layout=self.hp_layout.inner_layout(2),
-            objectname = "MAXIMUM mod",
-            text = "MAXIMUM",
+            objectname="MAXIMUM mod",
+            text="MAXIMUM",
             class_group=self.widget_group,
-            signal=self.modify_stat,
             height=cons.WSIZE,
-            stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_DARK}; font-size: {cons.FONT_SMALL}; font-weight: bold; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;"
-
+            stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_DARK}; font-size: {cons.FONT_SMALL}; font-weight: bold; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;",
         )
 
-        self.toughness_threshold= Widget(
+        self.toughness_threshold = Widget(
             widget_type=QPushButton(),
             parent_layout=self.hp_layout.inner_layout(3),
-            objectname = "PAIN",
+            objectname="PAIN",
             class_group=self.widget_group,
-            height=cons.WSIZE*1.5,
-            stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_COLOR}; font-size: {cons.FONT_LARGE}; font-weight: bold; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-top-right-radius: 6px;"
-
+            height=cons.WSIZE * 1.5,
+            stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_COLOR}; font-size: {cons.FONT_LARGE}; font-weight: bold; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-top-right-radius: 6px;",
+            signal=self.modify_stat,
         )
 
-        self.toughness_threshold_mod= Widget(
+        self.toughness_threshold_mod = Widget(
             widget_type=QPushButton(),
             parent_layout=self.hp_layout.inner_layout(3),
-            objectname = "PAIN mod",
-            text = "THRESHOLD",
+            objectname="PAIN mod",
+            text="THRESHOLD",
             class_group=self.widget_group,
-            signal=self.modify_stat,
             height=cons.WSIZE,
-            stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_DARK}; font-size: {cons.FONT_SMALL}; font-weight: bold; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;"
-
+            stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_DARK}; font-size: {cons.FONT_SMALL}; font-weight: bold; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;",
         )
 
-        self.corruption_current= Widget(
+        self.corruption_current = Widget(
             widget_type=QPushButton(),
             parent_layout=self.corruption_layout.inner_layout(1),
-            signal=self.add_sub,
-            objectname = "CORRUPTION",
+            objectname="CORRUPTION",
             class_group=self.widget_group,
-            height=cons.WSIZE*1.5,
-            stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_COLOR}; font-size: {cons.FONT_LARGE}; font-weight: bold; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-top-right-radius: 6px;"
+            height=cons.WSIZE * 1.5,
+            stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_COLOR}; font-size: {cons.FONT_LARGE}; font-weight: bold; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-top-right-radius: 6px;",
+            signal=self.modify_stat,
         )
 
         self.corruption_mod = Widget(
             widget_type=QPushButton(),
             parent_layout=self.corruption_layout.inner_layout(1),
             class_group=self.widget_group,
-            text = "CORRUPTION",
-            objectname = "CORRUPTION mod",
-            signal = self.modify_stat,
+            text="CORRUPTION",
+            objectname="CORRUPTION mod",
             height=cons.WSIZE,
-            stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_DARK}; font-size: {cons.FONT_SMALL}; font-weight: bold; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;"
-
+            stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_DARK}; font-size: {cons.FONT_SMALL}; font-weight: bold; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;",
+            signal=self.add_sub,
         )
 
-        self.corruption_permanent= Widget(
+        self.corruption_permanent = Widget(
             widget_type=QPushButton(),
             parent_layout=self.corruption_layout.inner_layout(2),
-            signal=self.add_sub,
-            objectname = "PERMANENT",
+            objectname="PERMANENT",
             class_group=self.widget_group,
-            height=cons.WSIZE*1.5,
-            stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_COLOR}; font-size: {cons.FONT_LARGE}; font-weight: bold; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-top-right-radius: 6px;"
+            height=cons.WSIZE * 1.5,
+            stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_COLOR}; font-size: {cons.FONT_LARGE}; font-weight: bold; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-top-right-radius: 6px;",
+            signal=self.modify_stat,
         )
 
         self.corruption_permanent_mod = Widget(
             widget_type=QPushButton(),
             parent_layout=self.corruption_layout.inner_layout(2),
             class_group=self.widget_group,
-            text = "PERMANENT",
-            objectname = "PERMANENT mod",
-            signal = self.modify_stat,
+            text="PERMANENT",
+            objectname="PERMANENT mod",
             height=cons.WSIZE,
-            stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_DARK}; font-size: {cons.FONT_SMALL}; font-weight: bold; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;"
-
+            stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_DARK}; font-size: {cons.FONT_SMALL}; font-weight: bold; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;",
+            signal=self.add_sub,
         )
 
-        self.corruption_threshold= Widget(
+        self.corruption_threshold = Widget(
             widget_type=QPushButton(),
             parent_layout=self.corruption_layout.inner_layout(3),
-            objectname = "THRESHOLD",
+            objectname="THRESHOLD",
             class_group=self.widget_group,
-            height=cons.WSIZE*1.5,
-            stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_COLOR}; font-size: {cons.FONT_LARGE}; font-weight: bold; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-top-right-radius: 6px;"
+            height=cons.WSIZE * 1.5,
+            stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_COLOR}; font-size: {cons.FONT_LARGE}; font-weight: bold; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-top-right-radius: 6px;",
+            signal=self.modify_stat,
         )
 
         self.corruption_threshold_mod = Widget(
             widget_type=QPushButton(),
             parent_layout=self.corruption_layout.inner_layout(3),
             class_group=self.widget_group,
-            text = "THRESHOLD",
-            objectname = "THRESHOLD mod",
-            signal = self.modify_stat,
+            text="THRESHOLD",
+            objectname="THRESHOLD mod",
             height=cons.WSIZE,
-            stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_DARK}; font-size: {cons.FONT_SMALL}; font-weight: bold; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;"
+            stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_DARK}; font-size: {cons.FONT_SMALL}; font-weight: bold; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;",
         )
 
         for widget in self.widget_group:
@@ -260,42 +255,61 @@ class CharacterSheetGUI(QWidget):
         for section in self.section_group:
             section.connect_to_parent()
 
-        self.setLayout(self.master_layout)       
+        self.setLayout(self.master_layout)
         self.character.set_sheet_gui(self)
 
-    def mousePressEvent(self, event): #this is a very specific event used to subtract values when right clicking on a widget
+    def mousePressEvent(
+        self, event
+    ):  # this is a very specific event used to subtract values when right clicking on a widget
         if event.button() == Qt.RightButton:
             widget = self.childAt(event.pos())
-            if widget.objectName() in [stat+" mod" for stat in cons.STATS+cons.SECONDARY_STATS]:
-                string = widget.text()
-                ModifyStat(string).subtract_one(self.character, widget)
+            if widget.objectName() in cons.STATS + cons.SECONDARY_STATS:
+                button_widget = self.findChild(
+                    QPushButton, widget.objectName() + " mod"
+                )
+                string = button_widget.text()
+                ModifyStat(string).add_one(self.character, button_widget)
 
     def open_abilities(self):
         self.abilities = AddNewAbility(self.character)
         self.abilities.show()
 
     def modify_stat(self):
-        widget = self.sender()
-        string = widget.text()
-        ModifyStat(string).add_one(self.character, widget)
+        number_widget = self.sender().objectName()
+        button_widget = self.findChild(QPushButton, number_widget + " mod")
+        string = button_widget.text()
+        ModifyStat(string).subtract_one(self.character, button_widget)
 
     def roll_dice(self):
         self.character_name = self.character.character_name
-        self.roll_type = self.sender().property("roll")   
+
+        objectname = self.sender().objectName().split(" ")[0]
+        number_widget = self.findChild(QPushButton, objectname)
+
+        self.roll_type = self.sender().property("roll")
 
         if self.roll_type in cons.STATS:
-            self.check = int(self.sender().text())
+            self.check = int(number_widget.text())
             self.dice = "1d20"
         else:
             self.check = 0
-            self.dice = self.sender().text()
+            self.dice = number_widget.text()
 
-        rolling_dice = DiceRoll(self.sender(),self.character_name,self.roll_type.capitalize(),self.dice, check = self.check, character = self.character).roll()
+        rolling_dice = DiceRoll(
+            number_widget,
+            self.character_name,
+            self.roll_type.capitalize(),
+            self.dice,
+            check=self.check,
+            character=self.character,
+        ).roll()
 
     def add_sub(self):
-        doc_string = self.sender().objectName()
-        add_sub_gui = AddSub(self.character, self.sender(), doc_item = doc_string)
+        objectname = self.sender().objectName().split(" ")[0]
+        number_widget = self.findChild(QPushButton, objectname)
+        add_sub_gui = AddSub(self.character, number_widget, doc_item=objectname)
         add_sub_gui.show()
+
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)

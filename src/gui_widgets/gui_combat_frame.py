@@ -21,18 +21,19 @@ entry_dict = {
     "Time": "23:00:00",
 }
 
+
 class CombatEntry(QWidget):
     def __init__(self, count):
         super().__init__()
-     
+
         self.master_layout = QHBoxLayout()
         self.widget_group = []
         self.section_group = []
 
         if count % 2 == 0:
-            bg_color = cons.PRIMARY
+            self.bg_color = cons.PRIMARY
         else:
-            bg_color = cons.PRIMARY_DARKER      
+            self.bg_color = cons.PRIMARY_DARKER
 
         self.item_section = Section(
             outer_layout=QHBoxLayout(),
@@ -40,8 +41,8 @@ class CombatEntry(QWidget):
             parent_layout=self.master_layout,
             class_group=self.section_group,
             group=True,
-            content_margin=(0,0,10,0),
-            stylesheet=f"background-color: {bg_color};"
+            content_margin=(0, 0, 10, 0),
+            stylesheet=f"background-color: {self.bg_color };",
         )
 
         # self.character_label = Widget(
@@ -56,7 +57,7 @@ class CombatEntry(QWidget):
             widget_type=QLabel(),
             parent_layout=self.item_section.inner_layout(3),
             class_group=self.widget_group,
-            width=cons.WSIZE*4,
+            width=cons.WSIZE * 4,
         )
 
         self.portrait.get_widget().setAlignment(Qt.AlignCenter)
@@ -76,11 +77,10 @@ class CombatEntry(QWidget):
         #     size_policy=(QSizePolicy.Expanding, QSizePolicy.Expanding),
         # )
 
-
         self.result_message_label = Widget(
             widget_type=QPushButton(),
             parent_layout=self.item_section.inner_layout(2),
-            class_group=self.widget_group,       
+            class_group=self.widget_group,
             size_policy=(QSizePolicy.Expanding, QSizePolicy.Expanding),
             stylesheet=f"font-size: {cons.FONT_SMALL};",
         )
@@ -89,16 +89,16 @@ class CombatEntry(QWidget):
             widget_type=QPushButton(),
             parent_layout=self.item_section.inner_layout(1),
             class_group=self.widget_group,
-            width=cons.WSIZE*2,
-            height=cons.WSIZE*2,
+            width=cons.WSIZE * 2,
+            height=cons.WSIZE * 2,
         )
 
-        self.item_section.inner_layout(1).setContentsMargins(5,5,5,5)
-        self.item_section.inner_layout(2).setContentsMargins(5,5,5,5)
-        self.item_section.inner_layout(3).setContentsMargins(1,1,1,1)
+        self.item_section.inner_layout(1).setContentsMargins(5, 5, 5, 5)
+        self.item_section.inner_layout(2).setContentsMargins(5, 5, 5, 5)
+        self.item_section.inner_layout(3).setContentsMargins(1, 1, 1, 1)
         self.item_section.inner_layout(1).setAlignment(Qt.AlignLeft)
         self.item_section.inner_layout(2).setAlignment(Qt.AlignLeft)
-        
+
         for widget in self.widget_group:
             widget.connect_to_parent()
             widget.set_signal()
@@ -107,44 +107,48 @@ class CombatEntry(QWidget):
             section.connect_to_parent()
 
         self.setFixedWidth(300)
-        self.setFixedHeight(cons.WSIZE*2.5)
+        self.setFixedHeight(cons.WSIZE * 2.5)
         self.setLayout(self.master_layout)
 
         self.master_layout.setAlignment(Qt.AlignBottom)
-        self.master_layout.setContentsMargins(0,0,0,0)
+        self.master_layout.setContentsMargins(0, 0, 0, 0)
 
         style_a = f"color: {cons.FONT_DARK}; background-color: {cons.DARK}; border-style: outset;"
         get_updater().call_latest(self.setStyleSheet, style_a)
 
-    def update_widget(self,entry):
+    def update_widget(self, entry):
         self.character = entry["Character"]
+        self.active = entry["Active"]
         self.type = entry["Type"]
         self.check = entry["Check"]
         self.dice = entry["Dice"]
         self.result = entry["Result"]
-        self.modifier= str(entry["Modifier"])
+        self.modifier = str(entry["Modifier"])
         self.result_message = entry["Result Message"]
         self.result_breakdown = entry["Result Breakdown"]
         self.time = entry["Time"]
 
         color_type = cons.ACTIVE_COLOR
-        if self.type.upper() not in color_type:
-            type_bg_color = "#926f2b"
+        if self.active.upper() not in color_type:
+            type_bg_color = color_type["MISC"]
         else:
-            type_bg_color = color_type[self.type.upper()]   
+            type_bg_color = color_type[self.active.upper()]
 
-        if int(self.check) == 0:
-            self.item.get_widget().setText(self.type)
+        self.item.get_widget().setText(self.active)
+        if self.check == 0:
+            self.result_message_label.get_widget().setText(f"{self.type}")
         else:
-            self.item.get_widget().setText(f"{self.check} {self.type}")
-            
-        #self.item_label.get_widget().setText(self.character)
+            self.result_message_label.get_widget().setText(
+                f"{self.check} {self.type.title()}"
+            )
+        #  ({self.result_message}) Removed success/fail message
+
+        # self.item_label.get_widget().setText(self.character)
         result_widget = self.result_label.get_widget()
         result_widget.setText(str(self.result))
         result_widget.setToolTip(f"{self.result_breakdown}")
-        self.result_message_label.get_widget().setText(self.result_message)
 
-        func.set_icon(self.portrait.get_widget(),f"{self.character}.png","")
+        func.set_icon(self.portrait.get_widget(), f"{self.character}.png", "")
         self.portrait.get_widget().setToolTip(f"{self.character}")
 
         style_c = f"background-color: {type_bg_color}; color: {cons.PRIMARY}; font-size: {cons.FONT_LARGE}; font-weight: bold; border: 1px solid {cons.BORDER}; border-radius: 6px;"

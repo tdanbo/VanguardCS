@@ -1,4 +1,3 @@
-
 import sys
 from PySide2.QtWidgets import *
 from PySide2.QtGui import *
@@ -8,7 +7,7 @@ from template.widget import Widget
 import constants as cons
 import pymongo
 
-#from gui_classes.custom_roll import class_custom_rolls
+# from gui_classes.custom_roll import class_custom_rolls
 from gui_classes.class_character import Character
 
 from gui_classes.class_roll import DiceRoll
@@ -16,6 +15,7 @@ from gui_classes.class_modify_roll import ModifyRoll
 
 from gui_widgets.gui_new_char_frame import NewCharacter
 from gui_widgets.gui_add_sub import AddSub
+
 
 class InventoryGUI(QWidget):
     def __init__(self, character):
@@ -27,53 +27,53 @@ class InventoryGUI(QWidget):
         self.master_layout = QVBoxLayout()
         self.section_group = []
         self.widget_group = []
-        self.master_layout.setContentsMargins(0,0,0,0)
+        self.master_layout.setContentsMargins(0, 0, 0, 0)
         self.master_layout.setSpacing(0)
-        #Setting up layouts/sections
-        
+        # Setting up layouts/sections
+
         self.portrait_layout = Section(
-            outer_layout = QHBoxLayout(),
-            inner_layout = ("VBox", 2),
-            parent_layout = self.master_layout,
-            group = True,
-            title = "Test",
-            icon = ("plus.png",cons.WSIZE/2,cons.FONT_COLOR),
-            class_group = self.section_group,
+            outer_layout=QHBoxLayout(),
+            inner_layout=("VBox", 2),
+            parent_layout=self.master_layout,
+            group=True,
+            title="Test",
+            icon=("plus.png", cons.WSIZE / 2, cons.FONT_COLOR),
+            class_group=self.section_group,
             spacing=3,
-            height=100
+            height=100,
         )
 
         self.portrait_layout.get_title()[1].setText("")
-        self.portrait_layout.get_title()[0].setStyleSheet(f"background-color: {cons.PRIMARY_LIGHTER}; border: 1px solid {cons.BORDER};")
-
+        self.portrait_layout.get_title()[0].setStyleSheet(
+            f"background-color: {cons.PRIMARY_LIGHTER}; border: 1px solid {cons.BORDER};"
+        )
 
         self.name_layout = Section(
-            outer_layout = QVBoxLayout(),
-            inner_layout = ("HBox", 2),
-            parent_layout = self.portrait_layout.inner_layout(2),
+            outer_layout=QVBoxLayout(),
+            inner_layout=("HBox", 2),
+            parent_layout=self.portrait_layout.inner_layout(2),
             class_group=self.section_group,
-            content_margin=(0,0,0,0),
+            content_margin=(0, 0, 0, 0),
             spacing=3,
         )
 
-        scroll_style = f"QScrollBar {{background-color: {cons.PRIMARY}; width: 6px;}}"\
-                       f"QWidget {{background-color: {cons.PRIMARY};}}"\
-                       f"QScrollBar::handle:vertical {{background-color: {cons.BORDER}; width: 6px; min-height: 20px; border: none; outline: none;}}"\
-
-        self.inventory_scroll = Section(
-            outer_layout = QVBoxLayout(),
-            inner_layout = ("VBox", 1),
-            parent_layout = self.master_layout,
-            scroll=(True,"bottom"),
-            title="BACKPACK",
-            group = True,   
-            class_group = self.section_group,
-            spacing=0,
-            content_margin=(0,0,0,0),
-            stylesheet=scroll_style	
+        scroll_style = (
+            f"QScrollBar {{background-color: {cons.PRIMARY}; width: 6px;}}"
+            f"QWidget {{background-color: {cons.PRIMARY};}}"
+            f"QScrollBar::handle:vertical {{background-color: {cons.BORDER}; width: 6px; min-height: 20px; border: none; outline: none;}}"
         )
-
-
+        self.inventory_scroll = Section(
+            outer_layout=QVBoxLayout(),
+            inner_layout=("VBox", 1),
+            parent_layout=self.master_layout,
+            scroll=(True, "bottom"),
+            title="BACKPACK",
+            group=True,
+            class_group=self.section_group,
+            spacing=0,
+            content_margin=(0, 0, 0, 0),
+            stylesheet=scroll_style,
+        )
 
         self.inventory_scroll.get_title()[1].setAlignment(Qt.AlignCenter)
 
@@ -82,13 +82,12 @@ class InventoryGUI(QWidget):
             parent_layout=self.portrait_layout.inner_layout(1),
             objectname="portrait",
             class_group=self.widget_group,
-            height= 58,
+            height=58,
             stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; border: 1px solid {cons.BORDER};",
             # width=cons.WSIZE*6,
         )
 
         self.portrait.get_widget().setAlignment(Qt.AlignCenter)
-    
 
         self.character_name = Widget(
             widget_type=QComboBox(),
@@ -99,101 +98,100 @@ class InventoryGUI(QWidget):
             signal=self.load_character,
             height=cons.WSIZE,
             stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; border: 1px solid {cons.BORDER}; font-size: {cons.FONT_MID}; font-weight: bold; color: {cons.FONT_COLOR};",
-
         )
 
         self.experience_section = Section(
-            outer_layout = QHBoxLayout(),
-            inner_layout = ("VBox", 2),
-            parent_layout = self.name_layout.inner_layout(2),
+            outer_layout=QHBoxLayout(),
+            inner_layout=("VBox", 2),
+            parent_layout=self.name_layout.inner_layout(2),
             class_group=self.section_group,
-            spacing = 3,
+            spacing=3,
         )
 
-        self.experience= Widget(
+        self.experience = Widget(
             widget_type=QPushButton(),
             parent_layout=self.experience_section.inner_layout(1),
-            objectname="experience",
+            objectname="XP",
             class_group=self.widget_group,
-            height=cons.WSIZE*1.5,
-            stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_COLOR}; font-size: {cons.FONT_MID}; font-weight: bold; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-top-right-radius: 6px;"
-
+            height=cons.WSIZE * 1.5,
+            stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_COLOR}; font-size: {cons.FONT_MID}; font-weight: bold; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-top-right-radius: 6px;",
         )
 
         self.experience_label = Widget(
             widget_type=QPushButton(),
             parent_layout=self.experience_section.inner_layout(1),
-            objectname = "",
+            objectname="XP mod",
             class_group=self.widget_group,
-            text = "XP",
+            text="XP",
             height=cons.WSIZE,
-            stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_DARK}; font-size: {cons.FONT_SMALL}; font-weight: bold; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;"
+            stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_DARK}; font-size: {cons.FONT_SMALL}; font-weight: bold; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;",
         )
 
-        self.unspent_experience= Widget(
+        self.unspent_experience = Widget(
             widget_type=QPushButton(),
             parent_layout=self.experience_section.inner_layout(2),
-            objectname="total experience",
-            signal = self.add_sub,
+            objectname="TOTALXP",
             class_group=self.widget_group,
-            height=cons.WSIZE*1.5,
-            stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_COLOR}; font-size: {cons.FONT_MID}; font-weight: bold; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-top-right-radius: 6px;"
-
+            height=cons.WSIZE * 1.5,
+            stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_COLOR}; font-size: {cons.FONT_MID}; font-weight: bold; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-top-right-radius: 6px;",
         )
 
         self.unspent_experience_label = Widget(
             widget_type=QPushButton(),
             parent_layout=self.experience_section.inner_layout(2),
-            objectname = "experience_label",
+            objectname="TOTALXP mod",
             class_group=self.widget_group,
-            text = "UNSPENT XP",
+            text="UNSPENT XP",
             height=cons.WSIZE,
-            stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_DARK}; font-size: {cons.FONT_SMALL}; font-weight: bold; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;"
+            signal=self.add_sub,
+            stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_DARK}; font-size: {cons.FONT_SMALL}; font-weight: bold; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;",
         )
 
         portrait_title = self.portrait_layout.get_title()[0]
         portrait_title.clicked.connect(self.open_new_character)
 
         self.equipment_layout = Section(
-            outer_layout = QHBoxLayout(),
-            inner_layout = ("VBox", 2),
-            parent_layout = self.master_layout,
-            group = True,
-            title = "EQUIPMENT",
-            class_group = self.section_group,
-            content_margin=(0,0,0,0),
+            outer_layout=QHBoxLayout(),
+            inner_layout=("VBox", 2),
+            parent_layout=self.master_layout,
+            group=True,
+            title="EQUIPMENT",
+            class_group=self.section_group,
+            content_margin=(0, 0, 0, 0),
             spacing=0,
-            height=216
+            height=216,
         )
 
         self.equipment_layout.get_title()[1].setAlignment(Qt.AlignCenter)
 
         self.bottom_section = Section(
-            outer_layout = QHBoxLayout(),
-            inner_layout = ("HBox", 1),
-            parent_layout = self.master_layout,
-            class_group = self.section_group,
+            outer_layout=QHBoxLayout(),
+            inner_layout=("HBox", 1),
+            parent_layout=self.master_layout,
+            class_group=self.section_group,
             spacing=3,
             height=100,
         )
-            
+
         self.active_section = Section(
-            outer_layout = QHBoxLayout(),
-            inner_layout = ("VBox", 4),
-            parent_layout = self.bottom_section.inner_layout(1),
+            outer_layout=QHBoxLayout(),
+            inner_layout=("VBox", 5),
+            parent_layout=self.bottom_section.inner_layout(1),
             title="ACTIVE",
-            group = True,
-            class_group = self.section_group,
-            spacing=3
+            group=True,
+            class_group=self.section_group,
+            spacing=3,
         )
 
         self.active_section.get_title()[1].setAlignment(Qt.AlignCenter)
 
-        #Below is all the widgets used in the character sheet
-        for number,stat in enumerate(["ATTACK","DEFENSE","CASTING","SNEAKING"]):
+        # Below is all the widgets used in the character sheet
+        for number, stat in enumerate(
+            ["CASTING", "SNEAKING", "SKILL", "DEFENSE", "ATTACK"]
+        ):
             self.extra_modifier_button = Widget(
                 widget_type=QPushButton(),
-                parent_layout = self.active_section.inner_layout(number+1),
+                parent_layout=self.active_section.inner_layout(number + 1),
                 objectname=f"{stat} mod",
                 class_group=self.widget_group,
                 size_policy=(QSizePolicy.Expanding, QSizePolicy.Expanding),
@@ -204,8 +202,8 @@ class InventoryGUI(QWidget):
 
             self.extra_modifier_label = Widget(
                 widget_type=QToolButton(),
-                parent_layout=self.active_section.inner_layout(number+1),
-                icon=(f"{stat.capitalize()}.png","",cons.DARK,cons.WSIZE),
+                parent_layout=self.active_section.inner_layout(number + 1),
+                icon=(f"{stat.capitalize()}.png", "", cons.DARK, cons.WSIZE),
                 class_group=self.widget_group,
                 size_policy=(QSizePolicy.Expanding, QSizePolicy.Expanding),
                 stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_COLOR}; font-size: {cons.FONT_MID}; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;",
@@ -216,37 +214,39 @@ class InventoryGUI(QWidget):
             )
 
         self.modifier_section = Section(
-            outer_layout = QHBoxLayout(),
-            inner_layout = ("VBox", 5),
-            parent_layout = self.bottom_section.inner_layout(1),
+            outer_layout=QHBoxLayout(),
+            inner_layout=("VBox", 5),
+            parent_layout=self.bottom_section.inner_layout(1),
             title="MODIFIER",
-            group = True,
-            class_group = self.section_group,
+            group=True,
+            class_group=self.section_group,
             spacing=3,
-            width = 60
+            width=60,
         )
 
         self.modifier_section.get_title()[1].setAlignment(Qt.AlignCenter)
 
         self.modifier_mod = Widget(
             widget_type=QPushButton(),
-            parent_layout = self.modifier_section.inner_layout(1),
+            parent_layout=self.modifier_section.inner_layout(1),
             objectname="MODIFIER mod",
             class_group=self.widget_group,
-            stylesheet=f"background-color: {cons.FONT_COLOR}; color: {cons.FONT_LIGHT}; font-size: {cons.FONT_MID}; font-weight: bold; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-top-right-radius: 6px;",
+            stylesheet=f"background-color: {cons.PRIMARY_DARKER}; color: {cons.FONT_MEDIUM}; font-size: {cons.FONT_MID}; font-weight: bold; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-top-right-radius: 6px;",
             size_policy=(QSizePolicy.Expanding, QSizePolicy.Expanding),
-            signal = lambda: self.adjust_modifier("add")
+            signal=lambda: self.adjust_modifier("add"),
+            enabled=False,
         )
 
         self.modifier_button = Widget(
             widget_type=QToolButton(),
             parent_layout=self.modifier_section.inner_layout(1),
-            icon=(f"Modifier.png","",cons.PRIMARY_LIGHTER,cons.WSIZE),
+            icon=(f"Modifier.png", "", cons.PRIMARY_LIGHTER, cons.WSIZE),
             class_group=self.widget_group,
             size_policy=(QSizePolicy.Expanding, QSizePolicy.Expanding),
             objectname="MODIFIER button",
-            stylesheet=f"background-color: {cons.FONT_COLOR}; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;",
-            signal = lambda: self.adjust_modifier("add")
+            stylesheet=f"background-color: {cons.PRIMARY_DARKER}; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;",
+            signal=lambda: self.adjust_modifier("add"),
+            enabled=False,
         )
 
         for widget in self.widget_group:
@@ -260,111 +260,110 @@ class InventoryGUI(QWidget):
         self.setStyleSheet(
             f"border-style: outset; color: {cons.FONT_DARK}; background-color: {cons.DARK};border-style: outset;"
         )
-        self.setLayout(self.master_layout)   
-        self.update_character_dropdown() 
+        self.setLayout(self.master_layout)
+        self.update_character_dropdown()
         self.character.set_inventory_gui(self)
 
-    def make_item_slot(self,count,layout,descriptor):
+    def make_item_slot(self, count, layout, descriptor):
         if count % 2 == 0:
             color = cons.PRIMARY_DARKER
         else:
             color = cons.PRIMARY
 
         self.slot_layot = Section(
-            outer_layout = QHBoxLayout(),
-            inner_layout = ("VBox", 5),
+            outer_layout=QHBoxLayout(),
+            inner_layout=("VBox", 5),
             parent_layout=layout,
             class_group=self.section_group,
-            stylesheet=f"background-color: {color};"
-
+            stylesheet=f"background-color: {color};",
         )
-        self.backpack= Widget(
+        self.backpack = Widget(
             widget_type=QToolButton(),
             text="",
             parent_layout=self.slot_layot.inner_layout(1),
-            width = cons.WSIZE*1.50,
-            height = cons.WSIZE*1.5,
+            width=cons.WSIZE * 1.50,
+            height=cons.WSIZE * 1.5,
             objectname=f"icon{descriptor}{count}",
-            class_group=self.widget_group
+            class_group=self.widget_group,
         )
 
         self.backpack_label = Widget(
             widget_type=QLabel(),
             parent_layout=self.slot_layot.inner_layout(1),
-            height = cons.WSIZE/1.5,
+            height=cons.WSIZE / 1.5,
             objectname=f"icon_label{descriptor}{count}",
             text=f"{count}.",
             align="center",
-            class_group=self.widget_group
+            class_group=self.widget_group,
         )
-            
+
         self.backpack_item = Widget(
             widget_type=QLineEdit(),
             parent_layout=self.slot_layot.inner_layout(2),
-            height = cons.WSIZE*1.5,
-            signal= lambda: self.find_item,
+            height=cons.WSIZE * 1.5,
+            signal=lambda: self.find_item,
             objectname=f"item{count}",
             class_group=self.widget_group,
             align="center",
-
         )
 
         self.backpack_item_label = Widget(
             widget_type=QLabel(),
             text="",
             parent_layout=self.slot_layot.inner_layout(2),
-            height = cons.WSIZE/1.5,
+            height=cons.WSIZE / 1.5,
             objectname=f"inventory_label{count}",
             align="center",
-            class_group=self.widget_group
+            class_group=self.widget_group,
         )
 
-        self.backpack= Widget(
+        self.backpack = Widget(
             widget_type=QPushButton(),
             text="",
             parent_layout=self.slot_layot.inner_layout(4),
-            height = cons.WSIZE*1.5,
+            height=cons.WSIZE * 1.5,
             objectname=f"quality{count}",
             class_group=self.widget_group,
-            size_policy=(QSizePolicy.Expanding, QSizePolicy.Fixed)
+            size_policy=(QSizePolicy.Expanding, QSizePolicy.Fixed),
         )
 
         self.backpack_hit_label = Widget(
             widget_type=QLabel(),
             text="",
             parent_layout=self.slot_layot.inner_layout(4),
-            height = cons.WSIZE/1.5,
+            height=cons.WSIZE / 1.5,
             objectname=f"quality_label{count}",
             align="center",
             class_group=self.widget_group,
-            size_policy=(QSizePolicy.Expanding, QSizePolicy.Fixed)
+            size_policy=(QSizePolicy.Expanding, QSizePolicy.Fixed),
         )
 
         self.weapon_modifier = Widget(
             widget_type=QPushButton(),
             parent_layout=self.slot_layot.inner_layout(5),
-            height = cons.WSIZE,
+            height=cons.WSIZE,
             objectname=f"roll{count}",
             class_group=self.widget_group,
-            stylesheet=f"font-weight: bold; color: {cons.FONT_COLOR}; background-color: {cons.PRIMARY_LIGHTER}; border: 1px solid {cons.BORDER}; border-radius: 6px;"
-
+            stylesheet=f"font-weight: bold; color: {cons.FONT_COLOR}; background-color: {cons.PRIMARY_LIGHTER}; border: 1px solid {cons.BORDER}; border-radius: 6px;",
         )
 
         self.backpack_damage_label = Widget(
             widget_type=QLabel(),
             text="",
             parent_layout=self.slot_layot.inner_layout(5),
-            height = cons.WSIZE/1.5,
+            height=cons.WSIZE / 1.5,
             objectname=f"roll_label{count}",
             align="center",
             class_group=self.widget_group,
-            size_policy=(QSizePolicy.Expanding, QSizePolicy.Fixed)
+            size_policy=(QSizePolicy.Expanding, QSizePolicy.Fixed),
         )
 
-    def mousePressEvent(self, event): #this is a very specific event used to subtract values when right clicking on a widget
+    def mousePressEvent(
+        self, event
+    ):  # this is a very specific event used to subtract values when right clicking on a widget
         if event.button() == Qt.RightButton:
             widget = self.childAt(event.pos())
-            if widget.objectName() in ["MODIFIER button","MODIFIER mod"]:
+            if widget.objectName() in ["MODIFIER button", "MODIFIER mod"]:
                 self.adjust_modifier("subtract")
 
     def load_character(self):
@@ -376,11 +375,11 @@ class InventoryGUI(QWidget):
 
     def open_new_character(self):
         self.new_character = NewCharacter(self, self.character)
-        self.new_character.show()        
+        self.new_character.show()
 
     def update_character_dropdown(self):
         self.client = pymongo.MongoClient(cons.CONNECT)
-        self.db = self.client ["dnd"]
+        self.db = self.client["dnd"]
         self.collection = self.db["characters"]
         character_list = self.collection.distinct("character")
         self.character_name.get_widget().addItems(character_list)
@@ -388,39 +387,50 @@ class InventoryGUI(QWidget):
     def roll_dice(self):
         self.character = self.character_sheet.character_name
         self.combat_log = self.character_sheet.combat_log
-        self.roll_type = self.sender().property("roll")   
+        self.roll_type = self.sender().property("roll")
 
-        if self.roll_type in ["CASTING","DEFENSE"]:
+        if self.roll_type in ["CASTING", "DEFENSE"]:
             self.check = int(self.sender().text())
             self.dice = "1d20"
         else:
             self.check = 0
             self.dice = self.sender().text()
 
-        rolling_dice = DiceRoll(self.sender(),self.combat_log,self.character,self.roll_type.capitalize(),self.dice, check = self.check).roll()
+        rolling_dice = DiceRoll(
+            self.sender(),
+            self.combat_log,
+            self.character,
+            self.roll_type.capitalize(),
+            self.dice,
+            check=self.check,
+        ).roll()
 
     def add_sub(self):
-        doc_string = self.sender().objectName()
-        add_sub_gui = AddSub(self.character, self.sender(), doc_item = doc_string)
+        objectname = self.sender().objectName().split(" ")[0]
+        number_widget = self.findChild(QPushButton, objectname)
+        add_sub_gui = AddSub(
+            self.character, number_widget, doc_item=objectname, xp=True
+        )
         add_sub_gui.show()
 
     def change_active_modifier(self):
         print("Change Active")
         print(self.sender().objectName())
         ModifyRoll(self.character).change_active(self.sender())
-        
+
     def adjust_modifier(self, adjust):
         current_value = int(self.modifier_mod.get_widget().text())
         if adjust == "add":
             current_value += 1
         else:
             current_value -= 1
-        
+
         if current_value > 0:
             current_value = f"+{current_value}"
 
         self.modifier_mod.get_widget().setText(str(current_value))
         ModifyRoll(self.character).run_set_stats()
+
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
