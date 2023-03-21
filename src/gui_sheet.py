@@ -18,6 +18,16 @@ class CharacterSheetGUI(QWidget):
     def __init__(self, character):
         super().__init__()
 
+        self.top_button=(
+                f"QPushButton {{background-color: {cons.PRIMARY_MEDIUM}; color: {cons.FONT_COLOR}; font-size: {cons.FONT_LARGE}; font-weight: bold; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-top-right-radius: 6px;}}"
+            )
+        
+        self.bottom_button=(
+                f"QPushButton {{background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_DARK}; font-size: {cons.FONT_SMALL}; font-weight: bold; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;}}"
+                f"QPushButton:hover {{background-color: {cons.PRIMARY_HOVER};}}"
+                f"QPushButton:pressed {{background-color: {cons.PRIMARY_LIGHTER};}}"
+            )
+
         self.character = character
 
         self.master_layout = QVBoxLayout()
@@ -40,6 +50,7 @@ class CharacterSheetGUI(QWidget):
             f"QWidget {{background-color: {cons.PRIMARY};}}"
             f"QScrollBar::handle:vertical {{background-color: {cons.BORDER}; width: 6px; min-height: 20px; border: none; outline: none;}}"
         )
+
         self.ability_layout = Section(
             outer_layout=QVBoxLayout(),
             inner_layout=("VBox", 1),
@@ -110,7 +121,7 @@ class CharacterSheetGUI(QWidget):
                 objectname=stat,
                 class_group=self.widget_group,
                 height=cons.WSIZE * 1.3,
-                stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_COLOR}; font-size: {cons.FONT_LARGE}; font-weight: bold; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-top-right-radius: 6px;",
+                stylesheet=self.top_button,
             )
 
             self.stat_button = Widget(
@@ -120,9 +131,9 @@ class CharacterSheetGUI(QWidget):
                 objectname=f"{stat} mod",
                 class_group=self.widget_group,
                 height=cons.WSIZE * 1.3,
-                stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_DARK}; font-size: {cons.FONT_SMALL}; font-weight: bold; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;",
                 signal=self.roll_dice,
                 property=("roll", stat),
+                stylesheet=self.bottom_button,
             )
 
         self.toughness_current = Widget(
@@ -130,9 +141,9 @@ class CharacterSheetGUI(QWidget):
             parent_layout=self.hp_layout.inner_layout(1),
             objectname="TOUGHNESS",
             class_group=self.widget_group,
-            height=cons.WSIZE * 1.50,
-            stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_COLOR}; font-size: {cons.FONT_LARGE}; font-weight: bold; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-top-right-radius: 6px;",
+            size_policy=(QSizePolicy.Expanding, QSizePolicy.Expanding),
             signal=self.modify_stat,
+            stylesheet=self.top_button,
         )
 
         self.toughness_current_label = Widget(
@@ -141,9 +152,9 @@ class CharacterSheetGUI(QWidget):
             objectname="TOUGHNESS mod",
             text="TOUGHNESS",
             class_group=self.widget_group,
-            height=cons.WSIZE,
-            stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_DARK}; font-size: {cons.FONT_SMALL}; font-weight: bold; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;",
+            size_policy=(QSizePolicy.Expanding, QSizePolicy.Expanding),
             signal=self.add_sub,
+            stylesheet=self.bottom_button,
         )
 
         self.toughness_max = Widget(
@@ -151,9 +162,9 @@ class CharacterSheetGUI(QWidget):
             parent_layout=self.hp_layout.inner_layout(2),
             objectname="MAXIMUM",
             class_group=self.widget_group,
-            height=cons.WSIZE * 1.5,
-            stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_COLOR}; font-size: {cons.FONT_LARGE}; font-weight: bold; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-top-right-radius: 6px;",
+            size_policy=(QSizePolicy.Expanding, QSizePolicy.Expanding),
             signal=self.modify_stat,
+            stylesheet=self.top_button,
         )
 
         self.toughness_max_mod = Widget(
@@ -162,8 +173,8 @@ class CharacterSheetGUI(QWidget):
             objectname="MAXIMUM mod",
             text="MAXIMUM",
             class_group=self.widget_group,
-            height=cons.WSIZE,
-            stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_DARK}; font-size: {cons.FONT_SMALL}; font-weight: bold; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;",
+            size_policy=(QSizePolicy.Expanding, QSizePolicy.Expanding),#
+            stylesheet=self.bottom_button,
         )
 
         self.toughness_threshold = Widget(
@@ -171,9 +182,9 @@ class CharacterSheetGUI(QWidget):
             parent_layout=self.hp_layout.inner_layout(3),
             objectname="PAIN",
             class_group=self.widget_group,
-            height=cons.WSIZE * 1.5,
-            stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_COLOR}; font-size: {cons.FONT_LARGE}; font-weight: bold; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-top-right-radius: 6px;",
+            size_policy=(QSizePolicy.Expanding, QSizePolicy.Expanding),
             signal=self.modify_stat,
+            stylesheet=self.top_button,
         )
 
         self.toughness_threshold_mod = Widget(
@@ -182,8 +193,8 @@ class CharacterSheetGUI(QWidget):
             objectname="PAIN mod",
             text="THRESHOLD",
             class_group=self.widget_group,
-            height=cons.WSIZE,
-            stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_DARK}; font-size: {cons.FONT_SMALL}; font-weight: bold; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;",
+            size_policy=(QSizePolicy.Expanding, QSizePolicy.Expanding),
+            stylesheet=self.bottom_button,
         )
 
         self.corruption_current = Widget(
@@ -191,9 +202,9 @@ class CharacterSheetGUI(QWidget):
             parent_layout=self.corruption_layout.inner_layout(1),
             objectname="CORRUPTION",
             class_group=self.widget_group,
-            height=cons.WSIZE * 1.5,
-            stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_COLOR}; font-size: {cons.FONT_LARGE}; font-weight: bold; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-top-right-radius: 6px;",
+            size_policy=(QSizePolicy.Expanding, QSizePolicy.Expanding),
             signal=self.modify_stat,
+            stylesheet=self.top_button
         )
 
         self.corruption_mod = Widget(
@@ -202,9 +213,9 @@ class CharacterSheetGUI(QWidget):
             class_group=self.widget_group,
             text="CORRUPTION",
             objectname="CORRUPTION mod",
-            height=cons.WSIZE,
-            stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_DARK}; font-size: {cons.FONT_SMALL}; font-weight: bold; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;",
+            size_policy=(QSizePolicy.Expanding, QSizePolicy.Expanding),
             signal=self.add_sub,
+            stylesheet=self.bottom_button,
         )
 
         self.corruption_permanent = Widget(
@@ -212,9 +223,9 @@ class CharacterSheetGUI(QWidget):
             parent_layout=self.corruption_layout.inner_layout(2),
             objectname="PERMANENT",
             class_group=self.widget_group,
-            height=cons.WSIZE * 1.5,
-            stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_COLOR}; font-size: {cons.FONT_LARGE}; font-weight: bold; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-top-right-radius: 6px;",
+            size_policy=(QSizePolicy.Expanding, QSizePolicy.Expanding),
             signal=self.modify_stat,
+            stylesheet=self.top_button,
         )
 
         self.corruption_permanent_mod = Widget(
@@ -223,9 +234,9 @@ class CharacterSheetGUI(QWidget):
             class_group=self.widget_group,
             text="PERMANENT",
             objectname="PERMANENT mod",
-            height=cons.WSIZE,
-            stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_DARK}; font-size: {cons.FONT_SMALL}; font-weight: bold; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;",
+            size_policy=(QSizePolicy.Expanding, QSizePolicy.Expanding),
             signal=self.add_sub,
+            stylesheet=self.bottom_button,
         )
 
         self.corruption_threshold = Widget(
@@ -233,9 +244,9 @@ class CharacterSheetGUI(QWidget):
             parent_layout=self.corruption_layout.inner_layout(3),
             objectname="THRESHOLD",
             class_group=self.widget_group,
-            height=cons.WSIZE * 1.5,
-            stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_COLOR}; font-size: {cons.FONT_LARGE}; font-weight: bold; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-top-right-radius: 6px;",
+            size_policy=(QSizePolicy.Expanding, QSizePolicy.Expanding),
             signal=self.modify_stat,
+            stylesheet=self.top_button,
         )
 
         self.corruption_threshold_mod = Widget(
@@ -244,8 +255,8 @@ class CharacterSheetGUI(QWidget):
             class_group=self.widget_group,
             text="THRESHOLD",
             objectname="THRESHOLD mod",
-            height=cons.WSIZE,
-            stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_DARK}; font-size: {cons.FONT_SMALL}; font-weight: bold; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;",
+            size_policy=(QSizePolicy.Expanding, QSizePolicy.Expanding),
+            stylesheet=self.bottom_button,
         )
 
         for widget in self.widget_group:

@@ -21,6 +21,22 @@ class InventoryGUI(QWidget):
     def __init__(self, character):
         super().__init__()
 
+        self.top_button=(
+                f"QPushButton {{background-color: {cons.PRIMARY_MEDIUM}; color: {cons.FONT_COLOR}; font-size: {cons.FONT_MID}; font-weight: bold; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-top-right-radius: 6px;}}"
+            )
+        
+        self.bottom_button=(
+                f"QPushButton {{background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_DARK}; font-size: {cons.FONT_SMALL}; font-weight: bold; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;}}"
+                f"QPushButton:hover {{background-color: {cons.PRIMARY_HOVER};}}"
+                f"QPushButton:pressed {{background-color: {cons.PRIMARY_LIGHTER};}}"
+            )
+        
+        self.bottom_tool_button=(
+                f"QToolButton {{background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_DARK}; font-size: {cons.FONT_SMALL}; font-weight: bold; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;}}"
+                f"QToolButton:hover {{background-color: {cons.PRIMARY_HOVER};}}"
+                f"QToolButton:pressed {{background-color: {cons.PRIMARY_LIGHTER};}}"
+            )
+
         # setting up character sheet
         self.character = character
 
@@ -83,6 +99,7 @@ class InventoryGUI(QWidget):
             objectname="portrait",
             class_group=self.widget_group,
             height=58,
+            size_policy=(QSizePolicy.Expanding, QSizePolicy.Fixed),
             stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; border: 1px solid {cons.BORDER};",
             # width=cons.WSIZE*6,
         )
@@ -113,8 +130,9 @@ class InventoryGUI(QWidget):
             parent_layout=self.experience_section.inner_layout(1),
             objectname="XP",
             class_group=self.widget_group,
-            height=cons.WSIZE * 1.5,
-            stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_COLOR}; font-size: {cons.FONT_MID}; font-weight: bold; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-top-right-radius: 6px;",
+            #height=cons.WSIZE * 1.5,
+            size_policy=(QSizePolicy.Expanding, QSizePolicy.Expanding),
+            stylesheet=self.top_button
         )
 
         self.experience_label = Widget(
@@ -123,8 +141,9 @@ class InventoryGUI(QWidget):
             objectname="XP mod",
             class_group=self.widget_group,
             text="XP",
-            height=cons.WSIZE,
-            stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_DARK}; font-size: {cons.FONT_SMALL}; font-weight: bold; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;",
+            #height=cons.WSIZE,
+            size_policy=(QSizePolicy.Expanding, QSizePolicy.Expanding),
+            stylesheet=self.bottom_button
         )
 
         self.unspent_experience = Widget(
@@ -132,8 +151,9 @@ class InventoryGUI(QWidget):
             parent_layout=self.experience_section.inner_layout(2),
             objectname="TOTALXP",
             class_group=self.widget_group,
-            height=cons.WSIZE * 1.5,
-            stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_COLOR}; font-size: {cons.FONT_MID}; font-weight: bold; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-top-right-radius: 6px;",
+            #height=cons.WSIZE * 1.5,
+            size_policy=(QSizePolicy.Expanding, QSizePolicy.Expanding),
+            stylesheet=self.top_button
         )
 
         self.unspent_experience_label = Widget(
@@ -141,10 +161,11 @@ class InventoryGUI(QWidget):
             parent_layout=self.experience_section.inner_layout(2),
             objectname="TOTALXP mod",
             class_group=self.widget_group,
-            text="UNSPENT XP",
-            height=cons.WSIZE,
+            text="UNSPENT",
+            #height=cons.WSIZE,
+            size_policy=(QSizePolicy.Expanding, QSizePolicy.Expanding),
             signal=self.add_sub,
-            stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_DARK}; font-size: {cons.FONT_SMALL}; font-weight: bold; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;",
+            stylesheet=self.bottom_button
         )
 
         portrait_title = self.portrait_layout.get_title()[0]
@@ -195,9 +216,9 @@ class InventoryGUI(QWidget):
                 objectname=f"{stat} mod",
                 class_group=self.widget_group,
                 size_policy=(QSizePolicy.Expanding, QSizePolicy.Expanding),
-                stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_COLOR}; font-size: {cons.FONT_MID}; font-weight: bold; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-top-right-radius: 6px;",
                 checkable=True,
                 checked=False,
+                stylesheet=self.top_button,
             )
 
             self.extra_modifier_label = Widget(
@@ -206,11 +227,11 @@ class InventoryGUI(QWidget):
                 icon=(f"{stat.capitalize()}.png", "", cons.DARK, cons.WSIZE),
                 class_group=self.widget_group,
                 size_policy=(QSizePolicy.Expanding, QSizePolicy.Expanding),
-                stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_COLOR}; font-size: {cons.FONT_MID}; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;",
                 checkable=True,
                 checked=False,
                 objectname=f"{stat} button",
                 signal=self.change_active_modifier,
+                stylesheet=self.bottom_tool_button,
             )
 
         self.modifier_section = Section(
@@ -231,7 +252,7 @@ class InventoryGUI(QWidget):
             parent_layout=self.modifier_section.inner_layout(1),
             objectname="MODIFIER mod",
             class_group=self.widget_group,
-            stylesheet=f"background-color: {cons.PRIMARY_DARKER}; color: {cons.FONT_MEDIUM}; font-size: {cons.FONT_MID}; font-weight: bold; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-top-right-radius: 6px;",
+            stylesheet=f"background-color: {cons.PRIMARY_MEDIUM}; color: {cons.PRIMARY_LIGHTER}; font-size: {cons.FONT_MID}; font-weight: bold; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-top-right-radius: 6px;",
             size_policy=(QSizePolicy.Expanding, QSizePolicy.Expanding),
             signal=lambda: self.adjust_modifier("add"),
             enabled=False,
@@ -244,7 +265,7 @@ class InventoryGUI(QWidget):
             class_group=self.widget_group,
             size_policy=(QSizePolicy.Expanding, QSizePolicy.Expanding),
             objectname="MODIFIER button",
-            stylesheet=f"background-color: {cons.PRIMARY_DARKER}; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;",
+            stylesheet=f"background-color: {cons.PRIMARY_MEDIUM}; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;",
             signal=lambda: self.adjust_modifier("add"),
             enabled=False,
         )
@@ -263,100 +284,6 @@ class InventoryGUI(QWidget):
         self.setLayout(self.master_layout)
         self.update_character_dropdown()
         self.character.set_inventory_gui(self)
-
-    def make_item_slot(self, count, layout, descriptor):
-        if count % 2 == 0:
-            color = cons.PRIMARY_DARKER
-        else:
-            color = cons.PRIMARY
-
-        self.slot_layot = Section(
-            outer_layout=QHBoxLayout(),
-            inner_layout=("VBox", 5),
-            parent_layout=layout,
-            class_group=self.section_group,
-            stylesheet=f"background-color: {color};",
-        )
-        self.backpack = Widget(
-            widget_type=QToolButton(),
-            text="",
-            parent_layout=self.slot_layot.inner_layout(1),
-            width=cons.WSIZE * 1.50,
-            height=cons.WSIZE * 1.5,
-            objectname=f"icon{descriptor}{count}",
-            class_group=self.widget_group,
-        )
-
-        self.backpack_label = Widget(
-            widget_type=QLabel(),
-            parent_layout=self.slot_layot.inner_layout(1),
-            height=cons.WSIZE / 1.5,
-            objectname=f"icon_label{descriptor}{count}",
-            text=f"{count}.",
-            align="center",
-            class_group=self.widget_group,
-        )
-
-        self.backpack_item = Widget(
-            widget_type=QLineEdit(),
-            parent_layout=self.slot_layot.inner_layout(2),
-            height=cons.WSIZE * 1.5,
-            signal=lambda: self.find_item,
-            objectname=f"item{count}",
-            class_group=self.widget_group,
-            align="center",
-        )
-
-        self.backpack_item_label = Widget(
-            widget_type=QLabel(),
-            text="",
-            parent_layout=self.slot_layot.inner_layout(2),
-            height=cons.WSIZE / 1.5,
-            objectname=f"inventory_label{count}",
-            align="center",
-            class_group=self.widget_group,
-        )
-
-        self.backpack = Widget(
-            widget_type=QPushButton(),
-            text="",
-            parent_layout=self.slot_layot.inner_layout(4),
-            height=cons.WSIZE * 1.5,
-            objectname=f"quality{count}",
-            class_group=self.widget_group,
-            size_policy=(QSizePolicy.Expanding, QSizePolicy.Fixed),
-        )
-
-        self.backpack_hit_label = Widget(
-            widget_type=QLabel(),
-            text="",
-            parent_layout=self.slot_layot.inner_layout(4),
-            height=cons.WSIZE / 1.5,
-            objectname=f"quality_label{count}",
-            align="center",
-            class_group=self.widget_group,
-            size_policy=(QSizePolicy.Expanding, QSizePolicy.Fixed),
-        )
-
-        self.weapon_modifier = Widget(
-            widget_type=QPushButton(),
-            parent_layout=self.slot_layot.inner_layout(5),
-            height=cons.WSIZE,
-            objectname=f"roll{count}",
-            class_group=self.widget_group,
-            stylesheet=f"font-weight: bold; color: {cons.FONT_COLOR}; background-color: {cons.PRIMARY_LIGHTER}; border: 1px solid {cons.BORDER}; border-radius: 6px;",
-        )
-
-        self.backpack_damage_label = Widget(
-            widget_type=QLabel(),
-            text="",
-            parent_layout=self.slot_layot.inner_layout(5),
-            height=cons.WSIZE / 1.5,
-            objectname=f"roll_label{count}",
-            align="center",
-            class_group=self.widget_group,
-            size_policy=(QSizePolicy.Expanding, QSizePolicy.Fixed),
-        )
 
     def mousePressEvent(
         self, event

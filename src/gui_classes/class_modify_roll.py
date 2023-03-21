@@ -8,6 +8,18 @@ import constants as cons
 class ModifyRoll:
     def __init__(self, character):
         self.character = character
+                
+        self.bottom_button=(
+                f"QPushButton {{background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_DARK}; font-size: {cons.FONT_SMALL}; font-weight: bold; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;}}"
+                f"QPushButton:hover {{background-color: {cons.PRIMARY_HOVER};}}"
+                f"QPushButton:pressed {{background-color: {cons.PRIMARY_LIGHTER};}}"
+            )
+        
+        self.bottom_tool_button=(
+                f"QToolButton {{background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_DARK}; font-size: {cons.FONT_SMALL}; font-weight: bold; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;}}"
+                f"QToolButton:hover {{background-color: {cons.PRIMARY_HOVER};}}"
+                f"QToolButton:pressed {{background-color: {cons.PRIMARY_LIGHTER};}}"
+            )
 
     def change_active(self, widget):
         self.widget = widget
@@ -53,7 +65,7 @@ class ModifyRoll:
                 button_widget.setStyleSheet(checked_style)
 
             self.character.inventory_gui.modifier_mod.get_widget().setStyleSheet(
-                f"background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_COLOR}; font-size: {cons.FONT_MID}; font-weight: bold; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-top-right-radius: 6px;"
+                f"background-color: {cons.PRIMARY_MEDIUM}; color: {cons.FONT_COLOR}; font-size: {cons.FONT_MID}; font-weight: bold; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-top-right-radius: 6px;"
             )
 
             self.character.inventory_gui.modifier_button.get_widget().setStyleSheet(
@@ -82,11 +94,11 @@ class ModifyRoll:
                 )
                 button_widget.setChecked(False)
 
-            button_widget.setStyleSheet(unchecked_style)
+            button_widget.setStyleSheet(self.bottom_tool_button)
 
         for button in cons.STATS:
             button_widget = self.character.sheet_gui.findChild(QWidget, f"{button} mod")
-            button_widget.setStyleSheet(unchecked_style)
+            button_widget.setStyleSheet(self.bottom_button)
 
         # Resetting the base modifier
         base_modifier_widget = self.character.inventory_gui.modifier_mod.get_widget()
@@ -96,11 +108,11 @@ class ModifyRoll:
         base_button_widget.setEnabled(False)
 
         base_modifier_widget.setStyleSheet(
-            f"background-color: {cons.PRIMARY_DARKER}; color: {cons.FONT_MEDIUM}; font-size: {cons.FONT_MID}; font-weight: bold; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-top-right-radius: 6px;"
+            f"background-color: {cons.PRIMARY_MEDIUM}; color: {cons.PRIMARY_LIGHTER}; font-size: {cons.FONT_MID}; font-weight: bold; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-top-right-radius: 6px;"
         )
 
         base_button_widget.setStyleSheet(
-            f"background-color: {cons.PRIMARY_DARKER}; color: {cons.FONT_MEDIUM}; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;"
+            f"background-color: {cons.PRIMARY_MEDIUM}; color: {cons.PRIMARY_LIGHTER}; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;"
         )
 
         # self.character.active_modifier_name = ""

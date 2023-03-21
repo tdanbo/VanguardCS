@@ -10,22 +10,10 @@ import template.functions as func
 
 from qt_thread_updater import get_updater
 
-entry_dict = {
-    "Character": "Beasttoe",
-    "Type": "Resolute",
-    "Dice": "6d6",
-    "Result": "29",
-    "Modifier": "-2",
-    "Result Breakdown": "6+6+5",
-    "Result Message": "Failed",
-    "Time": "23:00:00",
-}
-
-
 class CombatEntry(QWidget):
     def __init__(self, count):
         super().__init__()
-
+        
         self.master_layout = QHBoxLayout()
         self.widget_group = []
         self.section_group = []
@@ -134,7 +122,7 @@ class CombatEntry(QWidget):
         else:
             type_bg_color = color_type[self.active.upper()]
 
-        self.item.get_widget().setText(self.active)
+        self.item.get_widget().setText(self.active.title())
         if self.check == 0:
             self.result_message_label.get_widget().setText(f"{self.type}")
         else:

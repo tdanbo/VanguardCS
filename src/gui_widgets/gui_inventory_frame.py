@@ -264,6 +264,18 @@ class InventoryItem(QWidget):
             spacing=2,
         )
 
+        self.dice_button_style = (
+                f"QToolButton {{padding-left: 5px; padding-right: 5px; background-color: {cons.PRIMARY_LIGHTER}; color: {self.type_bg_color}; font-size: {cons.FONT_SMALL}; font-weight: bold; border: 1px solid {cons.BORDER}; border-radius: 6px;}}"
+                f"QToolButton:hover {{background-color: {cons.PRIMARY_HOVER};}}"
+                f"QToolButton:pressed {{background-color: {cons.PRIMARY_LIGHTER};}}"
+            )
+
+        self.quantity_dice_button_style = (
+                f"QToolButton {{padding-left: 5px; padding-right: 5px; background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_DARK}; font-size: 12px; font-weight: bold; border: 1px solid {cons.BORDER}; border-radius: 6px;}}"
+                f"QToolButton:hover {{background-color: {cons.PRIMARY_HOVER};}}"
+                f"QToolButton:pressed {{background-color: {cons.PRIMARY_LIGHTER};}}"
+            )
+
         if "Roll" in self.item_dict:
             dice_type = self.item_dict["Roll"][0]
             dice = self.item_dict["Roll"][1].replace("D", "d")
@@ -274,10 +286,10 @@ class InventoryItem(QWidget):
                 text=dice,
                 objectname="item",
                 class_group=self.widget_group,
-                stylesheet=f"padding-left: 5px; padding-right: 5px; background-color: {cons.PRIMARY_LIGHTER}; color: {self.type_bg_color}; font-size: {cons.FONT_SMALL}; font-weight: bold; border: 1px solid {cons.BORDER}; border-radius: 6px;",
                 height=cons.WSIZE,
                 signal=self.roll_dice,
                 property=("roll", dice_type),
+                stylesheet=self.dice_button_style
             )
 
         elif "Quantity" in self.item_dict:
@@ -289,9 +301,9 @@ class InventoryItem(QWidget):
                 text=f"x {quantity}",
                 objectname="quantity",
                 class_group=self.widget_group,
-                stylesheet=f"padding-left: 5px; padding-right: 5px; background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_DARK}; font-size: {cons.FONT_SMALL}; font-weight: bold; border: 1px solid {cons.BORDER}; border-radius: 6px;",
                 height=cons.WSIZE,
                 signal=self.add_sub,
+                stylesheet=self.quantity_dice_button_style
             )
 
         self.type_label = Widget(

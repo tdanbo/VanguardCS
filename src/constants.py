@@ -87,8 +87,10 @@ ACTIVE_COLOR = {
     "MISC": WHITE,
 }
 
+PRIMARY_HOVER = "#fffdf7"
 PRIMARY_DARKER = "#dbd7c8"
 PRIMARY = "#f0e8d9"
+PRIMARY_MEDIUM = "#f2eedf"
 PRIMARY_LIGHTER = "#f1efe9"
 BORDER_LIGHT = "#ccbda5"
 BORDER = "#b3a691"

@@ -28,6 +28,16 @@ class CombatLogGUI(QWidget):
 
         self.character = character
 
+        self.top_button=(
+                f"QPushButton {{background-color: {cons.PRIMARY_MEDIUM}; color: {cons.FONT_COLOR}; font-size: {cons.FONT_MID}; font-weight: bold; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-top-right-radius: 6px;}}"
+            )
+        
+        self.bottom_button=(
+                f"QPushButton {{background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_DARK}; font-size: {cons.FONT_SMALL}; font-weight: bold; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;}}"
+                f"QPushButton:hover {{background-color: {cons.PRIMARY_HOVER};}}"
+                f"QPushButton:pressed {{background-color: {cons.PRIMARY_LIGHTER};}}"
+            )
+
         # Setting up layouts/sections
 
         scroll_style = (
@@ -97,7 +107,7 @@ class CombatLogGUI(QWidget):
                 ),
                 class_group=self.widget_group,
                 size_policy=(QSizePolicy.Expanding, QSizePolicy.Expanding),
-                stylesheet=f"font-weight: bold; font-size: {cons.FONT_MID}; color: {cons.FONT_COLOR}; background-color: {cons.PRIMARY_LIGHTER}; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-top-right-radius: 6px;",
+                stylesheet=self.top_button
             )
 
             self.dice_w = Widget(
@@ -110,8 +120,8 @@ class CombatLogGUI(QWidget):
                     class_custom_rolls.add_dice, self, die_type[0]
                 ),
                 class_group=self.widget_group,
-                stylesheet=f"font-weight: bold; font-size: {cons.FONT_SMALL}; color: {cons.FONT_DARK}; background-color: {cons.PRIMARY_LIGHTER}; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;",
                 size_policy=(QSizePolicy.Expanding, QSizePolicy.Expanding),
+                stylesheet=self.bottom_button
             )
 
             self.dice_count.get_widget().setMinimumWidth(cons.WSIZE * 1.5)
