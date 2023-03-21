@@ -4,6 +4,7 @@ import sys
 import json
 from template.license import License
 import pymongo
+import certifi
 
 ROOT = os.path.abspath(os.path.dirname(__file__))
 try:
@@ -118,11 +119,11 @@ FONT_COLOR = "#864433"
 # BORDER_DARK = "#2d2d2d"
 
 # READING DATABASE
-client = pymongo.MongoClient(CONNECT)
-QUALITIES = client["equipment"]["quality"].find_one()
+CLIENT = pymongo.MongoClient(CONNECT, tlsCAFile=certifi.where())
+QUALITIES = CLIENT["equipment"]["quality"].find_one()
 
 ABILITIES = {}
-db = client["abilities"]
+db = CLIENT["abilities"]
 collection_names = db.list_collection_names()
 for name in collection_names:
     collection = db[name]
@@ -130,12 +131,12 @@ for name in collection_names:
     ABILITIES[name] = document
 
 EQUIPMENT = {}
-db = client["equipment"]
+db = CLIENT["equipment"]
 collection_names = db.list_collection_names()
 for name in collection_names:
     collection = db[name]
     document = collection.find_one()
     EQUIPMENT[name] = document
 
-db = client["dnd"]
+db = CLIENT["dnd"]
 COMBAT_LOG = db["combatlog"]

@@ -9,8 +9,6 @@ from template.widget import Widget
 import constants as cons
 import math
 
-import pymongo
-
 
 class NewCharacter(QWidget):
     def __init__(self, isheet, character):
@@ -202,7 +200,6 @@ class NewCharacter(QWidget):
             self.hide()
 
     def update_database(self, directory):
-        self.client = pymongo.MongoClient(cons.CONNECT)
-        self.db = self.client["dnd"]
+        self.db = cons.CLIENT["dnd"]
         self.collection = self.db["characters"]
         self.collection.insert_one(directory)

@@ -2,7 +2,7 @@ from PySide2.QtWidgets import *
 from PySide2.QtGui import *
 from PySide2.QtCore import *
 from qt_thread_updater import get_updater
-import pymongo
+
 import constants as cons
 from bson import json_util
 import json

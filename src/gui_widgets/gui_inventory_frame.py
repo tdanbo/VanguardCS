@@ -3,7 +3,6 @@ from PySide2.QtGui import *
 from PySide2.QtCore import *
 
 import constants as cons
-import pymongo
 
 from template.section import Section
 from template.widget import Widget

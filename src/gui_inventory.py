@@ -5,7 +5,6 @@ from PySide2.QtCore import *
 from template.section import Section
 from template.widget import Widget
 import constants as cons
-import pymongo
 
 # from gui_classes.custom_roll import class_custom_rolls
 from gui_classes.class_character import Character
@@ -305,8 +304,7 @@ class InventoryGUI(QWidget):
         self.new_character.show()
 
     def update_character_dropdown(self):
-        self.client = pymongo.MongoClient(cons.CONNECT)
-        self.db = self.client["dnd"]
+        self.db = cons.CLIENT["dnd"]
         self.collection = self.db["characters"]
         character_list = self.collection.distinct("character")
         self.character_name.get_widget().addItems(character_list)

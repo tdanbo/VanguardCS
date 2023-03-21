@@ -2,7 +2,6 @@ from PySide2.QtWidgets import *
 from PySide2.QtGui import *
 from PySide2.QtCore import *
 
-import pymongo
 import constants as cons
 import template.functions as func
 import math
@@ -24,8 +23,7 @@ class Character:
         if self.character_name == "":
             return
 
-        self.client = pymongo.MongoClient(cons.CONNECT)
-        self.db = self.client["dnd"]
+        self.db = cons.CLIENT["dnd"]
         self.collection = self.db["characters"]
 
         self.query = {"character": self.character_name}
