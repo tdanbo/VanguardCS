@@ -17,6 +17,17 @@ class NewCharacter(QWidget):
         self.isheet = isheet
         self.character = character
 
+        self.left_button=(
+                f"QPushButton {{background-color: {cons.PRIMARY_MEDIUM}; color: {cons.FONT_COLOR}; font-size: {cons.FONT_MID}; font-weight: bold; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-bottom-left-radius: 6px;}}"
+            )
+        
+        self.right_button=(
+                f"QPushButton {{background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_DARK}; font-size: {cons.FONT_SMALL}; font-weight: bold; border: 1px solid {cons.BORDER}; border-top-right-radius: 6px; border-bottom-right-radius: 6px;}}"
+                f"QPushButton:hover {{background-color: {cons.PRIMARY_HOVER};}}"
+                f"QPushButton:pressed {{background-color: {cons.PRIMARY_LIGHTER};}}"
+            )
+
+
         # settings up the character sheet
         self.master_layout = QVBoxLayout()
         self.section_group = []
@@ -65,7 +76,7 @@ class NewCharacter(QWidget):
                 class_group=self.widget_group,
                 height=cons.WSIZE * 1.5,
                 size_policy=(QSizePolicy.Expanding, QSizePolicy.Fixed),
-                stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; border: 1px solid {cons.BORDER};font-size: {cons.FONT_MID};color: {cons.FONT_MEDIUM}; font-weight: bold;",
+                stylesheet=self.left_button,
             )
 
             self.stat_input = Widget(
@@ -77,7 +88,7 @@ class NewCharacter(QWidget):
                 size_policy=(QSizePolicy.Expanding, QSizePolicy.Fixed),
                 signal=self.set_stat,
                 objectname=item,
-                stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; border: 1px solid {cons.BORDER};font-size: {cons.FONT_MID};color: {cons.FONT_COLOR}; font-weight: bold;",
+                stylesheet=self.right_button,
             )
 
         self.new_widget_layout = Section(
@@ -160,6 +171,7 @@ class NewCharacter(QWidget):
             }
             new_character["character"] = self.character_name
             new_character["rank"] = "Player"
+            new_character["Type"] = "Character"
             new_character["XP"] = 0
             new_character["TOTALXP"] = 50
 
@@ -174,6 +186,8 @@ class NewCharacter(QWidget):
 
             strong = int(new_character["stats"]["STRONG"])
             toughness = 10 if strong < 10 else strong
+
+
 
             new_character["stats"]["TOUGHNESS"] = toughness
             new_character["stats"]["CORRUPTION"] = 0

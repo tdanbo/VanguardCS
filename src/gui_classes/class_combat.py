@@ -15,12 +15,14 @@ class CombatLog:
         print("Combat Log Initialized")
 
     def get_log(self):
-        doc = cons.COMBAT_LOG.find().sort([("_id", -1)]).limit(21)
+        db = cons.CLIENT["dnd"]
+        self.COMBAT_LOG = db["combatlog"]
+        doc = self.COMBAT_LOG.find().sort([("_id", -1)]).limit(21)
         json_doc = json.loads(json_util.dumps(doc))
         return list(json_doc)
 
     def get_collection(self):
-        return cons.COMBAT_LOG
+        return self.COMBAT_LOG
 
     def start_watching(self):
         self.running = True
@@ -32,7 +34,7 @@ class CombatLog:
 
     def watch_collection(self):
         while self.running:
-            with cons.COMBAT_LOG.watch() as change_stream:
+            with self.COMBAT_LOG.watch() as change_stream:
                 for update_doc in change_stream:
                     self.update_combat_log()
 

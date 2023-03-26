@@ -1,7 +1,8 @@
-import sys
 from PySide2.QtWidgets import *
 from PySide2.QtGui import *
 from PySide2.QtCore import *
+import sys
+
 from template.section import Section
 from template.widget import Widget
 import constants as cons
