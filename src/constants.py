@@ -71,9 +71,7 @@ WHITE = "#bfb6ac"
 ACTIVE_COLOR = {
     "ATTACK": RED,
     "DAMAGE": RED,
-    "ABILITY": RED,
-    "MELEE": RED,
-    "RANGED": RED,
+    "ABILITY": RED, 
     "DEFENSE": BLUE,
     "ARMOR": BLUE,
     "CASTING": PURPLE,
@@ -82,9 +80,16 @@ ACTIVE_COLOR = {
     "ELIXIRS": PURPLE,
     "SNEAKING": GREEN,
     "AMMUNITION": GREEN,
+    "MONSTEROUS TRAIT":GREEN,
     "TEST": YELLOW,
     "SKILL": YELLOW,
     "TREASURE": YELLOW,
+    "ORDINARY_WEAPON": RED,
+    "ORDINARY_RANGED": RED,
+    "ORDINARY_ARMOR": BLUE,
+    "QUALITY_WEAPON": RED,
+    "QUALITY_RANGED": RED,
+    "QUALITY_ARMOR": BLUE,
     "MISC": WHITE,
 }
 
@@ -120,7 +125,7 @@ FONT_COLOR = "#864433"
 
 # READING DATABASE
 CLIENT = pymongo.MongoClient(CONNECT, tlsCAFile=certifi.where())
-QUALITIES = CLIENT["equipment"]["quality"].find_one()
+QUALITIES = CLIENT["qualities"]["qualities"].find_one()
 
 ABILITIES = {}
 db = CLIENT["abilities"]

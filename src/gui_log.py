@@ -128,7 +128,8 @@ class CombatLogGUI(QWidget):
             self.dice_w.get_widget().setMinimumWidth(cons.WSIZE * 1.5)
 
         self.combet_log_slots = []
-        for count in range(21):  # Make all static entries in the combatlog
+        for count in range(1, 31):  # Make all static entries in the combatlog
+            print(count)
             log_gui_entry = CombatEntry(count)
             self.log_scroll.inner_layout(1).addWidget(log_gui_entry)
 

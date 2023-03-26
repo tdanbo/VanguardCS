@@ -99,6 +99,10 @@ class InventoryItem(QWidget):
             for category in self.all_equipment:
                 for item in self.all_equipment[category]:
                     if item_string.lower() == item.lower():
+                        print("item found")
+                        print(item)
+                        print(item_string.lower())
+                        print(item.lower())
                         item_dict = self.all_equipment[category][item]
                         item_dict["Name"] = item
                         item_dict["Category"] = category
@@ -225,10 +229,10 @@ class InventoryItem(QWidget):
                 quality_tag = ""
             try:
                 if quality == "Effect":
-                    tooltip = f"<b>{quality}</b>: {self.item_dict['Description']}"
+                    tooltip = rf"<b>{quality}</b>: {self.item_dict['Description']}"
                 else:
                     tooltip = (
-                        f"<b>{quality}</b>: {cons.QUALITIES[quality]['Description']}"
+                        f"<b>{quality}</b>: {str(cons.QUALITIES[quality]['Description'])}"
                     )
             except:
                 tooltip = f"<b>{quality}"
@@ -461,6 +465,7 @@ class InventoryItem(QWidget):
         self.character.save_document()
 
     def set_impeding(self):
+        attack = 0
         defense = 0
         casting = 0
         speed = 0
@@ -480,6 +485,10 @@ class InventoryItem(QWidget):
                 defense += 1
             elif mh["Name"] == "Steel Shield":
                 defense += 2
+            if "Precise" in mh["Quality"]:
+                attack += 1
+            if "Balanced" in mh["Quality"]:
+                defense += 1
 
         oh = self.character.CHARACTER_DOC["equipment"]["off hand"]
         if oh != {}:
@@ -487,7 +496,12 @@ class InventoryItem(QWidget):
                 defense += 1
             elif oh["Name"] == "Steel Shield":
                 defense += 2
+            if "Precise" in oh["Quality"]:
+                attack += 1
+            if "Balanced" in oh["Quality"]:
+                defense += 1
 
         self.character.CHARACTER_DOC["DEFENSE mod"] = defense
         self.character.CHARACTER_DOC["CASTING mod"] = casting
         self.character.CHARACTER_DOC["SNEAKING mod"] = speed
+        self.character.CHARACTER_DOC["ATTACK mod"] = attack
