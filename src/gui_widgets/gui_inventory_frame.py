@@ -257,7 +257,7 @@ class InventoryItem(QWidget):
 
         self.roll_section = Section(
             outer_layout=QVBoxLayout(),
-            inner_layout=("HBox", 1),
+            inner_layout=("HBox", 2),
             parent_layout=self.item_section.inner_layout(5),
             class_group=self.section_group,
             spacing=2,

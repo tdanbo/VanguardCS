@@ -208,10 +208,14 @@ class AbilityItem(QWidget):
             stylesheet=f"font-size: {cons.FONT_SMALL}; font-weight: bold; color: {cons.DARK}"
         )
 
+        category_text = self.restyle_description(", ".join([self.ability_dict["Type"],self.ability_dict["Tradition"]]))
+        if self.ability_dict["Type"] in ["Ritual", "Mystical Power"]:
+            category_text = self.restyle_description(", ".join([self.ability_dict["Type"],self.ability_dict["Tradition"], "1 Permanent Corruption"]))
+
         self.category_box = Widget(
             widget_type=QLabel(),
             parent_layout = self.category_section.inner_layout(1),
-            text=self.restyle_description(self.ability_dict["Type"]+", "+self.ability_dict["Tradition"]),
+            text=category_text,
             objectname=f"category_label",
             class_group=self.widget_group,
             size_policy=(QSizePolicy.Expanding, QSizePolicy.Expanding),

@@ -130,13 +130,8 @@ class Character:
             self.DEFENSE += overweight
             self.SPEED += overweight
 
-
-        print(f"Current weight: {current_weight}")
-        print(f"Carry weight: {self.carry_weight}")
-
-
-
-        print(overweight)
+        scrollbar = self.inventory_gui.inventory_scroll.get_scroll().verticalScrollBar()
+        scrollbar.setValue(scrollbar.maximum())
 
     def set_equipment(self):
         print("Setting equipment")
