@@ -9,6 +9,10 @@ for file in os.listdir("src/.icons"):
     icon_path = os.path.join("src/.icons", file)
     data_list.append((icon_path, ".icons"))
 
+for file in os.listdir("src/.sounds"):
+    icon_path = os.path.join("src/.sounds", file)
+    data_list.append((icon_path, ".sounds"))
+
 a = Analysis(
     ['src/main.py'],
     pathex=[],
