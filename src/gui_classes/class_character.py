@@ -16,7 +16,6 @@ import random
 
 class Character:
     def __init__(self):
-        print("Character class initialized")
         self.active_modifier_name = ""
         self.active_modifier = 0
         self.base_modifier = 0
@@ -31,8 +30,6 @@ class Character:
 
         self.query = {"character": self.character_name}
         self.CHARACTER_DOC = self.collection.find_one(self.query)
-
-        print(f"{self.character_name}.png")
 
         # Set the character portrait
         if os.path.isfile(os.path.join(cons.ICONS,f"{self.character_name}.png")):
@@ -79,7 +76,6 @@ class Character:
         self.collection.update_one(self.query, current_sheet)
 
     def reset_active_modifiers(self):
-        print("Resetting active modifiers")
         self.ATTACK = 0
         self.DEFENSE = 0
         self.CASTING = 0
@@ -111,8 +107,6 @@ class Character:
             weight_multiplier = 1.5
         else:
             weight_multiplier = 1
-
-        print(weight_multiplier)
 
         self.carry_weight = math.floor((int(self.sheet_gui.findChild(QWidget, "STRONG").text())*weight_multiplier))-1
         self.carry_limit = self.carry_weight*2
@@ -367,7 +361,6 @@ class Character:
     def check_abilities(self,name):
         if name in [item["Name"] for item in self.CHARACTER_DOC["abilities"]]:
             self.ability_dict = [item for item in self.CHARACTER_DOC["abilities"] if item["Name"] == name][0]
-            print(f"Ability found: {self.ability_dict}")
             return True
         else:
             return False

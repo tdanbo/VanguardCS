@@ -24,7 +24,6 @@ class CombatLog:
         self.COMBAT_LOG = db["combatlog"]
         doc = self.COMBAT_LOG.find()
         doc_list = list(doc)
-        print("Reading Combat Log")
         return doc_list
 
     def get_collection(self):
@@ -43,7 +42,6 @@ class CombatLog:
             with self.COMBAT_LOG.watch() as change_stream:
                 for update_doc in change_stream:
                     print("Combat Log Updated")
-                    print(update_doc)
                     if update_doc["operationType"] == "insert":
                         self.play_roll_sound()
                         self.update_combat_log()

@@ -472,8 +472,6 @@ class AbilityItem(QWidget):
         self.character.active_modifier_name = self.ability_dict["Type"]
         self.roll_type = f"{self.sender().text()} {self.ability_dict['Name'].title()}"
 
-        print(self.roll_type)
-
         if self.roll_type in ["CASTING","DEFENSE"]:
             self.check = int(self.sender().text())
             self.dice = "1d20"

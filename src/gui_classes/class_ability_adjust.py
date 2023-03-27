@@ -12,7 +12,6 @@ class AbilityAdjust():
         self.armored_mystic()
 
     def shield_fighter(self):
-        print("Running")
         if self.check_abilities("Shield Fighter"):
             if self.main_hand != {}:
                 if self.main_hand["Name"] in ["Shield", "Buckler", "Steel Shield"]:
