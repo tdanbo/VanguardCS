@@ -54,7 +54,12 @@ class CombatLogGUI(QWidget):
             class_group=self.section_group,
             content_margin=(0, 0, 0, 0),
             stylesheet=scroll_style,
+            icon=("show_hide_sheets.png", cons.WSIZE, cons.PRIMARY_DARKER),
         )
+
+        self.log_scroll.get_title()[0].setCheckable(True)
+        self.log_scroll.get_title()[0].setChecked(True)
+        self.log_scroll.get_title()[0].clicked.connect(self.open_sheet)
 
         self.log_scroll.get_title()[1].setAlignment(Qt.AlignCenter)
         self.log_dice = Section(
@@ -193,3 +198,11 @@ class CombatLogGUI(QWidget):
         self.roll_button.get_widget().setHidden(True)
         title_widgets = self.log_dice.get_title()
         title_widgets[1].setHidden(False)
+
+    def open_sheet(self):
+        if self.sender().isChecked():
+            self.character.sheet_gui.show()
+            self.character.inventory_gui.show()
+        else:
+            self.character.sheet_gui.hide()
+            self.character.inventory_gui.hide()

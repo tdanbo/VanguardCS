@@ -9,6 +9,7 @@ import math
 from gui_widgets.gui_inventory_frame import InventoryItem
 from gui_widgets.gui_ability_frame import AbilityItem
 from gui_classes.class_modify_stat import ModifyStat
+from gui_classes.class_ability_adjust import AbilityAdjust
 
 import os
 import random
@@ -44,38 +45,48 @@ class Character:
                 self.inventory_gui.portrait.get_widget(), f"{random_portrait}.png", ""
             )
 
-        # Set character inventory
-        self.set_inventory()
+        self.set_all_stats()
 
-        # Set character equipment
-        self.set_equipment()
-
-        # Set character abilities
-        self.set_abilities()
-
+    def set_all_stats(self):
+        # Set the active modifiers
+        self.reset_active_modifiers()
         # Set character equipment
         self.set_stats()
-
         # Set secondary stats
         self.set_secondary_stats()
-
+        # Set character abilities
+        self.set_abilities()
+        # Set character inventory (Needs to be last to have strong counted in)
+        self.set_inventory()
+        # Set character equipment
+        self.set_equipment()
+        # Set qualities
+        self.set_qualities()
+        # final adjust with abilities
+        self.set_ability_adjustments()
         # Set character modifiers
         self.set_modifiers()
-
         # Set character calculated stats
         self.set_calculated_stats()
-
         # Set character xp
         self.set_xp()
-
-        # Set calculated stats
-        return self.CHARACTER_DOC
+        
+        # Save document
+        self.save_document()
 
     def save_document(self):
         current_sheet = {"$set": self.CHARACTER_DOC}
         self.collection.update_one(self.query, current_sheet)
 
+    def reset_active_modifiers(self):
+        print("Resetting active modifiers")
+        self.ATTACK = 0
+        self.DEFENSE = 0
+        self.CASTING = 0
+        self.SPEED = 0
+
     def set_inventory(self):
+        print("Setting inventory")
         self.inventory_layout = self.inventory_gui.inventory_scroll.inner_layout(1)
         func.clear_layout(self.inventory_layout)
         priority = {
@@ -96,15 +107,39 @@ class Character:
         )
         self.CHARACTER_DOC["inventory"] = sorted_list
 
-        for count in range(20, -1, -1):
+        if self.check_abilities("Pack-mule"):
+            weight_multiplier = 1.5
+        else:
+            weight_multiplier = 1
+
+        print(weight_multiplier)
+
+        self.carry_weight = math.floor((int(self.sheet_gui.findChild(QWidget, "STRONG").text())*weight_multiplier))-1
+        self.carry_limit = self.carry_weight*2
+
+        for count in range(self.carry_limit, -1, -1):
             try:
                 item_dict = self.CHARACTER_DOC["inventory"][count]
             except:
                 item_dict = {}
+            item_widget = InventoryItem(self, count, item_dict, self.inventory_layout, self.carry_weight)
 
-            item_widget = InventoryItem(self, count, item_dict, self.inventory_layout)
+        current_weight = len(self.CHARACTER_DOC["inventory"])
+        overweight = (self.carry_weight-current_weight)+1
+        if overweight < 0:
+            self.DEFENSE += overweight
+            self.SPEED += overweight
+
+
+        print(f"Current weight: {current_weight}")
+        print(f"Carry weight: {self.carry_weight}")
+
+
+
+        print(overweight)
 
     def set_equipment(self):
+        print("Setting equipment")
         self.equipment_layout = self.inventory_gui.equipment_layout.inner_layout(1)
         func.clear_layout(self.equipment_layout)
 
@@ -113,6 +148,7 @@ class Character:
             1,
             self.CHARACTER_DOC["equipment"]["armor"],
             self.equipment_layout,
+            self.carry_weight,
             equipment="AR",
         )
         self.offhand_slot = InventoryItem(
@@ -120,6 +156,7 @@ class Character:
             2,
             self.CHARACTER_DOC["equipment"]["main hand"],
             self.equipment_layout,
+            self.carry_weight,
             equipment="MH",
         )
         self.armor_slot = InventoryItem(
@@ -127,8 +164,38 @@ class Character:
             3,
             self.CHARACTER_DOC["equipment"]["off hand"],
             self.equipment_layout,
+            self.carry_weight,
             equipment="OH",
         )
+
+    def set_qualities(self):
+        armor = self.CHARACTER_DOC["equipment"]["armor"]
+        if armor != {}:
+            impeding = [
+                quality for quality in armor["Quality"] if "Impeding" in quality
+            ][0]
+            value = ModifyStat(impeding).find_integer()
+            self.SPEED += value
+            self.DEFENSE += value
+            self.CASTING += value
+
+        mh = self.CHARACTER_DOC["equipment"]["main hand"]
+        if mh != {}:
+            if "Precise" in mh["Quality"]:
+                self.ATTACK += 1
+            if "Balanced 1" in mh["Quality"]:
+                self.DEFENSE += 1
+            elif "Balanced 2" in mh["Quality"]:
+                self.DEFENSE += 2
+
+        oh = self.CHARACTER_DOC["equipment"]["off hand"]
+        if oh != {}:
+            if "Precise" in oh["Quality"]:
+                self.ATTACK += 1
+            if "Balanced 1" in oh["Quality"]:
+                self.DEFENSE += 1
+            elif "Balanced 2" in oh["Quality"]:
+                self.DEFENSE += 2
 
     def set_stats(self):
         for stat in cons.STATS:
@@ -165,6 +232,11 @@ class Character:
             )
 
     def set_modifiers(self):
+        self.CHARACTER_DOC["DEFENSE mod"] = self.DEFENSE
+        self.CHARACTER_DOC["CASTING mod"] = self.CASTING
+        self.CHARACTER_DOC["SNEAKING mod"] = self.SPEED
+        self.CHARACTER_DOC["ATTACK mod"] = self.ATTACK
+
         for stat in cons.STATS:
             self.sheet_gui.findChild(QWidget, f"{stat} mod").setText(
                 str(self.CHARACTER_DOC["mods"][f"{stat} mod"])
@@ -183,6 +255,7 @@ class Character:
     def set_calculated_stats(self):
         strong = int(self.sheet_gui.findChild(QWidget, "STRONG").text())
         resolute = int(self.sheet_gui.findChild(QWidget, "RESOLUTE").text())
+        quick = int(self.sheet_gui.findChild(QWidget, "QUICK").text())
 
         maximum_mod = ModifyStat(
             self.CHARACTER_DOC["mods"]["MAXIMUM mod"]
@@ -210,7 +283,13 @@ class Character:
             str(corruption + permanent)
         )
 
+        movement = (quick+self.SPEED)*5
+        if movement < 20:
+            movement = 20
+        self.inventory_gui.movement_button.get_widget().setText(str(movement))
+
     def set_abilities(self):
+        print("Setting abilities")
         self.ability_layout = self.sheet_gui.ability_layout.inner_layout(1)
         func.clear_layout(self.ability_layout)
         priority = {
@@ -250,6 +329,10 @@ class Character:
             str(total_experience - earned_experience)
         )
 
+    def set_ability_adjustments(self):
+        print("Setting ability adjustments")
+        AbilityAdjust(self) 
+
     def clear_character(self):
         self.CHARACTER_DOC = None
 
@@ -285,6 +368,14 @@ class Character:
 
     def set_combat_log_gui(self, combat_log=None):
         self.combat_log = combat_log
+
+    def check_abilities(self,name):
+        if name in [item["Name"] for item in self.CHARACTER_DOC["abilities"]]:
+            self.ability_dict = [item for item in self.CHARACTER_DOC["abilities"] if item["Name"] == name][0]
+            print(f"Ability found: {self.ability_dict}")
+            return True
+        else:
+            return False
 
     # def set_combat_gui(self, combat_gui=None):
     #     self.combat_gui = combat_gui

@@ -5,6 +5,8 @@ from PySide2.QtCore import *
 from template.section import Section
 from template.widget import Widget
 
+import os
+import random
 import constants as cons
 import template.functions as func
 
@@ -136,7 +138,16 @@ class CombatEntry(QWidget):
         get_updater().call_latest(result_widget.setText, str(self.result))
         result_widget.setToolTip(f"{self.result_breakdown}")
 
-        func.set_icon(self.portrait.get_widget(), f"{self.character}.png", "")
+        if os.path.isfile(os.path.join(cons.ICONS,f"{self.character}.png")):
+            func.set_icon(
+                self.portrait.get_widget(), f"{self.character}.png", ""
+            )
+        else:
+            random_portrait = random.choice(["unknown"])
+            func.set_icon(
+                self.portrait.get_widget(), f"{random_portrait}.png", ""
+            )
+
         self.portrait.get_widget().setToolTip(f"{self.character}")
 
         style_c = f"background-color: {type_bg_color}; color: {cons.PRIMARY}; font-size: {cons.FONT_LARGE}; font-weight: bold; border: 1px solid {cons.BORDER}; border-radius: 6px;"

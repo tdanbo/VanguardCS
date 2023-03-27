@@ -115,12 +115,13 @@ class CharacterSheetGUI(QWidget):
         self.show_combat_log = Widget(
             widget_type=QToolButton(),
             parent_layout=self.corruption_layout.get_title()[2],
-            icon=("combat_log.png", cons.WSIZE, cons.FONT_COLOR),
+            icon=("show_hide_log.png", cons.WSIZE, cons.PRIMARY_DARKER),
             signal=self.open_combat_log,
             checkable=True,
             checked=False,
             class_group=self.widget_group,
-            stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; border: 1px solid {cons.BORDER};"
+            height=cons.WSIZE,
+            stylesheet=f"background-color: {cons.DARK}"
         )
 
         # Below is all the widgets used in the character sheet

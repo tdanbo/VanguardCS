@@ -49,7 +49,7 @@ class InventoryGUI(QWidget):
 
         self.portrait_layout = Section(
             outer_layout=QHBoxLayout(),
-            inner_layout=("VBox", 2),
+            inner_layout=("VBox", 3),
             parent_layout=self.master_layout,
             group=True,
             title="Test",
@@ -99,7 +99,7 @@ class InventoryGUI(QWidget):
             objectname="portrait",
             class_group=self.widget_group,
             height=58,
-            size_policy=(QSizePolicy.Expanding, QSizePolicy.Fixed),
+            width=100,
             stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; border: 1px solid {cons.BORDER};",
             # width=cons.WSIZE*6,
         )
@@ -109,10 +109,9 @@ class InventoryGUI(QWidget):
         self.character_name = Widget(
             widget_type=QComboBox(),
             parent_layout=self.portrait_layout.get_title()[2],
-            text=[""],
             objectname="name",
             class_group=self.widget_group,
-            signal=self.load_character,
+            signal=lambda: self.load_character(),
             height=cons.WSIZE,
             stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; border: 1px solid {cons.BORDER}; font-size: {cons.FONT_MID}; font-weight: bold; color: {cons.FONT_COLOR};",
         )
@@ -141,10 +140,32 @@ class InventoryGUI(QWidget):
 
         self.experience_section = Section(
             outer_layout=QHBoxLayout(),
-            inner_layout=("VBox", 2),
+            inner_layout=("VBox", 3),
             parent_layout=self.name_layout.inner_layout(2),
             class_group=self.section_group,
             spacing=3,
+        )
+
+        self.movement_button = Widget(
+                widget_type=QPushButton(),
+                parent_layout=self.experience_section.inner_layout(3),
+                # signal=self.modify_stat,
+                objectname="MOVEMENT",
+                class_group=self.widget_group,
+                stylesheet=self.top_button,
+                size_policy=(QSizePolicy.Expanding, QSizePolicy.Expanding),
+                hidden=True,
+        )
+
+        self.movement_mod_button = Widget(
+            widget_type=QPushButton(),
+            parent_layout=self.experience_section.inner_layout(3),
+            text="Ft.",
+            objectname=f"MOVEMENT mod",
+            class_group=self.widget_group,
+            stylesheet=self.bottom_button,
+            size_policy=(QSizePolicy.Expanding, QSizePolicy.Expanding),
+            hidden=True,
         )
 
         self.experience = Widget(
@@ -276,7 +297,7 @@ class InventoryGUI(QWidget):
             class_group=self.widget_group,
             stylesheet=f"background-color: {cons.PRIMARY_MEDIUM}; color: {cons.PRIMARY_LIGHTER}; font-size: {cons.FONT_MID}; font-weight: bold; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-top-right-radius: 6px;",
             size_policy=(QSizePolicy.Expanding, QSizePolicy.Expanding),
-            signal=lambda: self.adjust_modifier("add"),
+            signal=lambda: self.adjust_modifier("subtract"),
             enabled=False,
         )
 
@@ -288,9 +309,11 @@ class InventoryGUI(QWidget):
             size_policy=(QSizePolicy.Expanding, QSizePolicy.Expanding),
             objectname="MODIFIER button",
             stylesheet=f"background-color: {cons.PRIMARY_MEDIUM}; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;",
-            signal=lambda: self.adjust_modifier("add"),
+            signal=lambda: self.adjust_modifier("subtract"),
             enabled=False,
         )
+
+        self.update_character_dropdown()
 
         for widget in self.widget_group:
             widget.connect_to_parent()
@@ -304,7 +327,6 @@ class InventoryGUI(QWidget):
             f"border-style: outset; color: {cons.FONT_DARK}; background-color: {cons.DARK};border-style: outset;"
         )
         self.setLayout(self.master_layout)
-        self.update_character_dropdown()
         self.character.set_inventory_gui(self)
 
     def mousePressEvent(
@@ -313,10 +335,10 @@ class InventoryGUI(QWidget):
         if event.button() == Qt.RightButton:
             widget = self.childAt(event.pos())
             if widget.objectName() in ["MODIFIER button", "MODIFIER mod"]:
-                self.adjust_modifier("subtract")
+                self.adjust_modifier("add")
 
     def load_character(self):
-        self.current_character_name = self.sender().currentText()
+        self.current_character_name = self.character_name.get_widget().currentText()
         print(f"loading character: {self.current_character_name}")
         if self.current_character_name == "":
             self.character.clear_character()
@@ -332,7 +354,6 @@ class InventoryGUI(QWidget):
         self.db = cons.CLIENT["dnd"]
         self.collection = self.db["characters"]
         character_list = self.collection.distinct("character")
-        selected_char = self.character_name.get_widget().currentText()
         self.character_name.get_widget().clear()
         self.character_name.get_widget().addItems([""]+character_list)
         # if selected_char in character_list:

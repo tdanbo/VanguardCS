@@ -371,8 +371,8 @@ class AbilityItem(QWidget):
 
     def delete_ability(self):
         self.character.CHARACTER_DOC["abilities"].pop(self.slot)
-        self.character.save_document()
-        self.character.set_abilities()
+
+        self.character.set_all_stats()
 
     def gui_rank_state(self):
         if self.ability_dict["Novice"] == "":
@@ -425,8 +425,7 @@ class AbilityItem(QWidget):
         elif rank == "ability_master":
             self.ability_dict["Rank"] = "Master"
 
-        self.character.set_abilities()
-        self.character.save_document()
+        self.character.set_all_stats()
 
     def build_dice_section(self, string, layout):
 
@@ -460,8 +459,8 @@ class AbilityItem(QWidget):
     def select_ability(self):
         self.ability_dict["Rank"] = "Novice"
         self.character.CHARACTER_DOC["abilities"].append(self.ability_dict)
-        self.character.save_document()
-        self.character.set_abilities()
+
+        self.character.set_all_stats()
 
     def roll_dice(self):
         self.character_name = self.character.character_name

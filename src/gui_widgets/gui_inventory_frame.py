@@ -14,7 +14,7 @@ from gui_widgets.gui_add_sub import AddSub
 
 
 class InventoryItem(QWidget):
-    def __init__(self, character, count, item_dict, layout, equipment=""):
+    def __init__(self, character, count, item_dict, layout, carry_weight, equipment=""):
         super().__init__()
 
         self.character = character
@@ -23,6 +23,7 @@ class InventoryItem(QWidget):
         self.widget_group = []
         self.section_group = []
         self.count = count
+        self.carry_weight = carry_weight
 
         self.equipment = equipment
 
@@ -30,8 +31,12 @@ class InventoryItem(QWidget):
 
         if count % 2 == 0:
             self.bg_color = cons.PRIMARY
+            if count > self.carry_weight:
+                self.bg_color = "#ccb3a3"
         else:
             self.bg_color = cons.PRIMARY_DARKER
+            if count > self.carry_weight:
+                self.bg_color = "#b39c8f"
 
         self.item_section = Section(
             outer_layout=QHBoxLayout(),
@@ -105,8 +110,7 @@ class InventoryItem(QWidget):
                         item_dict["Equipped"]["2"] = False
 
                         self.character.CHARACTER_DOC["inventory"].append(item_dict)
-                        self.character.set_inventory()
-                        self.character.save_document()
+                        self.character.set_all_stats()
                         return
                     else:
                         pass
@@ -120,13 +124,11 @@ class InventoryItem(QWidget):
             item_dict["Equipped"]["2"] = False
 
             self.character.CHARACTER_DOC["inventory"].append(item_dict)
-            self.character.set_inventory()
-            self.character.save_document()
+            self.character.set_all_stats()
             return
 
         self.character.CHARACTER_DOC["inventory"].pop(item_slot)
-        self.character.set_inventory()
-        self.character.save_document()
+        self.character.set_all_stats()
 
     def misc_item(self):
         item = {"Quantity": 1, "Type": "Misc", "Quality": []}
@@ -411,11 +413,7 @@ class InventoryItem(QWidget):
 
             self.equip_button.setObjectName("AR_EQUIPPED")
 
-        self.set_impeding()
-        self.character.set_inventory()
-        self.character.set_equipment()
-        self.character.set_modifiers()
-        self.character.save_document()
+        self.character.set_all_stats()
 
     def unequip_item(self):
         if self.equip_button_type == "2H_EQUIPPED":
@@ -446,50 +444,4 @@ class InventoryItem(QWidget):
             self.character.CHARACTER_DOC["equipment"]["armor"] = {}
             self.equip_button.setObjectName("AR")
 
-        self.set_impeding()
-        self.character.set_inventory()
-        self.character.set_equipment()
-        self.character.set_modifiers()
-        self.character.save_document()
-
-    def set_impeding(self):
-        attack = 0
-        defense = 0
-        casting = 0
-        speed = 0
-        armor = self.character.CHARACTER_DOC["equipment"]["armor"]
-        if armor != {}:
-            impeding = [
-                quality for quality in armor["Quality"] if "Impeding" in quality
-            ][0]
-            value = ModifyStat(impeding).find_integer()
-            speed += value
-            defense += value
-            casting += value
-
-        mh = self.character.CHARACTER_DOC["equipment"]["main hand"]
-        if mh != {}:
-            if mh["Name"] in ["Shield", "Buckler"]:
-                defense += 1
-            elif mh["Name"] == "Steel Shield":
-                defense += 2
-            if "Precise" in mh["Quality"]:
-                attack += 1
-            if "Balanced" in mh["Quality"]:
-                defense += 1
-
-        oh = self.character.CHARACTER_DOC["equipment"]["off hand"]
-        if oh != {}:
-            if oh["Name"] in ["Shield", "Buckler"]:
-                defense += 1
-            elif oh["Name"] == "Steel Shield":
-                defense += 2
-            if "Precise" in oh["Quality"]:
-                attack += 1
-            if "Balanced" in oh["Quality"]:
-                defense += 1
-
-        self.character.CHARACTER_DOC["DEFENSE mod"] = defense
-        self.character.CHARACTER_DOC["CASTING mod"] = casting
-        self.character.CHARACTER_DOC["SNEAKING mod"] = speed
-        self.character.CHARACTER_DOC["ATTACK mod"] = attack
+        self.character.set_all_stats()
