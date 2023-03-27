@@ -10,6 +10,8 @@ from gui_widgets.gui_inventory_frame import InventoryItem
 from gui_widgets.gui_ability_frame import AbilityItem
 from gui_classes.class_modify_stat import ModifyStat
 
+import os
+import random
 
 class Character:
     def __init__(self):
@@ -29,12 +31,18 @@ class Character:
         self.query = {"character": self.character_name}
         self.CHARACTER_DOC = self.collection.find_one(self.query)
 
-        print(character_name)
+        print(f"{self.character_name}.png")
 
         # Set the character portrait
-        func.set_icon(
-            self.inventory_gui.portrait.get_widget(), f"{self.character_name}.png", ""
-        )
+        if os.path.isfile(os.path.join(cons.ICONS,f"{self.character_name}.png")):
+            func.set_icon(
+                self.inventory_gui.portrait.get_widget(), f"{self.character_name}.png", ""
+            )
+        else:
+            random_portrait = random.choice(["unknown"])
+            func.set_icon(
+                self.inventory_gui.portrait.get_widget(), f"{random_portrait}.png", ""
+            )
 
         # Set character inventory
         self.set_inventory()
@@ -156,9 +164,6 @@ class Character:
                 self.CHARACTER_DOC["mods"][f"{stat} mod"]
             )
 
-            print(stat)
-            print(stat_base)
-
     def set_modifiers(self):
         for stat in cons.STATS:
             self.sheet_gui.findChild(QWidget, f"{stat} mod").setText(
@@ -245,11 +250,41 @@ class Character:
             str(total_experience - earned_experience)
         )
 
+    def clear_character(self):
+        self.CHARACTER_DOC = None
+
+        func.set_icon(
+            self.inventory_gui.portrait.get_widget(), "", ""
+        )
+
+        func.clear_layout(self.sheet_gui.ability_layout.inner_layout(1))
+        func.clear_layout(self.inventory_gui.inventory_scroll.inner_layout(1))
+        func.clear_layout(self.inventory_gui.equipment_layout.inner_layout(1))
+
+        for stat in cons.STATS:
+            self.sheet_gui.findChild(QWidget, f"{stat}").setText("")
+            self.sheet_gui.findChild(QWidget, f"{stat} mod").setText("")
+
+        for stat in cons.SECONDARY_STATS:
+            self.sheet_gui.findChild(QWidget, f"{stat}").setText("")
+            self.sheet_gui.findChild(QWidget, f"{stat} mod").setText("")
+
+        for stat in ["DEFENSE", "CASTING", "SKILL", "SNEAKING", "ATTACK"]:
+            self.inventory_gui.findChild(QWidget, f"{stat} mod").setText("")
+
+        self.inventory_gui.modifier_mod.get_widget().setText("")
+
+        self.inventory_gui.experience.get_widget().setText("")
+        self.inventory_gui.unspent_experience.get_widget().setText("")
+
     def set_inventory_gui(self, inventory_gui=None):
         self.inventory_gui = inventory_gui
 
     def set_sheet_gui(self, sheet_gui=None):
         self.sheet_gui = sheet_gui
+
+    def set_combat_log_gui(self, combat_log=None):
+        self.combat_log = combat_log
 
     # def set_combat_gui(self, combat_gui=None):
     #     self.combat_gui = combat_gui

@@ -28,7 +28,7 @@ print(VERSION)
 
 CONNECT = f"mongodb+srv://{USER}:{PASSWORD}@cluster0.2oqhlud.mongodb.net/?retryWrites=true&w=majority"
 ICONS = os.path.join(ROOT, ".icons")
-
+SOUNDS = os.path.join(ROOT,"template",".sounds")
 
 WSIZE = 22
 ICON_COLOR = "#CCCCCC"

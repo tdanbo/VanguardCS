@@ -92,17 +92,11 @@ class InventoryItem(QWidget):
         item_string = self.sender().text()
         item_slot = int(self.sender().objectName())
 
-        print(item_string, item_slot)
-
         self.all_equipment = cons.EQUIPMENT
         if item_string != "":
             for category in self.all_equipment:
                 for item in self.all_equipment[category]:
                     if item_string.lower() == item.lower():
-                        print("item found")
-                        print(item)
-                        print(item_string.lower())
-                        print(item.lower())
                         item_dict = self.all_equipment[category][item]
                         item_dict["Name"] = item
                         item_dict["Category"] = category
@@ -355,19 +349,13 @@ class InventoryItem(QWidget):
         ).roll()
 
     def prepare_equip_item(self):
-        print("EQUIP")
         self.equip_button = self.sender()
         self.equip_button_type = self.equip_button.objectName()
 
-        print(self.equip_button)
-        print(self.equip_button_type)
-
         if "EQUIPPED" in self.equip_button_type:
             self.unequip_item()
-            print("UNEQUIP")
         else:
             self.equip_item()
-            print("EQUIP")
 
     def equip_item(self):
         if self.equip_button_type == "2H":

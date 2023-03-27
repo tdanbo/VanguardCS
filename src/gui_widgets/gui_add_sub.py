@@ -120,9 +120,6 @@ class AddSub(QWidget):
 
             self.character.CHARACTER_DOC["stats"][self.doc_item] = new_value
 
-        print(self.doc_item)
-        print(new_value)
-
         self.character.set_secondary_stats()
         self.character.set_calculated_stats()
         self.character.set_inventory()

@@ -10,7 +10,6 @@ class ModifyStat:
         self.string = string
 
     def find_integer(self):
-        print(self.string)
         split = self.string.split(" ")
         self.string = split[0]
         if len(split) == 1:

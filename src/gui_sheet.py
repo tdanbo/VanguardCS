@@ -112,6 +112,17 @@ class CharacterSheetGUI(QWidget):
 
         self.corruption_layout.get_title()[1].setAlignment(Qt.AlignCenter)
 
+        self.show_combat_log = Widget(
+            widget_type=QToolButton(),
+            parent_layout=self.corruption_layout.get_title()[2],
+            icon=("combat_log.png", cons.WSIZE, cons.FONT_COLOR),
+            signal=self.open_combat_log,
+            checkable=True,
+            checked=False,
+            class_group=self.widget_group,
+            stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; border: 1px solid {cons.BORDER};"
+        )
+
         # Below is all the widgets used in the character sheet
         for number, stat in enumerate(cons.STATS):
             self.stat_button = Widget(
@@ -321,6 +332,11 @@ class CharacterSheetGUI(QWidget):
         add_sub_gui = AddSub(self.character, number_widget, doc_item=objectname)
         add_sub_gui.show()
 
+    def open_combat_log(self):
+        if self.sender().isChecked():
+            self.character.combat_log.show()
+        else:
+            self.character.combat_log.hide()
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)

@@ -15,7 +15,7 @@ from gui_classes.class_modify_roll import ModifyRoll
 
 from gui_widgets.gui_new_char_frame import NewCharacter
 from gui_widgets.gui_add_sub import AddSub
-
+from gui_widgets.gui_del_char_frame import DeleteChar
 
 class InventoryGUI(QWidget):
     def __init__(self, character):
@@ -53,7 +53,7 @@ class InventoryGUI(QWidget):
             parent_layout=self.master_layout,
             group=True,
             title="Test",
-            icon=("plus.png", cons.WSIZE / 2, cons.FONT_COLOR),
+            icon=("dead.png", cons.WSIZE / 2, cons.PRIMARY_DARKER),
             class_group=self.section_group,
             spacing=3,
             height=100,
@@ -117,6 +117,28 @@ class InventoryGUI(QWidget):
             stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; border: 1px solid {cons.BORDER}; font-size: {cons.FONT_MID}; font-weight: bold; color: {cons.FONT_COLOR};",
         )
 
+        self.create_character = Widget(	
+            widget_type=QToolButton(),
+            parent_layout=self.portrait_layout.get_title()[2],
+            objectname="delete",
+            class_group=self.widget_group,
+            icon=("plus.png", cons.WSIZE / 2, cons.FONT_COLOR),
+            signal=self.open_new_character,
+            height=cons.WSIZE,
+            stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; border: 1px solid {cons.BORDER};",
+        )
+
+        self.update_character = Widget(	
+            widget_type=QToolButton(),
+            parent_layout=self.portrait_layout.get_title()[2],
+            objectname="update",
+            class_group=self.widget_group,
+            icon=("reload.png", cons.WSIZE / 2, cons.FONT_COLOR),
+            signal=self.update_character_dropdown,
+            height=cons.WSIZE,
+            stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; border: 1px solid {cons.BORDER};",
+        )
+
         self.experience_section = Section(
             outer_layout=QHBoxLayout(),
             inner_layout=("VBox", 2),
@@ -169,7 +191,7 @@ class InventoryGUI(QWidget):
         )
 
         portrait_title = self.portrait_layout.get_title()[0]
-        portrait_title.clicked.connect(self.open_new_character)
+        portrait_title.clicked.connect(self.delete_character)
 
         self.equipment_layout = Section(
             outer_layout=QHBoxLayout(),
@@ -295,20 +317,37 @@ class InventoryGUI(QWidget):
 
     def load_character(self):
         self.current_character_name = self.sender().currentText()
+        print(f"loading character: {self.current_character_name}")
+        if self.current_character_name == "":
+            self.character.clear_character()
+            return
         self.character.load_document(self.current_character_name)
-
-    def find_item(self):
-        print("WHAT")
 
     def open_new_character(self):
         self.new_character = NewCharacter(self, self.character)
         self.new_character.show()
 
     def update_character_dropdown(self):
+        print("updating character dropdown")
         self.db = cons.CLIENT["dnd"]
         self.collection = self.db["characters"]
         character_list = self.collection.distinct("character")
-        self.character_name.get_widget().addItems(character_list)
+        selected_char = self.character_name.get_widget().currentText()
+        self.character_name.get_widget().clear()
+        self.character_name.get_widget().addItems([""]+character_list)
+        # if selected_char in character_list:
+        #     self.character_name.get_widget().setCurrentText(selected_char)
+        # else:
+        #     self.character_name.get_widget().setCurrentText("")
+
+    def delete_character(self):
+
+        current_character = self.character_name.get_widget().currentText()
+        print(f"delete {current_character} from database")
+
+        #prompt the deletion
+        show_warning = DeleteChar(self, current_character)
+        warning = show_warning.show()
 
     def roll_dice(self):
         self.character = self.character_sheet.character_name
@@ -340,8 +379,6 @@ class InventoryGUI(QWidget):
         add_sub_gui.show()
 
     def change_active_modifier(self):
-        print("Change Active")
-        print(self.sender().objectName())
         ModifyRoll(self.character).change_active(self.sender())
 
     def adjust_modifier(self, adjust):

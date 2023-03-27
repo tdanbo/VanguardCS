@@ -8,7 +8,6 @@ from PySide2.QtCore import *
 
 from gui_classes.class_modify_roll import ModifyRoll
 
-
 class DiceRoll:
     def __init__(
         self,
@@ -23,8 +22,6 @@ class DiceRoll:
 
         self.character = character
         self.modifier_widget = self.character.inventory_gui.modifier_mod.get_widget()
-        print("roll")
-        print(self.character.active_modifier_name)
         self.roll_type = roll_type
         self.active_type = (
             self.character.active_modifier_name

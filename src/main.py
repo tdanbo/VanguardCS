@@ -36,6 +36,8 @@ class MainWindow(QWidget):
         self.main_layout.addWidget(self.character_sheet_gui)
         self.main_layout.addWidget(combat_log_gui)
 
+        combat_log_gui.setHidden(True)
+
         self.setLayout(self.main_layout)
         self.spacing = 0
         self.setStyleSheet(

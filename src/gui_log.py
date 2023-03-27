@@ -129,7 +129,6 @@ class CombatLogGUI(QWidget):
 
         self.combet_log_slots = []
         for count in range(1, 31):  # Make all static entries in the combatlog
-            print(count)
             log_gui_entry = CombatEntry(count)
             self.log_scroll.inner_layout(1).addWidget(log_gui_entry)
 
@@ -147,6 +146,7 @@ class CombatLogGUI(QWidget):
         for section in self.section_group:
             section.connect_to_parent()
 
+        self.character.set_combat_log_gui(self)
         self.setLayout(self.master_layout)
 
     def mousePressEvent(

@@ -8,8 +8,11 @@ from bson import json_util
 import json
 import threading
 
+import random
 import certifi
 import pymongo
+import os
+from playsound import playsound
 
 class CombatLog:
     def __init__(self, combat_log_gui):
@@ -21,10 +24,7 @@ class CombatLog:
         self.COMBAT_LOG = db["combatlog"]
         doc = self.COMBAT_LOG.find()
         doc_list = list(doc)
-        # json_doc = json.loads(json_util.dumps(doc))
-        # print(json_doc)
-        # return list(json_doc)
-        # print(list(doc))
+        print("Reading Combat Log")
         return doc_list
 
     def get_collection(self):
@@ -42,11 +42,23 @@ class CombatLog:
         while self.running:
             with self.COMBAT_LOG.watch() as change_stream:
                 for update_doc in change_stream:
-                    self.update_combat_log()
+                    print("Combat Log Updated")
+                    print(update_doc)
+                    if update_doc["operationType"] == "insert":
+                        self.play_roll_sound()
+                        self.update_combat_log()
+
 
     def update_combat_log(self):
+        print("Updating Combat Log")
         combat_log = self.get_log()
         for count, entry in enumerate(combat_log):
             self.combat_log_gui.combet_log_slots[count].update_widget(entry)
         scrollbar = self.combat_log_gui.log_scroll.get_scroll().verticalScrollBar()
         scrollbar.setValue(scrollbar.maximum())
+
+    def play_roll_sound(self):
+        sound = random.choice(os.listdir(cons.SOUNDS))
+        sound_path = rf"{os.path.join(cons.SOUNDS, sound)}"
+        playsound(sound_path)
+
