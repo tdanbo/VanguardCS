@@ -115,10 +115,10 @@ class InventoryItem(QWidget):
                     else:
                         pass
 
-            # Create misc item!
-            item_dict = self.misc_item()
+            # Create General Good item!
+            item_dict = self.general_item()
             item_dict["Name"] = item_string.title()
-            item_dict["Category"] = "Misc"
+            item_dict["Category"] = "General Good"
             item_dict["Equipped"] = {}
             item_dict["Equipped"]["1"] = False
             item_dict["Equipped"]["2"] = False
@@ -130,8 +130,8 @@ class InventoryItem(QWidget):
         self.character.CHARACTER_DOC["inventory"].pop(item_slot)
         self.character.set_all_stats()
 
-    def misc_item(self):
-        item = {"Quantity": 1, "Type": "Misc", "Quality": []}
+    def general_item(self):
+        item = {"Quantity": 1, "Type": "General Good", "Quality": []}
         return item
 
     def make_item(self, item_dict):
@@ -146,7 +146,7 @@ class InventoryItem(QWidget):
         if self.category.upper() in cons.ACTIVE_COLOR:
             self.type_bg_color = cons.ACTIVE_COLOR[self.category.upper()]
         else:
-            self.type_bg_color = cons.ACTIVE_COLOR["MISC"]
+            self.type_bg_color = cons.ACTIVE_COLOR["GENERAL_GOOD"]
 
         self.item.widget.setText(self.name)
 

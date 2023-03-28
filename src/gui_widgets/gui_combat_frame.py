@@ -120,7 +120,7 @@ class CombatEntry(QWidget):
 
         color_type = cons.ACTIVE_COLOR
         if self.active.upper() not in color_type:
-            type_bg_color = color_type["MISC"]
+            type_bg_color = color_type["GENERAL_GOOD"]
         else:
             type_bg_color = color_type[self.active.upper()]
 

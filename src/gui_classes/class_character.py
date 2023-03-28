@@ -86,16 +86,18 @@ class Character:
         self.inventory_layout = self.inventory_gui.inventory_scroll.inner_layout(1)
         func.clear_layout(self.inventory_layout)
         priority = {
-            "quality_weapon": 0,
-            "ordinary_weapon": 1,
-            "quality_ranged": 2,
-            "ordinary_ranged": 3,
-            "quality_armor": 4,
-            "ordinary_armor": 5,
-            "ammunition": 6,
-            "elixirs": 7,
-            "treasure": 8,
-            "misc": 9,
+            "lesser_artifact": 0,
+            "quality_weapon": 1,
+            "ordinary_weapon": 2,
+            "quality_ranged": 3,
+            "ordinary_ranged": 4,
+            "ammunition": 5,
+            "quality_armor": 6,
+            "ordinary_armor": 7,
+            "elixirs": 8,
+            "provision":9,
+            "treasure": 10,
+            "General Good": 11,
         }
         sorted_list = sorted(
             self.CHARACTER_DOC["inventory"],
@@ -108,7 +110,12 @@ class Character:
         else:
             weight_multiplier = 1
 
-        self.carry_weight = math.floor((int(self.sheet_gui.findChild(QWidget, "STRONG").text())*weight_multiplier))-1
+        if int(self.sheet_gui.findChild(QWidget, "STRONG").text()) < 10:
+            carry = 10
+        else:
+            carry = int(self.sheet_gui.findChild(QWidget, "STRONG").text())
+
+        self.carry_weight = math.floor((carry*weight_multiplier))-1
         self.carry_limit = self.carry_weight*2
 
         for count in range(self.carry_limit, -1, -1):

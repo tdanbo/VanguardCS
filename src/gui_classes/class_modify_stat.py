@@ -34,10 +34,7 @@ class ModifyStat:
         widget.setText(new_value)
 
         character.CHARACTER_DOC["mods"][stat_mod] = new_value
-        character.set_stats()
-        character.set_secondary_stats()
-        character.set_calculated_stats()
-        character.save_document()
+        character.set_all_stats()
 
     def subtract_one(self, character, widget):
         stat_mod = widget.objectName()
@@ -54,7 +51,4 @@ class ModifyStat:
         widget.setText(new_value)
 
         character.CHARACTER_DOC["mods"][stat_mod] = new_value
-        character.set_stats()
-        character.set_secondary_stats()
-        character.set_calculated_stats()
-        character.save_document()
+        character.set_all_stats()
