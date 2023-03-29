@@ -102,7 +102,7 @@ class AddNewEquipment(QWidget):
         )
         self.setMinimumHeight(cons.WSIZE * 30)
         self.setMinimumWidth(cons.WSIZE * 20)
-        self.setWindowTitle("Select Ability")
+        self.setWindowTitle("Select Equipment")
 
     def add_equipment(self):
         for button in self.all_equipment:
