@@ -131,10 +131,10 @@ class CharacterSheetGUI(QWidget):
             parent_layout=self.corruption_roll_layout.inner_layout(1),
             #icon=("reload.png", cons.WSIZE, cons.DARK),
             width=cons.WSIZE*2.6,
-            height=cons.WSIZE*2.6,
             stylesheet=f"background-color: {cons.PRIMARY_LIGHTER};border-radius: 6px; border: 1px solid {cons.BORDER}; font-size: 20px;",
             class_group=self.widget_group,
-            signal=self.change_corruption_level
+            signal=self.change_corruption_level,
+            size_policy=(QSizePolicy.Fixed, QSizePolicy.Expanding),
         )
 
         self.reset_corruption = Widget(

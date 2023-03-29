@@ -278,7 +278,7 @@ class Character(QWidget):
     def set_corruption_level(self):
         self.corruption_level = self.CHARACTER_DOC["CORRUPTION LEVEL"]
         func.set_icon(self.sheet_gui.corruption_level.get_widget(), f"{self.corruption_level}.png",cons.DARK,"")
-        self.sheet_gui.corruption_level.get_widget().setObjectName(f"{self.corruption_level}")
+        self.sheet_gui.corruption_level.get_widget().setObjectName(str(self.corruption_level))
 
     def set_corruption(self):
         print("set corruption")
@@ -297,6 +297,7 @@ class Character(QWidget):
             self.corruption_group.append(self.button)
 
         self.set_corruption_style()
+        self.save_document()
 
     def add_corruption(self, value):
         current_corruption = self.CHARACTER_DOC["stats"]["CORRUPTION"]
@@ -309,8 +310,15 @@ class Character(QWidget):
                 current_permanent += 1
 
             if current_permanent == self.corruption_threshold:
-                corruption_level = str(int(self.sheet_gui.corruption_level.get_widget().objectName())+1)
-                self.sheet_gui.corruption_level.get_widget().setObjectName(corruption_level)
+
+                corruption_level = int(self.sheet_gui.corruption_level.get_widget().objectName())+1
+                if corruption_level > 3:
+                    corruption_level = 3
+                
+                print("corruption level")
+                print(corruption_level)
+
+                self.sheet_gui.corruption_level.get_widget().setObjectName(str(corruption_level))
                 func.set_icon(self.sheet_gui.corruption_level.get_widget(), f"{corruption_level}.png",cons.DARK,"")
                 self.CHARACTER_DOC["CORRUPTION LEVEL"] = corruption_level
                 current_corruption = 0
@@ -456,12 +464,12 @@ class Character(QWidget):
         self.inventory_gui.experience.get_widget().setText("")
         self.inventory_gui.unspent_experience.get_widget().setText("")
 
-        for button in self.corruption_group:
-            button.setObjectName("empty")
+        for widget in self.corruption_group:
+            widget.setStyleSheet(f"background-color: {cons.PRIMARY_LIGHTER}; border: 1px solid {cons.BORDER}; border-radius: 6px;")
+            func.set_icon(widget, "", "", 20)
+            widget.setObjectName("empty")
 
         func.set_icon(self.sheet_gui.corruption_level.get_widget(), "", "")
-
-        self.set_corruption_style()
 
     def set_inventory_gui(self, inventory_gui=None):
         self.inventory_gui = inventory_gui
