@@ -124,9 +124,6 @@ class Character:
             self.DEFENSE += overweight
             self.SPEED += overweight
 
-        scrollbar = self.inventory_gui.inventory_scroll.get_scroll().verticalScrollBar()
-        scrollbar.setValue(scrollbar.maximum())
-
     def set_equipment(self):
         print("Setting equipment")
         self.equipment_layout = self.inventory_gui.equipment_layout.inner_layout(1)
