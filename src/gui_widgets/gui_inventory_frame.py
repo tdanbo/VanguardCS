@@ -31,10 +31,14 @@ class InventoryItem(QWidget):
 
         if count % 2 == 0:
             self.bg_color = cons.PRIMARY
+            color = QColor(cons.PRIMARY)
+            self.bg_darker_color = color.darker(110)
             if count > self.carry_weight:
                 self.bg_color = "#ccb3a3"
         else:
             self.bg_color = cons.PRIMARY_DARKER
+            color = QColor(cons.PRIMARY_DARKER)
+            self.bg_darker_color = color.darker(110)
             if count > self.carry_weight:
                 self.bg_color = "#b39c8f"
 
@@ -127,7 +131,8 @@ class InventoryItem(QWidget):
             self.character.set_all_stats()
             return
 
-        self.character.CHARACTER_DOC["inventory"].pop(item_slot)
+    def delete_item(self):
+        self.character.CHARACTER_DOC["inventory"].pop(self.count)
         self.character.set_all_stats()
 
     def general_item(self):
@@ -149,6 +154,7 @@ class InventoryItem(QWidget):
             self.type_bg_color = cons.ACTIVE_COLOR["GENERAL_GOOD"]
 
         self.item.widget.setText(self.name)
+        self.item.widget.setDisabled(True)
 
         if "Equip" in item_dict:
             equip = self.item_dict["Equip"]
@@ -227,9 +233,7 @@ class InventoryItem(QWidget):
                 if quality == "Effect":
                     tooltip = rf"<b>{quality}</b>: {self.item_dict['Description']}"
                 else:
-                    tooltip = (
-                        f"<b>{quality}</b>: {str(cons.QUALITIES[quality]['Description'])}"
-                    )
+                    tooltip = f"<b>{quality}</b>: {str(cons.QUALITIES[quality]['Description'])}"
             except:
                 tooltip = f"<b>{quality}"
 
@@ -264,16 +268,16 @@ class InventoryItem(QWidget):
         )
 
         self.dice_button_style = (
-                f"QToolButton {{padding-left: 5px; padding-right: 5px; background-color: {cons.PRIMARY_LIGHTER}; color: {self.type_bg_color}; font-size: {cons.FONT_SMALL}; font-weight: bold; border: 1px solid {cons.BORDER}; border-radius: 6px;}}"
-                f"QToolButton:hover {{background-color: {cons.PRIMARY_HOVER};}}"
-                f"QToolButton:pressed {{background-color: {cons.PRIMARY_LIGHTER};}}"
-            )
+            f"QToolButton {{padding-left: 5px; padding-right: 5px; background-color: {cons.PRIMARY_LIGHTER}; color: {self.type_bg_color}; font-size: {cons.FONT_SMALL}; font-weight: bold; border: 1px solid {cons.BORDER}; border-radius: 6px;}}"
+            f"QToolButton:hover {{background-color: {cons.PRIMARY_HOVER};}}"
+            f"QToolButton:pressed {{background-color: {cons.PRIMARY_LIGHTER};}}"
+        )
 
         self.quantity_dice_button_style = (
-                f"QToolButton {{padding-left: 5px; padding-right: 5px; background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_DARK}; font-size: 12px; font-weight: bold; border: 1px solid {cons.BORDER}; border-radius: 6px;}}"
-                f"QToolButton:hover {{background-color: {cons.PRIMARY_HOVER};}}"
-                f"QToolButton:pressed {{background-color: {cons.PRIMARY_LIGHTER};}}"
-            )
+            f"QToolButton {{padding-left: 5px; padding-right: 5px; background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_DARK}; font-size: 12px; font-weight: bold; border: 1px solid {cons.BORDER}; border-radius: 6px;}}"
+            f"QToolButton:hover {{background-color: {cons.PRIMARY_HOVER};}}"
+            f"QToolButton:pressed {{background-color: {cons.PRIMARY_LIGHTER};}}"
+        )
 
         if "Roll" in self.item_dict:
             dice_type = self.item_dict["Roll"][0]
@@ -288,7 +292,7 @@ class InventoryItem(QWidget):
                 height=cons.WSIZE,
                 signal=self.roll_dice,
                 property=("roll", dice_type),
-                stylesheet=self.dice_button_style
+                stylesheet=self.dice_button_style,
             )
 
         elif "Quantity" in self.item_dict:
@@ -302,8 +306,22 @@ class InventoryItem(QWidget):
                 class_group=self.widget_group,
                 height=cons.WSIZE,
                 signal=self.add_sub,
-                stylesheet=self.quantity_dice_button_style
+                stylesheet=self.quantity_dice_button_style,
             )
+
+        if self.equipment == "":
+            self.delete = Widget(
+                widget_type=QToolButton(),
+                parent_layout=self.roll_section.inner_layout(2),
+                objectname="delete",
+                class_group=self.widget_group,
+                height=cons.WSIZE,
+                signal=self.delete_item,
+                icon=("delete.png", cons.WSIZE / 2, self.bg_darker_color),
+                # stylesheet=f"QToolButton:hover {{background-color: #ff0000}};",
+            )
+
+        self.roll_section.inner_layout(2).setAlignment(Qt.AlignRight)
 
         self.type_label = Widget(
             widget_type=QLabel(),
