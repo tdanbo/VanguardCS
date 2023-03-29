@@ -187,8 +187,7 @@ class NewCharacter(QWidget):
             strong = int(new_character["stats"]["STRONG"])
             toughness = 10 if strong < 10 else strong
 
-
-
+            new_character["CORRUPTION LEVEL"] = 1
             new_character["stats"]["TOUGHNESS"] = toughness
             new_character["stats"]["CORRUPTION"] = 0
             new_character["stats"]["PERMANENT"] = 0

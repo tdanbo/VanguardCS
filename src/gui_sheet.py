@@ -12,7 +12,8 @@ from gui_classes.class_modify_stat import ModifyStat
 from gui_widgets.gui_add_sub import AddSub
 
 import sys
-
+import time
+import template.functions as func
 
 class CharacterSheetGUI(QWidget):
     def __init__(self, character):
@@ -106,6 +107,56 @@ class CharacterSheetGUI(QWidget):
             title="CORRUPTION",
             spacing=3,
             class_group=self.section_group,
+        )
+
+        self.corruption_token_layout = Section(
+            outer_layout=QHBoxLayout(),
+            inner_layout=("HBox", 1),
+            parent_layout=self.corruption_layout.inner_layout(1),
+            spacing=3,
+            class_group=self.section_group,
+        ) 
+
+        self.corruption_roll_layout = Section(
+            outer_layout=QHBoxLayout(),
+            inner_layout=("VBox", 2),
+            parent_layout=self.corruption_layout.inner_layout(1),
+            spacing=3,
+            class_group=self.section_group,
+            content_margin=(0, 0, 0, 0),
+        )
+
+        self.corruption_level = Widget(
+            widget_type=QToolButton(),
+            parent_layout=self.corruption_roll_layout.inner_layout(1),
+            #icon=("reload.png", cons.WSIZE, cons.DARK),
+            width=cons.WSIZE*2.6,
+            height=cons.WSIZE*2.6,
+            stylesheet=f"background-color: {cons.PRIMARY_LIGHTER};border-radius: 6px; border: 1px solid {cons.BORDER}; font-size: 20px;",
+            class_group=self.widget_group,
+            signal=self.change_corruption_level
+        )
+
+        self.reset_corruption = Widget(
+            widget_type=QToolButton(),
+            parent_layout=self.corruption_roll_layout.inner_layout(2),
+            signal=self.character.reset_corruption,
+            icon=("reload.png", cons.WSIZE, cons.DARK),
+            width=cons.WSIZE*1.3,
+            height=cons.WSIZE*1.3,
+            stylesheet=f"background-color: {cons.PRIMARY_LIGHTER};border-radius: 6px; border: 1px solid {cons.BORDER};",
+            class_group=self.widget_group,
+        )
+
+        self.make_corruption = Widget(
+            widget_type=QToolButton(),
+            parent_layout=self.corruption_roll_layout.inner_layout(2),
+            signal=self.roll_corruption,
+            icon=("dead.png", cons.WSIZE, cons.DARK),
+            width=cons.WSIZE*1.3,
+            height=cons.WSIZE*1.3,
+            stylesheet=f"background-color: {cons.PRIMARY_LIGHTER};border-radius: 6px; border: 1px solid {cons.BORDER};",
+            class_group=self.widget_group,
         )
 
         self.corruption_layout.get_title()[1].setAlignment(Qt.AlignCenter)
@@ -207,68 +258,6 @@ class CharacterSheetGUI(QWidget):
             stylesheet=self.bottom_button,
         )
 
-        # self.corruption_current = Widget(
-        #     widget_type=QPushButton(),
-        #     parent_layout=self.corruption_layout.inner_layout(1),
-        #     objectname="CORRUPTION",
-        #     class_group=self.widget_group,
-        #     size_policy=(QSizePolicy.Expanding, QSizePolicy.Expanding),
-        #     signal=self.modify_stat,
-        #     stylesheet=self.top_button
-        # )
-
-        # self.corruption_mod = Widget(
-        #     widget_type=QPushButton(),
-        #     parent_layout=self.corruption_layout.inner_layout(1),
-        #     class_group=self.widget_group,
-        #     text="CORRUPTION",
-        #     objectname="CORRUPTION mod",
-        #     size_policy=(QSizePolicy.Expanding, QSizePolicy.Expanding),
-        #     signal=self.add_sub,
-        #     stylesheet=self.bottom_button,
-        # )
-
-        # self.corruption_permanent = Widget(
-        #     widget_type=QPushButton(),
-        #     parent_layout=self.corruption_layout.inner_layout(2),
-        #     objectname="PERMANENT",
-        #     class_group=self.widget_group,
-        #     size_policy=(QSizePolicy.Expanding, QSizePolicy.Expanding),
-        #     signal=self.modify_stat,
-        #     stylesheet=self.top_button,
-        # )
-
-        # self.corruption_permanent_mod = Widget(
-        #     widget_type=QPushButton(),
-        #     parent_layout=self.corruption_layout.inner_layout(2),
-        #     class_group=self.widget_group,
-        #     text="PERMANENT",
-        #     objectname="PERMANENT mod",
-        #     size_policy=(QSizePolicy.Expanding, QSizePolicy.Expanding),
-        #     signal=self.add_sub,
-        #     stylesheet=self.bottom_button,
-        # )
-
-        # self.corruption_threshold = Widget(
-        #     widget_type=QPushButton(),
-        #     parent_layout=self.corruption_layout.inner_layout(3),
-        #     objectname="THRESHOLD",
-        #     class_group=self.widget_group,
-        #     size_policy=(QSizePolicy.Expanding, QSizePolicy.Expanding),
-        #     signal=self.modify_stat,
-        #     stylesheet=self.top_button,
-        # )
-
-        # self.corruption_threshold_mod = Widget(
-        #     widget_type=QPushButton(),
-        #     parent_layout=self.corruption_layout.inner_layout(3),
-        #     class_group=self.widget_group,
-        #     text="THRESHOLD",
-        #     objectname="THRESHOLD mod",
-        #     size_policy=(QSizePolicy.Expanding, QSizePolicy.Expanding),
-        #     stylesheet=self.bottom_button,
-        # )
-
         for widget in self.widget_group:
             widget.connect_to_parent()
             widget.set_signal()
@@ -278,6 +267,20 @@ class CharacterSheetGUI(QWidget):
 
         self.setLayout(self.master_layout)
         self.character.set_sheet_gui(self)
+
+    def change_corruption_level(self):
+        level = self.sender().objectName()
+
+        if level == "1":
+            self.character.CHARACTER_DOC["CORRUPTION LEVEL"] = "2"
+
+        if level == "2":
+            self.character.CHARACTER_DOC["CORRUPTION LEVEL"] = "3"
+
+        if level == "3":
+            self.character.CHARACTER_DOC["CORRUPTION LEVEL"] = "1"
+
+        self.character.set_corruption()
 
     def mousePressEvent(
         self, event
@@ -300,6 +303,21 @@ class CharacterSheetGUI(QWidget):
         button_widget = self.findChild(QPushButton, number_widget + " mod")
         string = button_widget.text()
         ModifyStat(string).subtract_one(self.character, button_widget)
+
+    def roll_corruption(self):
+        self.character_name = self.character.character_name
+        self.character.active_modifier_name = "Corruption"
+        dice_roll = DiceRoll(
+            self.sender(),
+            self.character.character_name,
+            "1d4",
+            "1d4",
+            check=0,
+            character=self.character,
+        ).roll()
+
+        time.sleep(1)
+        self.character.add_corruption(dice_roll)
 
     def roll_dice(self):
         self.character_name = self.character.character_name

@@ -113,6 +113,7 @@ class DiceRoll:
         self.character.active_modifier_name = ""
         ModifyRoll(self.character).clear_style()
         self.character.set_stats()
+        return self.result
 
     def subtract_ammo(self):
         has_ammo = False
