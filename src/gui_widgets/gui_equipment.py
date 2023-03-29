@@ -30,7 +30,10 @@ class AddNewEquipment(QWidget):
             content_margin=(0, 0, 0, 0),
         )
 
-        for category in self.all_equipment:
+        sorted_keys = sorted(self.all_equipment, key=lambda x: cons.PRIORITY[x])
+        sorted_item = {key: self.all_equipment[key] for key in sorted_keys}
+
+        for category in sorted_item:
             self.ability_widget = Widget(
                 widget_type=QToolButton(),
                 parent_layout=self.ability_section.inner_layout(1),
@@ -123,14 +126,14 @@ class AddNewEquipment(QWidget):
                             strings = [
                                 self.all_equipment[category][item]["Type"],
                                 self.all_equipment[category][item]["Cost"],
+                                self.all_equipment[category][item]["Name"],
+                                self.all_equipment[category][item]["Category"],
                             ]
 
                             if any(
                                 search_string in string.lower() for string in strings
                             ):
                                 self.inventory_dict = self.all_equipment[category][item]
-                                self.inventory_dict["Category"] = self.category
-                                self.inventory_dict["Name"] = item
                                 self.add_item()
 
             self.search_bar.get_widget().clearFocus()
@@ -141,8 +144,6 @@ class AddNewEquipment(QWidget):
                 if item != "_id":
                     if self.search_bar.get_widget().text() == "":
                         self.inventory_dict = self.all_equipment[self.category][item]
-                        self.inventory_dict["Category"] = self.category
-                        self.inventory_dict["Name"] = item
                         self.add_item()
                     else:
                         print("Searching")

@@ -70,7 +70,7 @@ BRIGHT_RED = "#923333"
 ACTIVE_COLOR = {
     "ATTACK": RED,
     "DAMAGE": RED,
-    "ABILITY": RED, 
+    "ABILITY": RED,
     "DEFENSE": BLUE,
     "ARMOR": BLUE,
     "CASTING": PURPLE,
@@ -79,7 +79,7 @@ ACTIVE_COLOR = {
     "ELIXIRS": PURPLE,
     "SNEAKING": GREEN,
     "AMMUNITION": RED,
-    "MONSTEROUS TRAIT":GREEN,
+    "MONSTEROUS TRAIT": GREEN,
     "TEST": YELLOW,
     "SKILL": YELLOW,
     "PROVISION": GREEN,
@@ -91,7 +91,22 @@ ACTIVE_COLOR = {
     "QUALITY_RANGED": RED,
     "QUALITY_ARMOR": BLUE,
     "GENERAL_GOOD": YELLOW,
-    "LESSER_ARTIFACT": BRIGHT_RED
+    "LESSER_ARTIFACT": BRIGHT_RED,
+}
+
+PRIORITY = {
+    "lesser_artifact": 0,
+    "quality_weapon": 1,
+    "ordinary_weapon": 2,
+    "quality_ranged": 3,
+    "ordinary_ranged": 4,
+    "ammunition": 5,
+    "quality_armor": 6,
+    "ordinary_armor": 7,
+    "elixirs": 8,
+    "provision": 9,
+    "treasure": 10,
+    "General Good": 11,
 }
 
 PRIMARY_HOVER = "#fffdf7"

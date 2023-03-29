@@ -14,6 +14,7 @@ from gui_classes.class_ability_adjust import AbilityAdjust
 import os
 import random
 
+
 class Character:
     def __init__(self):
         self.active_modifier_name = ""
@@ -32,9 +33,11 @@ class Character:
         self.CHARACTER_DOC = self.collection.find_one(self.query)
 
         # Set the character portrait
-        if os.path.isfile(os.path.join(cons.ICONS,f"{self.character_name}.png")):
+        if os.path.isfile(os.path.join(cons.ICONS, f"{self.character_name}.png")):
             func.set_icon(
-                self.inventory_gui.portrait.get_widget(), f"{self.character_name}.png", ""
+                self.inventory_gui.portrait.get_widget(),
+                f"{self.character_name}.png",
+                "",
             )
         else:
             random_portrait = random.choice(["unknown"])
@@ -67,7 +70,7 @@ class Character:
         self.set_calculated_stats()
         # Set character xp
         self.set_xp()
-        
+
         # Save document
         self.save_document()
 
@@ -85,24 +88,12 @@ class Character:
         print("Setting inventory")
         self.inventory_layout = self.inventory_gui.inventory_scroll.inner_layout(1)
         func.clear_layout(self.inventory_layout)
-        priority = {
-            "lesser_artifact": 0,
-            "quality_weapon": 1,
-            "ordinary_weapon": 2,
-            "quality_ranged": 3,
-            "ordinary_ranged": 4,
-            "ammunition": 5,
-            "quality_armor": 6,
-            "ordinary_armor": 7,
-            "elixirs": 8,
-            "provision":9,
-            "treasure": 10,
-            "General Good": 11,
-        }
+
         sorted_list = sorted(
             self.CHARACTER_DOC["inventory"],
-            key=lambda x: priority.get(x.get("Category", ""), len(priority)),
+            key=lambda x: cons.PRIORITY.get(x.get("Category", ""), len(cons.PRIORITY)),
         )
+
         self.CHARACTER_DOC["inventory"] = sorted_list
 
         if self.check_abilities("Pack-mule"):
@@ -115,18 +106,20 @@ class Character:
         else:
             carry = int(self.sheet_gui.findChild(QWidget, "STRONG").text())
 
-        self.carry_weight = math.floor((carry*weight_multiplier))-1
-        self.carry_limit = self.carry_weight*2
+        self.carry_weight = math.floor((carry * weight_multiplier)) - 1
+        self.carry_limit = self.carry_weight * 2
 
         for count in range(self.carry_limit, -1, -1):
             try:
                 item_dict = self.CHARACTER_DOC["inventory"][count]
             except:
                 item_dict = {}
-            item_widget = InventoryItem(self, count, item_dict, self.inventory_layout, self.carry_weight)
+            item_widget = InventoryItem(
+                self, count, item_dict, self.inventory_layout, self.carry_weight
+            )
 
         current_weight = len(self.CHARACTER_DOC["inventory"])
-        overweight = (self.carry_weight-current_weight)+1
+        overweight = (self.carry_weight - current_weight) + 1
         if overweight < 0:
             self.DEFENSE += overweight
             self.SPEED += overweight
@@ -279,7 +272,7 @@ class Character:
             str(corruption + permanent)
         )
 
-        movement = (quick+self.SPEED)*5
+        movement = (quick + self.SPEED) * 5
         if movement < 20:
             movement = 20
         self.inventory_gui.movement_button.get_widget().setText(str(movement))
@@ -327,14 +320,12 @@ class Character:
 
     def set_ability_adjustments(self):
         print("Setting ability adjustments")
-        AbilityAdjust(self) 
+        AbilityAdjust(self)
 
     def clear_character(self):
         self.CHARACTER_DOC = None
 
-        func.set_icon(
-            self.inventory_gui.portrait.get_widget(), "", ""
-        )
+        func.set_icon(self.inventory_gui.portrait.get_widget(), "", "")
 
         func.clear_layout(self.sheet_gui.ability_layout.inner_layout(1))
         func.clear_layout(self.inventory_gui.inventory_scroll.inner_layout(1))
@@ -365,9 +356,11 @@ class Character:
     def set_combat_log_gui(self, combat_log=None):
         self.combat_log = combat_log
 
-    def check_abilities(self,name):
+    def check_abilities(self, name):
         if name in [item["Name"] for item in self.CHARACTER_DOC["abilities"]]:
-            self.ability_dict = [item for item in self.CHARACTER_DOC["abilities"] if item["Name"] == name][0]
+            self.ability_dict = [
+                item for item in self.CHARACTER_DOC["abilities"] if item["Name"] == name
+            ][0]
             return True
         else:
             return False

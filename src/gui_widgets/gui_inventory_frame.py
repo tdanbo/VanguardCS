@@ -18,8 +18,6 @@ class InventoryItem(QWidget):
     def __init__(self, character, count, item_dict, layout, carry_weight, equipment=""):
         super().__init__()
 
-        print(item_dict)
-
         self.character = character
 
         self.master_layout = QVBoxLayout()
@@ -325,6 +323,7 @@ class InventoryItem(QWidget):
         self.roll_section.inner_layout(2).setAlignment(Qt.AlignRight)
 
         if self.equipment == "codex":
+            print("CODEX")
             self.cost_label = Widget(
                 widget_type=QLabel(),
                 parent_layout=self.roll_section.inner_layout(2),
@@ -335,17 +334,29 @@ class InventoryItem(QWidget):
                 stylesheet=f"color: {self.type_bg_color}; font-size: {cons.FONT_SMALL};",
             )
 
-        self.type_label = Widget(
-            widget_type=QToolButton(),
-            parent_layout=self.item_section.inner_layout(1),
-            objectname="item",
-            class_group=self.widget_group,
-            width=10,
-            stylesheet=f"background-color: {self.type_bg_color};padding-right: 1px",
-            signal=self.delete_item,
-            icon=("delete.png", cons.WSIZE / 2, self.dark_type_bg_color),
-            size_policy=(QSizePolicy.Fixed, QSizePolicy.Expanding),
-        )
+            self.type_label = Widget(
+                widget_type=QToolButton(),
+                parent_layout=self.item_section.inner_layout(1),
+                objectname="item",
+                class_group=self.widget_group,
+                width=10,
+                stylesheet=f"background-color: {self.type_bg_color};padding-right: 1px",
+                signal=self.select_item,
+                icon=("plus.png", cons.WSIZE / 2, self.dark_type_bg_color),
+                size_policy=(QSizePolicy.Fixed, QSizePolicy.Expanding),
+            )
+        else:
+            self.type_label = Widget(
+                widget_type=QToolButton(),
+                parent_layout=self.item_section.inner_layout(1),
+                objectname="item",
+                class_group=self.widget_group,
+                width=10,
+                stylesheet=f"background-color: {self.type_bg_color};padding-right: 1px",
+                signal=self.delete_item,
+                icon=("delete.png", cons.WSIZE / 2, self.dark_type_bg_color),
+                size_policy=(QSizePolicy.Fixed, QSizePolicy.Expanding),
+            )
 
         self.roll_section.inner_layout(1).setAlignment(Qt.AlignRight)
 
@@ -353,9 +364,14 @@ class InventoryItem(QWidget):
         self.item_section.inner_layout(5).setAlignment(Qt.AlignTop)
         self.item_label.get_widget().setAlignment(Qt.AlignTop)
 
-        if self.equipment:
+        if self.equipment not in ["", "codex"]:
             self.type_label.get_widget().setDisabled(True)
             func.set_icon(self.type_label.get_widget(), "", "", "")
+
+    def select_item(self):
+        print(self.select_item)
+        self.character.CHARACTER_DOC["inventory"].append(self.item_dict)
+        self.character.set_all_stats()
 
     def add_sub(self):
         add_sub_gui = AddSub(

@@ -16,26 +16,26 @@ from gui_classes.class_modify_roll import ModifyRoll
 from gui_widgets.gui_new_char_frame import NewCharacter
 from gui_widgets.gui_add_sub import AddSub
 from gui_widgets.gui_del_char_frame import DeleteChar
+from gui_widgets.gui_equipment import AddNewEquipment
+
 
 class InventoryGUI(QWidget):
     def __init__(self, character):
         super().__init__()
 
-        self.top_button=(
-                f"QPushButton {{background-color: {cons.PRIMARY_MEDIUM}; color: {cons.FONT_COLOR}; font-size: {cons.FONT_MID}; font-weight: bold; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-top-right-radius: 6px;}}"
-            )
-        
-        self.bottom_button=(
-                f"QPushButton {{background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_DARK}; font-size: {cons.FONT_SMALL}; font-weight: bold; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;}}"
-                f"QPushButton:hover {{background-color: {cons.PRIMARY_HOVER};}}"
-                f"QPushButton:pressed {{background-color: {cons.PRIMARY_LIGHTER};}}"
-            )
-        
-        self.bottom_tool_button=(
-                f"QToolButton {{background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_DARK}; font-size: {cons.FONT_SMALL}; font-weight: bold; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;}}"
-                f"QToolButton:hover {{background-color: {cons.PRIMARY_HOVER};}}"
-                f"QToolButton:pressed {{background-color: {cons.PRIMARY_LIGHTER};}}"
-            )
+        self.top_button = f"QPushButton {{background-color: {cons.PRIMARY_MEDIUM}; color: {cons.FONT_COLOR}; font-size: {cons.FONT_MID}; font-weight: bold; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-top-right-radius: 6px;}}"
+
+        self.bottom_button = (
+            f"QPushButton {{background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_DARK}; font-size: {cons.FONT_SMALL}; font-weight: bold; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;}}"
+            f"QPushButton:hover {{background-color: {cons.PRIMARY_HOVER};}}"
+            f"QPushButton:pressed {{background-color: {cons.PRIMARY_LIGHTER};}}"
+        )
+
+        self.bottom_tool_button = (
+            f"QToolButton {{background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_DARK}; font-size: {cons.FONT_SMALL}; font-weight: bold; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;}}"
+            f"QToolButton:hover {{background-color: {cons.PRIMARY_HOVER};}}"
+            f"QToolButton:pressed {{background-color: {cons.PRIMARY_LIGHTER};}}"
+        )
 
         # setting up character sheet
         self.character = character
@@ -89,8 +89,10 @@ class InventoryGUI(QWidget):
             spacing=0,
             content_margin=(0, 0, 0, 0),
             stylesheet=scroll_style,
+            icon=("codex.png", cons.WSIZE / 2, cons.PRIMARY_DARKER),
         )
 
+        self.inventory_scroll.get_title()[0].clicked.connect(self.show_codex)
         self.inventory_scroll.get_title()[1].setAlignment(Qt.AlignCenter)
 
         self.portrait = Widget(
@@ -116,7 +118,7 @@ class InventoryGUI(QWidget):
             stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; border: 1px solid {cons.BORDER}; font-size: {cons.FONT_MID}; font-weight: bold; color: {cons.FONT_COLOR};",
         )
 
-        self.create_character = Widget(	
+        self.create_character = Widget(
             widget_type=QToolButton(),
             parent_layout=self.portrait_layout.get_title()[2],
             objectname="delete",
@@ -127,7 +129,7 @@ class InventoryGUI(QWidget):
             stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; border: 1px solid {cons.BORDER};",
         )
 
-        self.update_character = Widget(	
+        self.update_character = Widget(
             widget_type=QToolButton(),
             parent_layout=self.portrait_layout.get_title()[2],
             objectname="update",
@@ -147,14 +149,14 @@ class InventoryGUI(QWidget):
         )
 
         self.movement_button = Widget(
-                widget_type=QPushButton(),
-                parent_layout=self.experience_section.inner_layout(3),
-                # signal=self.modify_stat,
-                objectname="MOVEMENT",
-                class_group=self.widget_group,
-                stylesheet=self.top_button,
-                size_policy=(QSizePolicy.Expanding, QSizePolicy.Expanding),
-                hidden=True,
+            widget_type=QPushButton(),
+            parent_layout=self.experience_section.inner_layout(3),
+            # signal=self.modify_stat,
+            objectname="MOVEMENT",
+            class_group=self.widget_group,
+            stylesheet=self.top_button,
+            size_policy=(QSizePolicy.Expanding, QSizePolicy.Expanding),
+            hidden=True,
         )
 
         self.movement_mod_button = Widget(
@@ -173,9 +175,9 @@ class InventoryGUI(QWidget):
             parent_layout=self.experience_section.inner_layout(1),
             objectname="XP",
             class_group=self.widget_group,
-            #height=cons.WSIZE * 1.5,
+            # height=cons.WSIZE * 1.5,
             size_policy=(QSizePolicy.Expanding, QSizePolicy.Expanding),
-            stylesheet=self.top_button
+            stylesheet=self.top_button,
         )
 
         self.experience_label = Widget(
@@ -184,9 +186,9 @@ class InventoryGUI(QWidget):
             objectname="XP mod",
             class_group=self.widget_group,
             text="XP",
-            #height=cons.WSIZE,
+            # height=cons.WSIZE,
             size_policy=(QSizePolicy.Expanding, QSizePolicy.Expanding),
-            stylesheet=self.bottom_button
+            stylesheet=self.bottom_button,
         )
 
         self.unspent_experience = Widget(
@@ -194,9 +196,9 @@ class InventoryGUI(QWidget):
             parent_layout=self.experience_section.inner_layout(2),
             objectname="TOTALXP",
             class_group=self.widget_group,
-            #height=cons.WSIZE * 1.5,
+            # height=cons.WSIZE * 1.5,
             size_policy=(QSizePolicy.Expanding, QSizePolicy.Expanding),
-            stylesheet=self.top_button
+            stylesheet=self.top_button,
         )
 
         self.unspent_experience_label = Widget(
@@ -205,10 +207,10 @@ class InventoryGUI(QWidget):
             objectname="TOTALXP mod",
             class_group=self.widget_group,
             text="UNSPENT",
-            #height=cons.WSIZE,
+            # height=cons.WSIZE,
             size_policy=(QSizePolicy.Expanding, QSizePolicy.Expanding),
             signal=self.add_sub,
-            stylesheet=self.bottom_button
+            stylesheet=self.bottom_button,
         )
 
         portrait_title = self.portrait_layout.get_title()[0]
@@ -355,7 +357,7 @@ class InventoryGUI(QWidget):
         self.collection = self.db["characters"]
         character_list = self.collection.distinct("character")
         self.character_name.get_widget().clear()
-        self.character_name.get_widget().addItems([""]+character_list)
+        self.character_name.get_widget().addItems([""] + character_list)
         # if selected_char in character_list:
         #     self.character_name.get_widget().setCurrentText(selected_char)
         # else:
@@ -366,7 +368,7 @@ class InventoryGUI(QWidget):
         current_character = self.character_name.get_widget().currentText()
         print(f"delete {current_character} from database")
 
-        #prompt the deletion
+        # prompt the deletion
         show_warning = DeleteChar(self, current_character)
         warning = show_warning.show()
 
@@ -414,6 +416,10 @@ class InventoryGUI(QWidget):
 
         self.modifier_mod.get_widget().setText(str(current_value))
         ModifyRoll(self.character).run_set_stats()
+
+    def show_codex(self):
+        self.codex = AddNewEquipment(self.character)
+        self.codex.show()
 
 
 if __name__ == "__main__":
