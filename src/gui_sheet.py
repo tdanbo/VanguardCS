@@ -18,15 +18,13 @@ class CharacterSheetGUI(QWidget):
     def __init__(self, character):
         super().__init__()
 
-        self.top_button=(
-                f"QPushButton {{background-color: {cons.PRIMARY_MEDIUM}; color: {cons.FONT_COLOR}; font-size: {cons.FONT_LARGE}; font-weight: bold; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-top-right-radius: 6px;}}"
-            )
-        
-        self.bottom_button=(
-                f"QPushButton {{background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_DARK}; font-size: {cons.FONT_SMALL}; font-weight: bold; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;}}"
-                f"QPushButton:hover {{background-color: {cons.PRIMARY_HOVER};}}"
-                f"QPushButton:pressed {{background-color: {cons.PRIMARY_LIGHTER};}}"
-            )
+        self.top_button = f"QPushButton {{background-color: {cons.PRIMARY_MEDIUM}; color: {cons.FONT_COLOR}; font-size: {cons.FONT_LARGE}; font-weight: bold; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-top-right-radius: 6px;}}"
+
+        self.bottom_button = (
+            f"QPushButton {{background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_DARK}; font-size: {cons.FONT_SMALL}; font-weight: bold; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;}}"
+            f"QPushButton:hover {{background-color: {cons.PRIMARY_HOVER};}}"
+            f"QPushButton:pressed {{background-color: {cons.PRIMARY_LIGHTER};}}"
+        )
 
         self.character = character
 
@@ -102,7 +100,7 @@ class CharacterSheetGUI(QWidget):
 
         self.corruption_layout = Section(
             outer_layout=QHBoxLayout(),
-            inner_layout=("VBox", 3),
+            inner_layout=("HBox", 1),
             parent_layout=self.character_basic.inner_layout(1),
             group=True,
             title="CORRUPTION",
@@ -121,7 +119,7 @@ class CharacterSheetGUI(QWidget):
             checked=False,
             class_group=self.widget_group,
             height=cons.WSIZE,
-            stylesheet=f"background-color: {cons.DARK}"
+            stylesheet=f"background-color: {cons.DARK}",
         )
 
         # Below is all the widgets used in the character sheet
@@ -185,7 +183,7 @@ class CharacterSheetGUI(QWidget):
             objectname="MAXIMUM mod",
             text="MAXIMUM",
             class_group=self.widget_group,
-            size_policy=(QSizePolicy.Expanding, QSizePolicy.Expanding),#
+            size_policy=(QSizePolicy.Expanding, QSizePolicy.Expanding),  #
             stylesheet=self.bottom_button,
         )
 
@@ -209,67 +207,67 @@ class CharacterSheetGUI(QWidget):
             stylesheet=self.bottom_button,
         )
 
-        self.corruption_current = Widget(
-            widget_type=QPushButton(),
-            parent_layout=self.corruption_layout.inner_layout(1),
-            objectname="CORRUPTION",
-            class_group=self.widget_group,
-            size_policy=(QSizePolicy.Expanding, QSizePolicy.Expanding),
-            signal=self.modify_stat,
-            stylesheet=self.top_button
-        )
+        # self.corruption_current = Widget(
+        #     widget_type=QPushButton(),
+        #     parent_layout=self.corruption_layout.inner_layout(1),
+        #     objectname="CORRUPTION",
+        #     class_group=self.widget_group,
+        #     size_policy=(QSizePolicy.Expanding, QSizePolicy.Expanding),
+        #     signal=self.modify_stat,
+        #     stylesheet=self.top_button
+        # )
 
-        self.corruption_mod = Widget(
-            widget_type=QPushButton(),
-            parent_layout=self.corruption_layout.inner_layout(1),
-            class_group=self.widget_group,
-            text="CORRUPTION",
-            objectname="CORRUPTION mod",
-            size_policy=(QSizePolicy.Expanding, QSizePolicy.Expanding),
-            signal=self.add_sub,
-            stylesheet=self.bottom_button,
-        )
+        # self.corruption_mod = Widget(
+        #     widget_type=QPushButton(),
+        #     parent_layout=self.corruption_layout.inner_layout(1),
+        #     class_group=self.widget_group,
+        #     text="CORRUPTION",
+        #     objectname="CORRUPTION mod",
+        #     size_policy=(QSizePolicy.Expanding, QSizePolicy.Expanding),
+        #     signal=self.add_sub,
+        #     stylesheet=self.bottom_button,
+        # )
 
-        self.corruption_permanent = Widget(
-            widget_type=QPushButton(),
-            parent_layout=self.corruption_layout.inner_layout(2),
-            objectname="PERMANENT",
-            class_group=self.widget_group,
-            size_policy=(QSizePolicy.Expanding, QSizePolicy.Expanding),
-            signal=self.modify_stat,
-            stylesheet=self.top_button,
-        )
+        # self.corruption_permanent = Widget(
+        #     widget_type=QPushButton(),
+        #     parent_layout=self.corruption_layout.inner_layout(2),
+        #     objectname="PERMANENT",
+        #     class_group=self.widget_group,
+        #     size_policy=(QSizePolicy.Expanding, QSizePolicy.Expanding),
+        #     signal=self.modify_stat,
+        #     stylesheet=self.top_button,
+        # )
 
-        self.corruption_permanent_mod = Widget(
-            widget_type=QPushButton(),
-            parent_layout=self.corruption_layout.inner_layout(2),
-            class_group=self.widget_group,
-            text="PERMANENT",
-            objectname="PERMANENT mod",
-            size_policy=(QSizePolicy.Expanding, QSizePolicy.Expanding),
-            signal=self.add_sub,
-            stylesheet=self.bottom_button,
-        )
+        # self.corruption_permanent_mod = Widget(
+        #     widget_type=QPushButton(),
+        #     parent_layout=self.corruption_layout.inner_layout(2),
+        #     class_group=self.widget_group,
+        #     text="PERMANENT",
+        #     objectname="PERMANENT mod",
+        #     size_policy=(QSizePolicy.Expanding, QSizePolicy.Expanding),
+        #     signal=self.add_sub,
+        #     stylesheet=self.bottom_button,
+        # )
 
-        self.corruption_threshold = Widget(
-            widget_type=QPushButton(),
-            parent_layout=self.corruption_layout.inner_layout(3),
-            objectname="THRESHOLD",
-            class_group=self.widget_group,
-            size_policy=(QSizePolicy.Expanding, QSizePolicy.Expanding),
-            signal=self.modify_stat,
-            stylesheet=self.top_button,
-        )
+        # self.corruption_threshold = Widget(
+        #     widget_type=QPushButton(),
+        #     parent_layout=self.corruption_layout.inner_layout(3),
+        #     objectname="THRESHOLD",
+        #     class_group=self.widget_group,
+        #     size_policy=(QSizePolicy.Expanding, QSizePolicy.Expanding),
+        #     signal=self.modify_stat,
+        #     stylesheet=self.top_button,
+        # )
 
-        self.corruption_threshold_mod = Widget(
-            widget_type=QPushButton(),
-            parent_layout=self.corruption_layout.inner_layout(3),
-            class_group=self.widget_group,
-            text="THRESHOLD",
-            objectname="THRESHOLD mod",
-            size_policy=(QSizePolicy.Expanding, QSizePolicy.Expanding),
-            stylesheet=self.bottom_button,
-        )
+        # self.corruption_threshold_mod = Widget(
+        #     widget_type=QPushButton(),
+        #     parent_layout=self.corruption_layout.inner_layout(3),
+        #     class_group=self.widget_group,
+        #     text="THRESHOLD",
+        #     objectname="THRESHOLD mod",
+        #     size_policy=(QSizePolicy.Expanding, QSizePolicy.Expanding),
+        #     stylesheet=self.bottom_button,
+        # )
 
         for widget in self.widget_group:
             widget.connect_to_parent()
@@ -338,6 +336,7 @@ class CharacterSheetGUI(QWidget):
             self.character.combat_log.show()
         else:
             self.character.combat_log.hide()
+
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)

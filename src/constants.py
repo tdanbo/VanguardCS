@@ -51,9 +51,9 @@ SECONDARY_STATS = [
     "TOUGHNESS",
     "MAXIMUM",
     "PAIN",
-    "CORRUPTION",
-    "PERMANENT",
-    "THRESHOLD",
+    # "CORRUPTION",
+    # "PERMANENT",
+    # "THRESHOLD",
 ]
 
 # ARMOR = ["armor"]

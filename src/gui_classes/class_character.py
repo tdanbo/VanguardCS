@@ -14,12 +14,18 @@ from gui_classes.class_ability_adjust import AbilityAdjust
 import os
 import random
 
+from template.widget import Widget
+from template.section import Section
+
 
 class Character:
     def __init__(self):
         self.active_modifier_name = ""
         self.active_modifier = 0
         self.base_modifier = 0
+
+        self.section_group = []
+        self.widget_group = []
 
     def load_document(self, character_name):
         self.character_name = character_name
@@ -68,11 +74,20 @@ class Character:
         self.set_modifiers()
         # Set character calculated stats
         self.set_calculated_stats()
+        # Set corruption
+        self.set_corruption()
         # Set character xp
         self.set_xp()
 
         # Save document
         self.save_document()
+
+        for widget in self.widget_group:
+            widget.connect_to_parent()
+            widget.set_signal()
+
+        for section in self.section_group:
+            section.connect_to_parent()
 
     def save_document(self):
         current_sheet = {"$set": self.CHARACTER_DOC}
@@ -240,16 +255,13 @@ class Character:
 
     def set_calculated_stats(self):
         strong = int(self.sheet_gui.findChild(QWidget, "STRONG").text())
-        resolute = int(self.sheet_gui.findChild(QWidget, "RESOLUTE").text())
+
         quick = int(self.sheet_gui.findChild(QWidget, "QUICK").text())
 
         maximum_mod = ModifyStat(
             self.CHARACTER_DOC["mods"]["MAXIMUM mod"]
         ).find_integer()
         pain_mod = ModifyStat(self.CHARACTER_DOC["mods"]["PAIN mod"]).find_integer()
-        corruption_mod = ModifyStat(
-            self.CHARACTER_DOC["mods"]["THRESHOLD mod"]
-        ).find_integer()
 
         max_toughness = (10 if strong < 10 else strong) + maximum_mod
         pain_threshold = math.ceil(strong / 2) + pain_mod
@@ -257,22 +269,38 @@ class Character:
         self.sheet_gui.toughness_max.get_widget().setText(str(max_toughness))
         self.sheet_gui.toughness_threshold.get_widget().setText(str(pain_threshold))
 
-        corruption_threshold = math.ceil(resolute / 2) + corruption_mod
-        self.sheet_gui.corruption_threshold.get_widget().setText(
-            f"{corruption_threshold} / {resolute}"
-        )
+        # corruption_threshold = math.ceil(resolute / 2) + corruption_mod
+        # self.sheet_gui.corruption_threshold.get_widget().setText(
+        #     f"{corruption_threshold} / {resolute}"
+        # )
 
-        # set total corruption
-        corruption = int(self.sheet_gui.corruption_current.get_widget().text())
-        permanent = int(self.sheet_gui.corruption_permanent.get_widget().text())
-        self.sheet_gui.corruption_current.get_widget().setText(
-            str(corruption + permanent)
-        )
+        # # set total corruption
+        # corruption = int(self.sheet_gui.corruption_current.get_widget().text())
+        # permanent = int(self.sheet_gui.corruption_permanent.get_widget().text())
+        # self.sheet_gui.corruption_current.get_widget().setText(
+        #     str(corruption + permanent)
+        # )
 
         movement = (quick + self.SPEED) * 5
         if movement < 20:
             movement = 20
         self.inventory_gui.movement_button.get_widget().setText(str(movement))
+
+    def set_corruption(self):
+        resolute = int(self.sheet_gui.findChild(QWidget, "RESOLUTE").text())
+        corruption_mod = ModifyStat(
+            self.CHARACTER_DOC["mods"]["THRESHOLD mod"]
+        ).find_integer()
+
+        for count in range(resolute + corruption_mod):
+            self.corruption_current = Widget(
+                widget_type=QToolButton(),
+                parent_layout=self.sheet_gui.corruption_layout.inner_layout(1),
+                objectname="CORRUPTION",
+                class_group=self.widget_group,
+                size_policy=(QSizePolicy.Expanding, QSizePolicy.Expanding),
+                stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; border: 1px solid {cons.BORDER};",
+            )
 
     def set_abilities(self):
         print("Setting abilities")
