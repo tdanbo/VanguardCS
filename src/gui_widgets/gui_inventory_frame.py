@@ -6,6 +6,7 @@ import constants as cons
 
 from template.section import Section
 from template.widget import Widget
+import template.functions as func
 
 from gui_classes.class_roll import DiceRoll
 from gui_classes.class_modify_stat import ModifyStat
@@ -17,6 +18,8 @@ class InventoryItem(QWidget):
     def __init__(self, character, count, item_dict, layout, carry_weight, equipment=""):
         super().__init__()
 
+        print(item_dict)
+
         self.character = character
 
         self.master_layout = QVBoxLayout()
@@ -24,6 +27,7 @@ class InventoryItem(QWidget):
         self.section_group = []
         self.count = count
         self.carry_weight = carry_weight
+        self.item_dict = item_dict
 
         self.equipment = equipment
 
@@ -32,15 +36,15 @@ class InventoryItem(QWidget):
         if count % 2 == 0:
             self.bg_color = cons.PRIMARY
             color = QColor(cons.PRIMARY)
-            self.bg_darker_color = color.darker(110)
+            self.bg_darker_color = color.darker(130).name()
             if count > self.carry_weight:
-                self.bg_color = "#ccb3a3"
+                self.bg_color = self.bg_darker_color
         else:
             self.bg_color = cons.PRIMARY_DARKER
             color = QColor(cons.PRIMARY_DARKER)
-            self.bg_darker_color = color.darker(110)
+            self.bg_darker_color = color.darker(130).name()
             if count > self.carry_weight:
-                self.bg_color = "#b39c8f"
+                self.bg_color = self.bg_darker_color
 
         self.item_section = Section(
             outer_layout=QHBoxLayout(),
@@ -68,14 +72,15 @@ class InventoryItem(QWidget):
             stylesheet=f"font-size: {cons.FONT_MID}; font-weight: bold;",
             height=cons.WSIZE,
             signal=self.get_item,
+            align="center",
         )
 
         # CREATING EMPTY OR POPULATED ITEM WIDGET
-        if item_dict == {}:
+        if self.item_dict == {}:
             self.type_bg_color = self.bg_color
             pass  # Setting up empty item
         else:
-            self.make_item(item_dict)
+            self.make_item()
 
         for widget in self.widget_group:
             widget.connect_to_parent()
@@ -95,6 +100,10 @@ class InventoryItem(QWidget):
         self.setLayout(self.master_layout)
         self.setFixedHeight(65)
         self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
+
+        if self.equipment:
+            self.item.widget.setDisabled(True)
+
         layout.addWidget(self)
 
     def get_item(self):
@@ -106,28 +115,28 @@ class InventoryItem(QWidget):
             for category in self.all_equipment:
                 for item in self.all_equipment[category]:
                     if item_string.lower() == item.lower():
-                        item_dict = self.all_equipment[category][item]
-                        item_dict["Name"] = item
-                        item_dict["Category"] = category
-                        item_dict["Equipped"] = {}
-                        item_dict["Equipped"]["1"] = False
-                        item_dict["Equipped"]["2"] = False
+                        self.item_dict = self.all_equipment[category][item]
+                        self.item_dict["Name"] = item
+                        self.item_dict["Category"] = category
+                        self.item_dict["Equipped"] = {}
+                        self.item_dict["Equipped"]["1"] = False
+                        self.item_dict["Equipped"]["2"] = False
 
-                        self.character.CHARACTER_DOC["inventory"].append(item_dict)
+                        self.character.CHARACTER_DOC["inventory"].append(self.item_dict)
                         self.character.set_all_stats()
                         return
                     else:
                         pass
 
             # Create General Good item!
-            item_dict = self.general_item()
-            item_dict["Name"] = item_string.title()
-            item_dict["Category"] = "General Good"
-            item_dict["Equipped"] = {}
-            item_dict["Equipped"]["1"] = False
-            item_dict["Equipped"]["2"] = False
+            self.item_dict = self.general_item()
+            self.item_dict["Name"] = item_string.title()
+            self.item_dict["Category"] = "General Good"
+            self.item_dict["Equipped"] = {}
+            self.item_dict["Equipped"]["1"] = False
+            self.item_dict["Equipped"]["2"] = False
 
-            self.character.CHARACTER_DOC["inventory"].append(item_dict)
+            self.character.CHARACTER_DOC["inventory"].append(self.item_dict)
             self.character.set_all_stats()
             return
 
@@ -139,8 +148,7 @@ class InventoryItem(QWidget):
         item = {"Quantity": 1, "Type": "General Good", "Quality": []}
         return item
 
-    def make_item(self, item_dict):
-        self.item_dict = item_dict
+    def make_item(self):
         self.name = self.item_dict["Name"]
         self.category = self.item_dict["Category"]
         self.item_type = self.item_dict["Type"]
@@ -150,20 +158,25 @@ class InventoryItem(QWidget):
 
         if self.category.upper() in cons.ACTIVE_COLOR:
             self.type_bg_color = cons.ACTIVE_COLOR[self.category.upper()]
+            color = QColor(self.type_bg_color)
+            self.dark_type_bg_color = color.darker(150)
         else:
             self.type_bg_color = cons.ACTIVE_COLOR["GENERAL_GOOD"]
+            color = QColor(self.type_bg_color)
+            self.dark_type_bg_color = color.darker(150)
 
         self.item.widget.setText(self.name)
+        self.item.widget.setAlignment(Qt.AlignLeft)
         self.item.widget.setDisabled(True)
 
-        if "Equip" in item_dict:
+        if "Equip" in self.item_dict:
             equip = self.item_dict["Equip"]
             if self.equipment != "":
                 self.type_label = Widget(
                     widget_type=QPushButton(),
                     parent_layout=self.item_section.inner_layout(2),
                     class_group=self.widget_group,
-                    width=7,
+                    width=10,
                     stylesheet=f"QPushButton {{ background-color: {cons.BORDER_LIGHT}; }}"
                     f"QPushButton:hover {{ background-color: {self.type_bg_color}; }}",
                     size_policy=(QSizePolicy.Fixed, QSizePolicy.Expanding),
@@ -177,7 +190,7 @@ class InventoryItem(QWidget):
                         widget_type=QPushButton(),
                         parent_layout=self.item_section.inner_layout(2),
                         class_group=self.widget_group,
-                        width=7,
+                        width=10,
                         stylesheet=f"QPushButton {{ background-color: {cons.BORDER_LIGHT}; }}"
                         f"QPushButton:hover {{ background-color: {self.type_bg_color}; }}",
                         size_policy=(QSizePolicy.Fixed, QSizePolicy.Expanding),
@@ -309,27 +322,29 @@ class InventoryItem(QWidget):
                 stylesheet=self.quantity_dice_button_style,
             )
 
-        if self.equipment == "":
-            self.delete = Widget(
-                widget_type=QToolButton(),
-                parent_layout=self.roll_section.inner_layout(2),
-                objectname="delete",
-                class_group=self.widget_group,
-                height=cons.WSIZE,
-                signal=self.delete_item,
-                icon=("delete.png", cons.WSIZE / 2, self.bg_darker_color),
-                # stylesheet=f"QToolButton:hover {{background-color: #ff0000}};",
-            )
-
         self.roll_section.inner_layout(2).setAlignment(Qt.AlignRight)
 
+        if self.equipment == "codex":
+            self.cost_label = Widget(
+                widget_type=QLabel(),
+                parent_layout=self.roll_section.inner_layout(2),
+                text=f"{self.item_dict['Cost']}",
+                objectname="cost",
+                class_group=self.widget_group,
+                height=cons.WSIZE,
+                stylesheet=f"color: {self.type_bg_color}; font-size: {cons.FONT_SMALL};",
+            )
+
         self.type_label = Widget(
-            widget_type=QLabel(),
+            widget_type=QToolButton(),
             parent_layout=self.item_section.inner_layout(1),
             objectname="item",
             class_group=self.widget_group,
-            width=7,
-            stylesheet=f"background-color: {self.type_bg_color}",
+            width=10,
+            stylesheet=f"background-color: {self.type_bg_color};padding-right: 1px",
+            signal=self.delete_item,
+            icon=("delete.png", cons.WSIZE / 2, self.dark_type_bg_color),
+            size_policy=(QSizePolicy.Fixed, QSizePolicy.Expanding),
         )
 
         self.roll_section.inner_layout(1).setAlignment(Qt.AlignRight)
@@ -337,6 +352,10 @@ class InventoryItem(QWidget):
         # self.item_section.inner_layout(2).setAlignment(Qt.AlignLeft)
         self.item_section.inner_layout(5).setAlignment(Qt.AlignTop)
         self.item_label.get_widget().setAlignment(Qt.AlignTop)
+
+        if self.equipment:
+            self.type_label.get_widget().setDisabled(True)
+            func.set_icon(self.type_label.get_widget(), "", "", "")
 
     def add_sub(self):
         add_sub_gui = AddSub(

@@ -3,15 +3,15 @@ from PySide2.QtGui import *
 from PySide2.QtCore import *
 import constants as cons
 import sys
-from gui_widgets.gui_ability_frame import AbilityItem
+from gui_widgets.gui_inventory_frame import InventoryItem
 from template.section import Section
 from template.widget import Widget
 
 
-class AddNewAbility(QWidget):
+class AddNewEquipment(QWidget):
     def __init__(self, character):
         super().__init__(None, Qt.WindowStaysOnTopHint)
-        self.all_abilities = cons.ABILITIES
+        self.all_equipment = cons.EQUIPMENT
 
         self.character = character
 
@@ -30,7 +30,7 @@ class AddNewAbility(QWidget):
             content_margin=(0, 0, 0, 0),
         )
 
-        for category in self.all_abilities:
+        for category in self.all_equipment:
             self.ability_widget = Widget(
                 widget_type=QToolButton(),
                 parent_layout=self.ability_section.inner_layout(1),
@@ -38,7 +38,7 @@ class AddNewAbility(QWidget):
                 height=cons.WSIZE * 2,
                 objectname=category,
                 class_group=self.widget_group,
-                signal=self.add_abilities,
+                signal=self.add_equipment,
                 size_policy=(QSizePolicy.Expanding, QSizePolicy.Fixed),
                 stylesheet=f"background-color: {cons.PRIMARY}; border: 1px solid {cons.BORDER};",
                 tooltip=category.replace("_", " ").title(),
@@ -61,7 +61,7 @@ class AddNewAbility(QWidget):
             align="center",
             objectname="search",
             class_group=self.widget_group,
-            signal=self.add_abilities,
+            signal=self.add_equipment,
             stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; border: 1px solid {cons.BORDER};",
         )
 
@@ -101,8 +101,8 @@ class AddNewAbility(QWidget):
         self.setMinimumWidth(cons.WSIZE * 20)
         self.setWindowTitle("Select Ability")
 
-    def add_abilities(self):
-        for button in self.all_abilities:
+    def add_equipment(self):
+        for button in self.all_equipment:
             self.findChild(QToolButton, button).setStyleSheet(
                 f"background-color: {cons.PRIMARY}; border: 1px solid {cons.BORDER};"
             )
@@ -116,50 +116,54 @@ class AddNewAbility(QWidget):
 
         if self.category == "search":
             if self.search_bar.get_widget().text() != "":
-                for category in self.all_abilities:
-                    for item in self.all_abilities[category]:
+                for category in self.all_equipment:
+                    for item in self.all_equipment[category]:
                         if item != "_id":
                             search_string = self.search_bar.get_widget().text().lower()
                             strings = [
-                                self.all_abilities[category][item]["Name"],
-                                self.all_abilities[category][item]["Tradition"],
-                                self.all_abilities[category][item]["Description"],
-                                self.all_abilities[category][item]["Novice"],
-                                self.all_abilities[category][item]["Adept"],
-                                self.all_abilities[category][item]["Master"],
+                                self.all_equipment[category][item]["Type"],
+                                self.all_equipment[category][item]["Cost"],
                             ]
 
                             if any(
                                 search_string in string.lower() for string in strings
                             ):
-                                self.ability_dict = self.all_abilities[category][item]
-                                self.add_ability()
+                                self.inventory_dict = self.all_equipment[category][item]
+                                self.inventory_dict["Category"] = self.category
+                                self.inventory_dict["Name"] = item
+                                self.add_item()
 
             self.search_bar.get_widget().clearFocus()
 
         else:
             self.search_bar.get_widget().setText("")
-            for item in self.all_abilities[self.category]:
+            for item in self.all_equipment[self.category]:
                 if item != "_id":
                     if self.search_bar.get_widget().text() == "":
-                        self.ability_dict = self.all_abilities[self.category][item]
-                        self.add_ability()
+                        self.inventory_dict = self.all_equipment[self.category][item]
+                        self.inventory_dict["Category"] = self.category
+                        self.inventory_dict["Name"] = item
+                        self.add_item()
                     else:
                         print("Searching")
 
-    def add_ability(self):
-        self.ability_dict["Rank"] = "Master"
-        ability = AbilityItem(self.character, self.ability_dict, select=True)
-        self.feats_scroll.inner_layout(1).addWidget(ability)
+    def add_item(self):
+        layout = self.feats_scroll.inner_layout(1)
+        ability = InventoryItem(
+            self.character, 1, self.inventory_dict, layout, 20, equipment="codex"
+        ).make_item()
 
     def clear_layout(self, layout):
         for item in range(layout.count()):
             layout.itemAt(item).widget().deleteLater()
 
 
+# (self, character, count, item_dict, layout, carry_weight, equipment="")
+
+
 def run_gui(name, version):
     app = QApplication(sys.argv)
-    w = AddNewAbility("", "")
+    w = AddNewEquipment("")
     w.show()
     app.exec_()
 
