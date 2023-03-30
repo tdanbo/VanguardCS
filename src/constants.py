@@ -51,10 +51,22 @@ SECONDARY_STATS = [
     "TOUGHNESS",
     "MAXIMUM",
     "PAIN",
-    # "CORRUPTION",
-    # "PERMANENT",
-    # "THRESHOLD",
 ]
+
+MOVEMENT = {
+    5: -5,
+    6: -5,
+    7: -5,
+    8: -5,
+    9: 0,
+    10: 0,
+    11: 0,
+    12: 5,
+    13: 5,
+    14: 5,
+    15: 5,
+}
+
 
 # ARMOR = ["armor"]
 

@@ -156,7 +156,7 @@ class InventoryGUI(QWidget):
             class_group=self.widget_group,
             stylesheet=self.top_button,
             size_policy=(QSizePolicy.Expanding, QSizePolicy.Expanding),
-            hidden=True,
+            hidden=False,
         )
 
         self.movement_mod_button = Widget(
@@ -167,7 +167,7 @@ class InventoryGUI(QWidget):
             class_group=self.widget_group,
             stylesheet=self.bottom_button,
             size_policy=(QSizePolicy.Expanding, QSizePolicy.Expanding),
-            hidden=True,
+            hidden=False,
         )
 
         self.experience = Widget(

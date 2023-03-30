@@ -271,10 +271,21 @@ class Character(QWidget):
         self.sheet_gui.toughness_max.get_widget().setText(str(max_toughness))
         self.sheet_gui.toughness_threshold.get_widget().setText(str(pain_threshold))
 
-        movement = (quick + self.SPEED) * 5
-        if movement < 20:
-            movement = 20
-        self.inventory_gui.movement_button.get_widget().setText(str(movement))
+        print(quick)
+
+        # Calculating speed
+        base_speed = 40
+        if quick < 5:
+            stat_modifier = -10
+        elif quick > 15:
+            stat_modifier = 10
+        else:
+            stat_modifier = cons.MOVEMENT[quick]
+
+        total_impeding = self.SPEED * 5
+        adjusted_base = base_speed + stat_modifier
+        calculated_speed = adjusted_base + total_impeding
+        self.inventory_gui.movement_button.get_widget().setText(str(calculated_speed))
 
     def set_corruption_level(self):
         self.corruption_level = self.CHARACTER_DOC["CORRUPTION LEVEL"]
@@ -471,7 +482,7 @@ class Character(QWidget):
     def clear_character(self):
         self.CHARACTER_DOC = None
 
-        func.set_icon(self.inventory_gui.portrait.get_widget(), "", width=0)
+        func.set_icon(self.inventory_gui.portrait.get_widget(), "", "", width=0)
 
         func.clear_layout(self.sheet_gui.ability_layout.inner_layout(1))
         func.clear_layout(self.inventory_gui.inventory_scroll.inner_layout(1))

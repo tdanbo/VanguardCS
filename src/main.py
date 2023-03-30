@@ -1,4 +1,3 @@
-
 from PySide2.QtWidgets import *
 from PySide2.QtGui import *
 from PySide2.QtCore import *
@@ -10,6 +9,7 @@ from gui_classes.class_combat import CombatLog
 from gui_classes.class_character import Character
 import constants as cons
 import os
+
 
 class MainWindow(QWidget):
     def __init__(self):
@@ -44,6 +44,8 @@ class MainWindow(QWidget):
             f"border-style: outset; color: {cons.FONT_DARK}; background-color: {cons.DARK};border-style: outset;"
         )
 
+        self.main_layout.setAlignment(Qt.AlignRight)
+
         self.combat_log.update_combat_log()
         self.combat_log.start_watching()
 
@@ -63,6 +65,7 @@ def run_gui(version):
     w.setWindowTitle(version)
     w.show()
     app.exec_()
+
 
 if __name__ == "__main__":
     run_gui(cons.VERSION)
