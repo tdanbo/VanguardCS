@@ -258,7 +258,6 @@ class InventoryItem(QWidget):
                 parent_layout=self.quality_section.inner_layout(layout),
                 objectname=f"quality{count}",
                 class_group=self.widget_group,
-                # icon=(f"{quality}.png", cons.WSIZE / 2, cons.BORDER_DARK),
                 height=20,
                 width=20,
                 text=quality_tag,
@@ -342,7 +341,7 @@ class InventoryItem(QWidget):
                 width=10,
                 stylesheet=f"background-color: {self.type_bg_color};padding-right: 1px",
                 signal=self.select_item,
-                icon=("plus.png", cons.WSIZE / 2, self.dark_type_bg_color),
+                icon=("plus.png", self.dark_type_bg_color, cons.ICON_SIZE),
                 size_policy=(QSizePolicy.Fixed, QSizePolicy.Expanding),
             )
         else:
@@ -354,7 +353,7 @@ class InventoryItem(QWidget):
                 width=10,
                 stylesheet=f"background-color: {self.type_bg_color};padding-right: 1px",
                 signal=self.delete_item,
-                icon=("delete.png", cons.WSIZE / 2, self.dark_type_bg_color),
+                icon=("delete.png", self.dark_type_bg_color, cons.ICON_SIZE),
                 size_policy=(QSizePolicy.Fixed, QSizePolicy.Expanding),
             )
 
@@ -366,7 +365,7 @@ class InventoryItem(QWidget):
 
         if self.equipment not in ["", "codex"]:
             self.type_label.get_widget().setDisabled(True)
-            func.set_icon(self.type_label.get_widget(), "", "", "")
+            func.set_icon(self.type_label.get_widget(), "", "", width=0)
 
     def select_item(self):
         print(self.select_item)

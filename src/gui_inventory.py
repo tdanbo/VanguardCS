@@ -53,7 +53,7 @@ class InventoryGUI(QWidget):
             parent_layout=self.master_layout,
             group=True,
             title="Test",
-            icon=("dead.png", cons.WSIZE / 2, cons.PRIMARY_DARKER),
+            icon=("dead.png", cons.PRIMARY_DARKER, cons.ICON_SIZE),
             class_group=self.section_group,
             spacing=3,
             height=100,
@@ -89,7 +89,7 @@ class InventoryGUI(QWidget):
             spacing=0,
             content_margin=(0, 0, 0, 0),
             stylesheet=scroll_style,
-            icon=("codex.png", cons.WSIZE / 2, cons.PRIMARY_DARKER),
+            icon=("codex.png", cons.PRIMARY_DARKER, cons.ICON_SIZE),
         )
 
         self.inventory_scroll.get_title()[0].clicked.connect(self.show_codex)
@@ -123,7 +123,7 @@ class InventoryGUI(QWidget):
             parent_layout=self.portrait_layout.get_title()[2],
             objectname="delete",
             class_group=self.widget_group,
-            icon=("plus.png", cons.WSIZE / 2, cons.FONT_COLOR),
+            icon=("plus.png", cons.FONT_COLOR, cons.ICON_SIZE),
             signal=self.open_new_character,
             height=cons.WSIZE,
             stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; border: 1px solid {cons.BORDER};",
@@ -134,7 +134,7 @@ class InventoryGUI(QWidget):
             parent_layout=self.portrait_layout.get_title()[2],
             objectname="update",
             class_group=self.widget_group,
-            icon=("reload.png", cons.WSIZE / 2, cons.FONT_COLOR),
+            icon=("reload.png", cons.FONT_COLOR, cons.ICON_SIZE),
             signal=self.update_character_dropdown,
             height=cons.WSIZE,
             stylesheet=f"background-color: {cons.PRIMARY_LIGHTER}; border: 1px solid {cons.BORDER};",
@@ -269,7 +269,7 @@ class InventoryGUI(QWidget):
             self.extra_modifier_label = Widget(
                 widget_type=QToolButton(),
                 parent_layout=self.active_section.inner_layout(number + 1),
-                icon=(f"{stat.capitalize()}.png", "", cons.DARK, cons.WSIZE),
+                icon=(f"{stat.capitalize()}.png", cons.DARK, cons.ICON_SIZE),
                 class_group=self.widget_group,
                 size_policy=(QSizePolicy.Expanding, QSizePolicy.Expanding),
                 checkable=True,
@@ -306,7 +306,7 @@ class InventoryGUI(QWidget):
         self.modifier_button = Widget(
             widget_type=QToolButton(),
             parent_layout=self.modifier_section.inner_layout(1),
-            icon=(f"Modifier.png", "", cons.PRIMARY_LIGHTER, cons.WSIZE),
+            icon=(f"Modifier.png", cons.PRIMARY_LIGHTER, cons.ICON_SIZE),
             class_group=self.widget_group,
             size_policy=(QSizePolicy.Expanding, QSizePolicy.Expanding),
             objectname="MODIFIER button",

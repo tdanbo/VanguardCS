@@ -28,15 +28,13 @@ class CombatLogGUI(QWidget):
 
         self.character = character
 
-        self.top_button=(
-                f"QPushButton {{background-color: {cons.PRIMARY_MEDIUM}; color: {cons.FONT_COLOR}; font-size: {cons.FONT_MID}; font-weight: bold; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-top-right-radius: 6px;}}"
-            )
-        
-        self.bottom_button=(
-                f"QPushButton {{background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_DARK}; font-size: {cons.FONT_SMALL}; font-weight: bold; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;}}"
-                f"QPushButton:hover {{background-color: {cons.PRIMARY_HOVER};}}"
-                f"QPushButton:pressed {{background-color: {cons.PRIMARY_LIGHTER};}}"
-            )
+        self.top_button = f"QPushButton {{background-color: {cons.PRIMARY_MEDIUM}; color: {cons.FONT_COLOR}; font-size: {cons.FONT_MID}; font-weight: bold; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-top-right-radius: 6px;}}"
+
+        self.bottom_button = (
+            f"QPushButton {{background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_DARK}; font-size: {cons.FONT_SMALL}; font-weight: bold; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;}}"
+            f"QPushButton:hover {{background-color: {cons.PRIMARY_HOVER};}}"
+            f"QPushButton:pressed {{background-color: {cons.PRIMARY_LIGHTER};}}"
+        )
 
         # Setting up layouts/sections
 
@@ -54,7 +52,7 @@ class CombatLogGUI(QWidget):
             class_group=self.section_group,
             content_margin=(0, 0, 0, 0),
             stylesheet=scroll_style,
-            icon=("show_hide_sheets.png", cons.WSIZE, cons.PRIMARY_DARKER),
+            icon=("show_hide_sheets.png", cons.PRIMARY_DARKER, cons.ICON_SIZE),
         )
 
         self.log_scroll.get_title()[0].setCheckable(True)
@@ -112,7 +110,7 @@ class CombatLogGUI(QWidget):
                 ),
                 class_group=self.widget_group,
                 size_policy=(QSizePolicy.Expanding, QSizePolicy.Expanding),
-                stylesheet=self.top_button
+                stylesheet=self.top_button,
             )
 
             self.dice_w = Widget(
@@ -120,13 +118,12 @@ class CombatLogGUI(QWidget):
                 parent_layout=self.dice_layout.inner_layout(0),
                 objectname=die_type[0],
                 text=die_type[0],
-                # icon = (f"{die_type[0]}.png","",cons.FONT_COLOR,100),
                 signal=functools.partial(
                     class_custom_rolls.add_dice, self, die_type[0]
                 ),
                 class_group=self.widget_group,
                 size_policy=(QSizePolicy.Expanding, QSizePolicy.Expanding),
-                stylesheet=self.bottom_button
+                stylesheet=self.bottom_button,
             )
 
             self.dice_count.get_widget().setMinimumWidth(cons.WSIZE * 1.5)

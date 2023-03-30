@@ -37,7 +37,7 @@ class AddNewEquipment(QWidget):
             self.ability_widget = Widget(
                 widget_type=QToolButton(),
                 parent_layout=self.ability_section.inner_layout(1),
-                icon=(f"{category}.png", cons.WSIZE / 2, cons.FONT_COLOR),
+                icon=(f"{category}.png", cons.FONT_COLOR, cons.ICON_SIZE),
                 height=cons.WSIZE * 2,
                 objectname=category,
                 class_group=self.widget_group,
@@ -54,7 +54,7 @@ class AddNewEquipment(QWidget):
             group=True,
             class_group=self.section_group,
             title="SEARCH",
-            icon=("search.png", cons.WSIZE, cons.PRIMARY_LIGHTER),
+            icon=("search.png", cons.PRIMARY_LIGHTER, cons.ICON_SIZE),
         )
 
         self.search_bar = Widget(

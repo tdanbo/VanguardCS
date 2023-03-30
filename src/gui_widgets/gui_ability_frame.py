@@ -76,21 +76,11 @@ class AbilityItem(QWidget):
             content_margin=(0, 0, 0, 0),
         )
 
-        # self.header_icon = Widget(
-        #     widget_type=QToolButton(),
-        #     parent_layout = self.power_section.inner_layout(1),
-        #     icon = (f"{self.ability_dict['Category']}.png",cons.WSIZE,self.type_bg_color),
-        #     height=cons.WSIZE,
-        #     width=cons.WSIZE,
-        #     objectname=f"ability_icon",
-        #     class_group=self.widget_group,
-        # )
-
         if self.select:
             self.header_select = Widget(
                 widget_type=QToolButton(),
                 parent_layout=self.header_section.inner_layout(1),
-                icon=("plus.png", cons.WSIZE, cons.FONT_MEDIUM),
+                icon=("plus.png", cons.FONT_MEDIUM, cons.ICON_SIZE),
                 height=cons.WSIZE,
                 width=cons.WSIZE,
                 objectname=f"ability_select",
@@ -101,7 +91,7 @@ class AbilityItem(QWidget):
             self.header_delete = Widget(
                 widget_type=QToolButton(),
                 parent_layout=self.header_section.inner_layout(1),
-                icon=("delete.png", cons.WSIZE, cons.FONT_MEDIUM),
+                icon=("delete.png", cons.FONT_MEDIUM, cons.ICON_SIZE),
                 height=cons.WSIZE,
                 width=cons.WSIZE,
                 objectname=f"ability_delete",

@@ -31,7 +31,7 @@ SOUNDS = os.path.join(ROOT, ".sounds")
 
 WSIZE = 22
 ICON_COLOR = "#CCCCCC"
-
+ICON_SIZE = 18
 CHARACTER = "Beasttoe"
 START_SLOTS = 6
 MAX_SLOTS = 16
@@ -92,7 +92,7 @@ ACTIVE_COLOR = {
     "QUALITY_ARMOR": BLUE,
     "GENERAL_GOOD": YELLOW,
     "LESSER_ARTIFACT": BRIGHT_RED,
-    "CORRUPTION": DARK
+    "CORRUPTION": DARK,
 }
 
 PRIORITY = {
@@ -107,7 +107,8 @@ PRIORITY = {
     "elixirs": 8,
     "provision": 9,
     "treasure": 10,
-    "General Good": 11,
+    "tools": 11,
+    "General Good": 12,
 }
 
 PRIMARY_HOVER = "#fffdf7"

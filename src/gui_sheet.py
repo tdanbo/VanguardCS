@@ -15,6 +15,7 @@ import sys
 import time
 import template.functions as func
 
+
 class CharacterSheetGUI(QWidget):
     def __init__(self, character):
         super().__init__()
@@ -57,7 +58,7 @@ class CharacterSheetGUI(QWidget):
             title="ABILITIES & POWERS",
             group=True,
             scroll=(True, "top"),
-            icon=("plus.png", cons.WSIZE, cons.PRIMARY_LIGHTER),
+            icon=("plus.png", cons.PRIMARY_LIGHTER, cons.ICON_SIZE),
             spacing=10,
             class_group=self.section_group,
             stylesheet=scroll_style,
@@ -115,7 +116,7 @@ class CharacterSheetGUI(QWidget):
             parent_layout=self.corruption_layout.inner_layout(1),
             spacing=3,
             class_group=self.section_group,
-        ) 
+        )
 
         self.corruption_roll_layout = Section(
             outer_layout=QHBoxLayout(),
@@ -129,8 +130,7 @@ class CharacterSheetGUI(QWidget):
         self.corruption_level = Widget(
             widget_type=QToolButton(),
             parent_layout=self.corruption_roll_layout.inner_layout(1),
-            #icon=("reload.png", cons.WSIZE, cons.DARK),
-            width=cons.WSIZE*2.6,
+            width=cons.WSIZE * 2.6,
             stylesheet=f"background-color: {cons.PRIMARY_LIGHTER};border-radius: 6px; border: 1px solid {cons.BORDER}; font-size: 20px;",
             class_group=self.widget_group,
             signal=self.change_corruption_level,
@@ -141,9 +141,9 @@ class CharacterSheetGUI(QWidget):
             widget_type=QToolButton(),
             parent_layout=self.corruption_roll_layout.inner_layout(2),
             signal=self.character.reset_corruption,
-            icon=("reload.png", cons.WSIZE, cons.DARK),
-            width=cons.WSIZE*1.3,
-            height=cons.WSIZE*1.3,
+            icon=("reload.png", cons.DARK, cons.ICON_SIZE),
+            width=cons.WSIZE * 1.3,
+            height=cons.WSIZE * 1.3,
             stylesheet=f"background-color: {cons.PRIMARY_LIGHTER};border-radius: 6px; border: 1px solid {cons.BORDER};",
             class_group=self.widget_group,
         )
@@ -152,9 +152,9 @@ class CharacterSheetGUI(QWidget):
             widget_type=QToolButton(),
             parent_layout=self.corruption_roll_layout.inner_layout(2),
             signal=self.roll_corruption,
-            icon=("dead.png", cons.WSIZE, cons.DARK),
-            width=cons.WSIZE*1.3,
-            height=cons.WSIZE*1.3,
+            icon=("dead.png", cons.DARK, cons.ICON_SIZE),
+            width=cons.WSIZE * 1.3,
+            height=cons.WSIZE * 1.3,
             stylesheet=f"background-color: {cons.PRIMARY_LIGHTER};border-radius: 6px; border: 1px solid {cons.BORDER};",
             class_group=self.widget_group,
         )
@@ -164,7 +164,7 @@ class CharacterSheetGUI(QWidget):
         self.show_combat_log = Widget(
             widget_type=QToolButton(),
             parent_layout=self.corruption_layout.get_title()[2],
-            icon=("show_hide_log.png", cons.WSIZE, cons.PRIMARY_DARKER),
+            icon=("show_hide_log.png", cons.PRIMARY_DARKER, cons.ICON_SIZE),
             signal=self.open_combat_log,
             checkable=True,
             checked=False,

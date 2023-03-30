@@ -17,16 +17,13 @@ class NewCharacter(QWidget):
         self.isheet = isheet
         self.character = character
 
-        self.left_button=(
-                f"QPushButton {{background-color: {cons.PRIMARY_MEDIUM}; color: {cons.FONT_COLOR}; font-size: {cons.FONT_MID}; font-weight: bold; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-bottom-left-radius: 6px;}}"
-            )
-        
-        self.right_button=(
-                f"QPushButton {{background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_DARK}; font-size: {cons.FONT_SMALL}; font-weight: bold; border: 1px solid {cons.BORDER}; border-top-right-radius: 6px; border-bottom-right-radius: 6px;}}"
-                f"QPushButton:hover {{background-color: {cons.PRIMARY_HOVER};}}"
-                f"QPushButton:pressed {{background-color: {cons.PRIMARY_LIGHTER};}}"
-            )
+        self.left_button = f"QPushButton {{background-color: {cons.PRIMARY_MEDIUM}; color: {cons.FONT_COLOR}; font-size: {cons.FONT_MID}; font-weight: bold; border: 1px solid {cons.BORDER}; border-top-left-radius: 6px; border-bottom-left-radius: 6px;}}"
 
+        self.right_button = (
+            f"QPushButton {{background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_DARK}; font-size: {cons.FONT_SMALL}; font-weight: bold; border: 1px solid {cons.BORDER}; border-top-right-radius: 6px; border-bottom-right-radius: 6px;}}"
+            f"QPushButton:hover {{background-color: {cons.PRIMARY_HOVER};}}"
+            f"QPushButton:pressed {{background-color: {cons.PRIMARY_LIGHTER};}}"
+        )
 
         # settings up the character sheet
         self.master_layout = QVBoxLayout()
@@ -96,7 +93,7 @@ class NewCharacter(QWidget):
             inner_layout=("HBox", 2),
             parent_layout=self.master_layout,
             title="New Character",
-            icon=("plus.png", cons.WSIZE * 1.5, cons.PRIMARY_LIGHTER),
+            icon=("plus.png", cons.PRIMARY_LIGHTER, cons.ICON_SIZE),
             group=(True, None, None),
             class_group=self.section_group,
         )

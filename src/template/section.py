@@ -70,7 +70,8 @@ class Section(QWidget):
                     self.title_icon.setObjectName(f"{objectname}_icon")
                     self.title_icon.setStyleSheet(f"background-color: {cons.DARK};")
                     self.title_icon.setFixedSize(cons.WSIZE, cons.WSIZE)
-                    func.set_icon(self.title_icon, icon[0], icon[2])
+                    print(icon)
+                    func.set_icon(self.title_icon, icon[0], icon[1], width=icon[2])
                     self.title_layout.addWidget(self.title_icon)
                 self.title_layout.addWidget(self.title_label)
 
@@ -81,7 +82,7 @@ class Section(QWidget):
                 self.groupbox.setStyleSheet(stylesheet)
             else:
                 self.groupbox.setStyleSheet(f"background-color: {cons.PRIMARY};")
-            #self.groupbox.setStyleSheet(f"background-color: {cons.PRIMARY};")
+            # self.groupbox.setStyleSheet(f"background-color: {cons.PRIMARY};")
 
             self.groupbox.setLayout(self.outer_layout_type)
             self.section_layout.addWidget(self.groupbox)
@@ -117,8 +118,12 @@ class Section(QWidget):
                     self.scroll_widget.setStyleSheet(stylesheet)
                     self.scroll_area_widget.setStyleSheet(stylesheet)
                 else:
-                    self.scroll_widget.setStyleSheet(f"background-color: {cons.PRIMARY};")
-                    self.scroll_area_widget.setStyleSheet(f"background-color: {cons.PRIMARY};")
+                    self.scroll_widget.setStyleSheet(
+                        f"background-color: {cons.PRIMARY};"
+                    )
+                    self.scroll_area_widget.setStyleSheet(
+                        f"background-color: {cons.PRIMARY};"
+                    )
 
                 self.outer_layout_type.addWidget(self.scroll_area_widget)
         else:
@@ -162,6 +167,6 @@ class Section(QWidget):
 
     def get_title(self):
         return (self.title_icon, self.title_label, self.title_layout)
-    
+
     def get_scroll(self):
         return self.scroll_area_widget

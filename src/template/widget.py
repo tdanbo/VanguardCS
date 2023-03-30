@@ -7,6 +7,7 @@ import constants as cons
 import template.functions as func
 import re
 
+
 class Widget:
     all_widgets = []
 
@@ -32,7 +33,7 @@ class Widget:
         checked=False,
         property=("", ""),
         class_group=[],
-        hidden = False
+        hidden=False,
     ):
         self.class_group = class_group
         self.text = text
@@ -57,13 +58,9 @@ class Widget:
         self.set_size(self.widget, width, height)
         self.set_validator(self.widget, validator)
         self.set_placeholder(self.widget, placeholder)
-        #self.load_setting(self.setting)
+        # self.load_setting(self.setting)
         if icon[0] != "":
-            if len(icon) == 4:
-                pix_width = icon[3]
-            else:
-                pix_width = 0
-            func.set_icon(self.widget, icon[0], icon[2], width=pix_width)
+            func.set_icon(self.widget, icon[0], icon[1], width=icon[2])
         if size_policy != None:
             self.widget.setSizePolicy(size_policy[0], size_policy[1])
 
@@ -74,7 +71,7 @@ class Widget:
             self.widget.setHidden(True)
 
     def setup_combobox(self, widget, text):
-        #widget.setSizeAdjustPolicy(QComboBox.AdjustToMinimumContentsLength)
+        # widget.setSizeAdjustPolicy(QComboBox.AdjustToMinimumContentsLength)
         widget.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
         model = QStandardItemModel(widget)
 
