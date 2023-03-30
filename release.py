@@ -6,6 +6,7 @@ import requests
 from github import Github
 import json
 
+
 class Release:
     def __init__(self, github_user, repo_name):
         token = json.load(open("release.key", "r"))["token"]
@@ -64,4 +65,6 @@ class Release:
         shutil.rmtree("dist")
         shutil.rmtree("build")
         os.remove(self.exe_path)
+
+
 Release("tdanbo", "VanguardCS").create_release()
