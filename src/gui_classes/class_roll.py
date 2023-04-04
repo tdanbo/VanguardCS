@@ -114,7 +114,7 @@ class DiceRoll:
         self.character.active_modifier = 0
         self.character.active_modifier_name = ""
         ModifyRoll(self.character).clear_style()
-        self.character.set_stats()
+        self.character.set_stats() 
         return self.result
 
     def subtract_ammo(self):
@@ -126,8 +126,7 @@ class DiceRoll:
                         self.character.CHARACTER_DOC["equipment"][value][
                             "Quantity"
                         ] -= 1
-                        self.character.set_equipment()
-                        self.character.save_document()
+                        self.character.set_all_stats()
                         has_ammo = True
                     else:
                         has_ammo = False

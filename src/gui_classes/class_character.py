@@ -68,10 +68,12 @@ class Character(QWidget):
         self.set_inventory()
         # Set character equipment
         self.set_equipment()
-        # Set qualities
-        self.set_qualities()
+        # Set armor qualities
+        self.set_armor_qualities()
         # final adjust with abilities
         self.set_ability_adjustments()
+        # Set weapon qualities
+        self.set_weapon_qualities()
         # Set character modifiers
         self.set_modifiers()
         # Set character calculated stats
@@ -171,7 +173,7 @@ class Character(QWidget):
             equipment="OH",
         )
 
-    def set_qualities(self):
+    def set_armor_qualities(self):
         armor = self.CHARACTER_DOC["equipment"]["armor"]
         if armor != {}:
             impeding = [
@@ -182,6 +184,7 @@ class Character(QWidget):
             self.DEFENSE += value
             self.CASTING += value
 
+    def set_weapon_qualities(self):
         mh = self.CHARACTER_DOC["equipment"]["main hand"]
         if mh != {}:
             if "Precise" in mh["Quality"]:
