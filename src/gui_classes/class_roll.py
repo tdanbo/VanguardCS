@@ -8,6 +8,7 @@ from PySide2.QtCore import *
 
 from gui_classes.class_modify_roll import ModifyRoll
 
+
 class DiceRoll:
     def __init__(
         self,
@@ -63,7 +64,8 @@ class DiceRoll:
         dice_roll = 0
         breakdowns = []
 
-        initial_split = self.dice.split("_")
+        remove_astrix = self.dice.replace("*", "")
+        initial_split = remove_astrix.split("_")
         for single_dice in initial_split:
             modifier_split = single_dice.split("+")
             if len(modifier_split) > 1:

@@ -372,6 +372,9 @@ class InventoryItem(QWidget):
         self.character.CHARACTER_DOC["inventory"].append(self.item_dict)
         self.character.set_all_stats()
 
+    def get_roll_widget(self):
+        return self.item_dice.get_widget()
+
     def add_sub(self):
         add_sub_gui = AddSub(
             self.character, self.sender(), doc_item=self.count, item=True
