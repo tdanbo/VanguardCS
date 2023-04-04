@@ -271,8 +271,6 @@ class Character(QWidget):
         self.sheet_gui.toughness_max.get_widget().setText(str(max_toughness))
         self.sheet_gui.toughness_threshold.get_widget().setText(str(pain_threshold))
 
-        print(quick)
-
         # Calculating speed
         base_speed = 40
         if quick < 5:
@@ -316,6 +314,12 @@ class Character(QWidget):
             self.button.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
             self.button.clicked.connect(self.change_corruption)
             self.corruption_group.append(self.button)
+
+        if self.corruption_threshold < self.CHARACTER_DOC["stats"]["CORRUPTION"]:
+            self.CHARACTER_DOC["stats"]["CORRUPTION"] = self.corruption_threshold
+
+        if self.corruption_threshold < self.CHARACTER_DOC["stats"]["PERMANENT"]:
+            self.CHARACTER_DOC["stats"]["PERMANENT"] = self.corruption_threshold
 
         self.set_corruption_style()
         self.save_document()
