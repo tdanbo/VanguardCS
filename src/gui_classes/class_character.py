@@ -146,7 +146,7 @@ class Character(QWidget):
         self.equipment_layout = self.inventory_gui.equipment_layout.inner_layout(1)
         func.clear_layout(self.equipment_layout)
 
-        self.mainhand_slot = InventoryItem(
+        self.armor_slot = InventoryItem(
             self,
             1,
             self.CHARACTER_DOC["equipment"]["armor"],
@@ -154,7 +154,7 @@ class Character(QWidget):
             self.carry_weight,
             equipment="AR",
         )
-        self.offhand_slot = InventoryItem(
+        self.mainhand_slot = InventoryItem(
             self,
             2,
             self.CHARACTER_DOC["equipment"]["main hand"],
@@ -162,7 +162,7 @@ class Character(QWidget):
             self.carry_weight,
             equipment="MH",
         )
-        self.armor_slot = InventoryItem(
+        self.offhand_slot = InventoryItem(
             self,
             3,
             self.CHARACTER_DOC["equipment"]["off hand"],
@@ -465,7 +465,10 @@ class Character(QWidget):
         earned_experience = 0
         for ability in self.CHARACTER_DOC["abilities"]:
             if ability["Rank"] == "Novice":
-                earned_experience += 10
+                if ability["Type"] == "Trait":
+                    earned_experience += 0
+                else:
+                    earned_experience += 10
             elif ability["Rank"] == "Adept":
                 earned_experience += 30
             elif ability["Rank"] == "Master":
