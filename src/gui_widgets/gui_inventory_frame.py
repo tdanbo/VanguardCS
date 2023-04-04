@@ -15,7 +15,7 @@ from gui_widgets.gui_add_sub import AddSub
 
 
 class InventoryItem(QWidget):
-    def __init__(self, character, count, item_dict, layout, carry_weight, equipment=False):
+    def __init__(self, character, count, item_dict, layout, carry_weight, equipment=""):
         super().__init__()
 
         self.character = character
@@ -169,7 +169,7 @@ class InventoryItem(QWidget):
 
         if "Equip" in self.item_dict:
             equip = self.item_dict["Equip"]
-            if self.equipment:
+            if self.equipment != "":
                 self.type_label = Widget(
                     widget_type=QPushButton(),
                     parent_layout=self.item_section.inner_layout(2),
@@ -258,6 +258,7 @@ class InventoryItem(QWidget):
                 parent_layout=self.quality_section.inner_layout(layout),
                 objectname=f"quality{count}",
                 class_group=self.widget_group,
+                # icon=(f"{quality}.png", cons.WSIZE / 2, cons.BORDER_DARK),
                 height=20,
                 width=20,
                 text=quality_tag,
@@ -319,6 +320,9 @@ class InventoryItem(QWidget):
                 stylesheet=self.quantity_dice_button_style,
             )
 
+            if self.equipment == "codex":
+                self.quantity.get_widget().setDisabled(True)
+
         self.roll_section.inner_layout(2).setAlignment(Qt.AlignRight)
 
         if self.equipment == "codex":
@@ -341,9 +345,10 @@ class InventoryItem(QWidget):
                 width=10,
                 stylesheet=f"background-color: {self.type_bg_color};padding-right: 1px",
                 signal=self.select_item,
-                icon=("plus.png", self.dark_type_bg_color, cons.ICON_SIZE),
+                icon=("plus.png", self.dark_type_bg_color, cons.WSIZE / 2),
                 size_policy=(QSizePolicy.Fixed, QSizePolicy.Expanding),
             )
+
         else:
             self.type_label = Widget(
                 widget_type=QToolButton(),
@@ -353,7 +358,7 @@ class InventoryItem(QWidget):
                 width=10,
                 stylesheet=f"background-color: {self.type_bg_color};padding-right: 1px",
                 signal=self.delete_item,
-                icon=("delete.png", self.dark_type_bg_color, cons.ICON_SIZE),
+                icon=("delete.png", self.dark_type_bg_color, cons.WSIZE / 2),
                 size_policy=(QSizePolicy.Fixed, QSizePolicy.Expanding),
             )
 
@@ -365,15 +370,12 @@ class InventoryItem(QWidget):
 
         if self.equipment not in ["", "codex"]:
             self.type_label.get_widget().setDisabled(True)
-            func.set_icon(self.type_label.get_widget(), "", "", width=0)
+            func.set_icon(self.type_label.get_widget(), "", "", 0)
 
     def select_item(self):
         print(self.select_item)
         self.character.CHARACTER_DOC["inventory"].append(self.item_dict)
         self.character.set_all_stats()
-
-    def get_roll_widget(self):
-        return self.item_dice.get_widget()
 
     def add_sub(self):
         add_sub_gui = AddSub(
@@ -469,6 +471,9 @@ class InventoryItem(QWidget):
             self.equip_button.setObjectName("AR_EQUIPPED")
 
         self.character.set_all_stats()
+
+    def get_roll_widget(self):
+        return self.item_dice.get_widget()
 
     def unequip_item(self):
         if self.equip_button_type == "2H_EQUIPPED":
