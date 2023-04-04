@@ -9,14 +9,17 @@ import constants as cons
 
 
 class AddSub(QWidget):
-    def __init__(self, character, widget, doc_item="", item=False, xp=False):
+    def __init__(self, character, widget, doc_item="", item=False, xp=False, equipment=False):
         super().__init__(None, Qt.WindowStaysOnTopHint)
+
+        print("AddSub")
 
         self.widget = widget
         self.doc_item = doc_item
         self.item = item
         self.xp = xp
         self.character = character
+        self.equipment = equipment
 
         self.master_layout = QVBoxLayout()
         self.section_group = []
@@ -81,10 +84,22 @@ class AddSub(QWidget):
         self.setLayout(self.master_layout)
 
     def send_value(self):
+        print(self.doc_item)
         if self.item == True:
-            current_value = int(
-                self.character.CHARACTER_DOC["inventory"][self.doc_item]["Quantity"]
-            )
+            if self.equipment == False:
+                current_value = int(
+                    self.character.CHARACTER_DOC["inventory"][self.doc_item]["Quantity"]
+                )
+            else:
+                if self.doc_item == 3:
+                    current_value = int(
+                        self.character.CHARACTER_DOC["equipment"]["off hand"]["Quantity"]
+                    )
+                else:
+                    current_value = int(
+                        self.character.CHARACTER_DOC["equipment"]["main hand"]["Quantity"]
+                    )
+
         elif self.xp == True:
             current_value = int(self.character.CHARACTER_DOC[self.doc_item])
         else:
@@ -104,9 +119,20 @@ class AddSub(QWidget):
         current_sender = self.widget.objectName()
 
         if self.item == True:
-            self.character.CHARACTER_DOC["inventory"][self.doc_item][
-                "Quantity"
-            ] = new_value
+            if self.equipment == False:
+                self.character.CHARACTER_DOC["inventory"][self.doc_item][
+                    "Quantity"
+                ] = new_value
+            else:
+                if self.doc_item == 3:
+                    self.character.CHARACTER_DOC["equipment"]["off hand"][
+                        "Quantity"
+                    ] = new_value
+                else:
+                    self.character.CHARACTER_DOC["equipment"]["main hand"][
+                        "Quantity"
+                    ] = new_value
+
         elif self.xp == True:
             self.character.CHARACTER_DOC[self.doc_item] = new_value
         else:
@@ -120,9 +146,5 @@ class AddSub(QWidget):
 
             self.character.CHARACTER_DOC["stats"][self.doc_item] = new_value
 
-        self.character.set_secondary_stats()
-        self.character.set_calculated_stats()
-        self.character.set_inventory()
-        self.character.set_xp()
-        self.character.save_document()
+        self.character.set_all_stats()
         self.close()

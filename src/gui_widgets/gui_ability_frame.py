@@ -21,6 +21,15 @@ class AbilityItem(QWidget):
         self.ability_dict = ability_dict
 
         self.slot = slot
+
+        if "Rank" not in self.ability_dict:
+            if self.select:
+                self.ability_dict["Rank"] = "Master"
+            else:
+                self.ability_dict["Rank"] = "Novice"
+        else:
+            pass
+
         # an empty widget was used to push the content together. might need to introduce.
 
         self.master_layout = QHBoxLayout()
@@ -77,6 +86,7 @@ class AbilityItem(QWidget):
         )
 
         if self.select:
+            #Set master rank for selectable abilities
             self.header_select = Widget(
                 widget_type=QToolButton(),
                 parent_layout=self.header_section.inner_layout(1),
@@ -382,7 +392,6 @@ class AbilityItem(QWidget):
 
     def delete_ability(self):
         self.character.CHARACTER_DOC["abilities"].pop(self.slot)
-
         self.character.set_all_stats()
 
     def gui_rank_state(self):
@@ -491,8 +500,24 @@ class AbilityItem(QWidget):
             self.dice_section.inner_layout(1).setAlignment(Qt.AlignRight)
 
     def select_ability(self):
-        self.ability_dict["Rank"] = "Novice"
-        self.character.CHARACTER_DOC["abilities"].append(self.ability_dict)
+        new_ability_dict = self.ability_dict.copy()
+        new_ability_dict["Rank"] = "Novice"
+        
+        self.character.CHARACTER_DOC["abilities"].append(new_ability_dict)
+
+        priority = {
+            "Ability": 0,
+            "Mystical Power": 1,
+            "Ritual": 2,
+            "Boon": 3,
+            "Burden": 4,
+            "Trait": 5,
+        }
+        self.character.CHARACTER_DOC["abilities"] = sorted(
+            self.character.CHARACTER_DOC["abilities"],
+            key=lambda x: priority.get(x.get("Type", ""), len(priority)),
+        )
+
         self.character.set_all_stats()
 
     def roll_dice(self):

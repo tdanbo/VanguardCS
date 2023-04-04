@@ -148,9 +148,8 @@ class AddNewAbility(QWidget):
                         print("Searching")
 
     def add_ability(self):
-        self.ability_dict["Rank"] = "Master"
-        ability = AbilityItem(self.character, self.ability_dict, select=True)
-        self.feats_scroll.inner_layout(1).addWidget(ability)
+        self.ability = AbilityItem(self.character, self.ability_dict, select=True, slot=None)
+        self.feats_scroll.inner_layout(1).addWidget(self.ability)
 
     def clear_layout(self, layout):
         for item in range(layout.count()):

@@ -15,7 +15,7 @@ from gui_widgets.gui_add_sub import AddSub
 
 
 class InventoryItem(QWidget):
-    def __init__(self, character, count, item_dict, layout, carry_weight, equipment=""):
+    def __init__(self, character, count, item_dict, layout, carry_weight, equipment=False):
         super().__init__()
 
         self.character = character
@@ -169,7 +169,7 @@ class InventoryItem(QWidget):
 
         if "Equip" in self.item_dict:
             equip = self.item_dict["Equip"]
-            if self.equipment != "":
+            if self.equipment:
                 self.type_label = Widget(
                     widget_type=QPushButton(),
                     parent_layout=self.item_section.inner_layout(2),
@@ -377,7 +377,7 @@ class InventoryItem(QWidget):
 
     def add_sub(self):
         add_sub_gui = AddSub(
-            self.character, self.sender(), doc_item=self.count, item=True
+            self.character, self.sender(), doc_item=self.count, item=True, equipment=self.equipment
         )
         add_sub_gui.show()
 

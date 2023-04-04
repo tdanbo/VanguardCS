@@ -442,20 +442,13 @@ class Character(QWidget):
         print("Setting abilities")
         self.ability_layout = self.sheet_gui.ability_layout.inner_layout(1)
         func.clear_layout(self.ability_layout)
-        priority = {
-            "Ability": 0,
-            "Mystical Power": 1,
-            "Ritual": 2,
-            "Boon": 3,
-            "Burden": 4,
-        }
-        self.sorted_list = sorted(
-            self.CHARACTER_DOC["abilities"],
-            key=lambda x: priority.get(x.get("Type", ""), len(priority)),
-        )
-        for slot, item in enumerate(self.sorted_list):
-            ability = AbilityItem(self, item, slot=slot)
-            self.ability_layout.addWidget(ability)
+
+        for slot, item in enumerate(self.CHARACTER_DOC["abilities"]):
+            print(item["Name"])
+            print(item["Rank"])
+            print("------------------")
+            self.new_ability = AbilityItem(self, item, select=False, slot=slot)
+            self.ability_layout.addWidget(self.new_ability)
         filler_widget = QWidget()
         filler_widget.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         self.ability_layout.addWidget(filler_widget)
