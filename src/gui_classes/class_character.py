@@ -104,7 +104,6 @@ class Character(QWidget):
         self.SPEED = 0
 
     def set_inventory(self):
-        print("Setting inventory")
         self.inventory_layout = self.inventory_gui.inventory_scroll.inner_layout(1)
         func.clear_layout(self.inventory_layout)
 
@@ -133,9 +132,10 @@ class Character(QWidget):
                 item_dict = self.CHARACTER_DOC["inventory"][count]
             except:
                 item_dict = {}
-            item_widget = InventoryItem(
+            self.item_widget = InventoryItem(
                 self, count, item_dict, self.inventory_layout, self.carry_weight
             )
+            print("------------------")
 
         current_weight = len(self.CHARACTER_DOC["inventory"])
         overweight = (self.carry_weight - current_weight) + 1
@@ -144,7 +144,6 @@ class Character(QWidget):
             self.SPEED += overweight
 
     def set_equipment(self):
-        print("Setting equipment")
         self.equipment_layout = self.inventory_gui.equipment_layout.inner_layout(1)
         func.clear_layout(self.equipment_layout)
 
@@ -301,7 +300,6 @@ class Character(QWidget):
         )
 
     def set_corruption(self):
-        print("set corruption")
         self.set_corruption_level()
         self.corruption_group = []
         func.clear_layout(self.sheet_gui.corruption_token_layout.inner_layout(1))
@@ -344,9 +342,6 @@ class Character(QWidget):
                 )
                 if corruption_level > 3:
                     corruption_level = 3
-
-                print("corruption level")
-                print(corruption_level)
 
                 self.sheet_gui.corruption_level.get_widget().setObjectName(
                     str(corruption_level)
@@ -394,8 +389,6 @@ class Character(QWidget):
             elif button.objectName() == "temporary":
                 self.CHARACTER_DOC["stats"]["CORRUPTION"] += 1
 
-        print(sender.objectName())
-
         self.save_document()
         self.set_corruption_style()
 
@@ -442,14 +435,10 @@ class Character(QWidget):
         self.save_document()
 
     def set_abilities(self):
-        print("Setting abilities")
         self.ability_layout = self.sheet_gui.ability_layout.inner_layout(1)
         func.clear_layout(self.ability_layout)
 
         for slot, item in enumerate(self.CHARACTER_DOC["abilities"]):
-            print(item["Name"])
-            print(item["Rank"])
-            print("------------------")
             self.new_ability = AbilityItem(self, item, select=False, slot=slot)
             self.ability_layout.addWidget(self.new_ability)
         filler_widget = QWidget()
@@ -479,7 +468,6 @@ class Character(QWidget):
         )
 
     def set_ability_adjustments(self):
-        print("Setting ability adjustments")
         AbilityAdjust(self)
 
     def clear_character(self):

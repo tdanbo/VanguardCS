@@ -9,7 +9,6 @@ def clear_layout(layout):
     for item in range(layout.count()):
         layout.itemAt(item).widget().deleteLater()
 
-
 def set_icon(widget, icon, color, width=20):
     qicon = QIcon()
     pixmap = QPixmap(os.path.join(cons.ICONS, icon))

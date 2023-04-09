@@ -70,7 +70,6 @@ class Section(QWidget):
                     self.title_icon.setObjectName(f"{objectname}_icon")
                     self.title_icon.setStyleSheet(f"background-color: {cons.DARK};")
                     self.title_icon.setFixedSize(cons.WSIZE, cons.WSIZE)
-                    print(icon)
                     func.set_icon(self.title_icon, icon[0], icon[1], width=icon[2])
                     self.title_layout.addWidget(self.title_icon)
                 self.title_layout.addWidget(self.title_label)
