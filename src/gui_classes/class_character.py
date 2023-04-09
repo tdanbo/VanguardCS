@@ -7,6 +7,7 @@ import template.functions as func
 import math
 
 from gui_widgets.gui_inventory_frame import InventoryItem
+from gui_widgets.gui_inventory_empty_frame import InventoryEmptyItem
 from gui_widgets.gui_ability_frame import AbilityItem
 from gui_classes.class_modify_stat import ModifyStat
 from gui_classes.class_ability_adjust import AbilityAdjust
@@ -130,12 +131,13 @@ class Character(QWidget):
         for count in range(self.carry_limit, -1, -1):
             try:
                 item_dict = self.CHARACTER_DOC["inventory"][count]
+                self.item_widget = InventoryItem(
+                    self, count, item_dict, self.inventory_layout, self.carry_weight
+                )
             except:
-                item_dict = {}
-            self.item_widget = InventoryItem(
-                self, count, item_dict, self.inventory_layout, self.carry_weight
-            )
-            print("------------------")
+                self.item_widget = InventoryEmptyItem(
+                    self, count, self.inventory_layout, self.carry_weight
+                )
 
         current_weight = len(self.CHARACTER_DOC["inventory"])
         overweight = (self.carry_weight - current_weight) + 1

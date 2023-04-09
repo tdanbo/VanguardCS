@@ -69,8 +69,8 @@ class InventoryItem(QWidget):
             class_group=self.widget_group,
             stylesheet=f"font-size: {cons.FONT_MID}; font-weight: bold;",
             height=cons.WSIZE,
-            signal=self.get_item,
             align="center",
+            enabled=False,
         )
 
         # CREATING EMPTY OR POPULATED ITEM WIDGET
@@ -104,47 +104,9 @@ class InventoryItem(QWidget):
 
         layout.addWidget(self)
 
-    def get_item(self):
-        item_string = self.sender().text()
-        item_slot = int(self.sender().objectName())
-
-        self.all_equipment = cons.EQUIPMENT
-        if item_string != "":
-            for category in self.all_equipment:
-                for item in self.all_equipment[category]:
-                    if item_string.lower() == item.lower():
-                        self.item_dict = self.all_equipment[category][item]
-                        self.item_dict["Name"] = item
-                        self.item_dict["Category"] = category
-                        self.item_dict["Equipped"] = {}
-                        self.item_dict["Equipped"]["1"] = False
-                        self.item_dict["Equipped"]["2"] = False
-
-                        self.character.CHARACTER_DOC["inventory"].append(self.item_dict)
-                        self.character.set_all_stats()
-                        return
-                    else:
-                        pass
-
-            # Create General Good item!
-            self.item_dict = self.general_item()
-            self.item_dict["Name"] = item_string.title()
-            self.item_dict["Category"] = "General Good"
-            self.item_dict["Equipped"] = {}
-            self.item_dict["Equipped"]["1"] = False
-            self.item_dict["Equipped"]["2"] = False
-
-            self.character.CHARACTER_DOC["inventory"].append(self.item_dict)
-            self.character.set_all_stats()
-            return
-
     def delete_item(self):
         self.character.CHARACTER_DOC["inventory"].pop(self.count)
         self.character.set_all_stats()
-
-    def general_item(self):
-        item = {"Quantity": 1, "Type": "General Good", "Quality": []}
-        return item
 
     def make_item(self):
         self.name = self.item_dict["Name"]
@@ -373,11 +335,15 @@ class InventoryItem(QWidget):
             func.set_icon(self.type_label.get_widget(), "", "", 0)
 
     def select_item(self):
-        print(self.select_item)
-        self.character.CHARACTER_DOC["inventory"].append(self.item_dict)
+        selected_item = self.item_dict.copy()
+
+        self.character.CHARACTER_DOC["inventory"].append(selected_item)
         self.character.set_all_stats()
 
     def add_sub(self):
+        if self.equipment == "":
+            self.equipment = False
+
         add_sub_gui = AddSub(
             self.character, self.sender(), doc_item=self.count, item=True, equipment=self.equipment
         )
