@@ -175,3 +175,14 @@ for name in collection_names:
 
 db = CLIENT["dnd"]
 COMBAT_LOG = db["combatlog"]
+
+TOOLTIP = {
+    "ACCURATE": "Hand-eye coordination, hit antagonist with bow/sword/axe.",
+    "CUNNING": "Recollect facts, make conclusions, do research.",
+    "DISCREET": "Avoid detection, sneak, smuggle items, trail person, pick pockets.",
+    "PERSUASIVE": "Influence/convince others, lead, rally.",
+    "QUICK": "Initiative, balance, climb, avoid being hit, sprint.",
+    "RESOLUTE": "Succeed with or resist various spells, resist being influenced.",
+    "STRONG": "Withstand damage/poison/disease, perform feats of strength.",
+    "VIGILANT": "Detect person/item, avoid ambush, sense danger.",
+}

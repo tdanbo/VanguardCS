@@ -195,6 +195,7 @@ class CharacterSheetGUI(QWidget):
                 signal=self.roll_dice,
                 property=("roll", stat),
                 stylesheet=self.bottom_button,
+                tooltip=cons.TOOLTIP[stat],
             )
 
         self.toughness_current = Widget(

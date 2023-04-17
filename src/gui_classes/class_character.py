@@ -277,9 +277,9 @@ class Character(QWidget):
 
         # Calculating speed
         base_speed = 40
-        if quick < 5:
+        if quick <= 5:
             stat_modifier = -10
-        elif quick > 15:
+        elif quick >= 15:
             stat_modifier = 10
         else:
             stat_modifier = cons.MOVEMENT[quick]
