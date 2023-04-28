@@ -86,7 +86,7 @@ class AbilityItem(QWidget):
         )
 
         if self.select:
-            #Set master rank for selectable abilities
+            # Set master rank for selectable abilities
             self.header_select = Widget(
                 widget_type=QToolButton(),
                 parent_layout=self.header_section.inner_layout(1),
@@ -472,7 +472,6 @@ class AbilityItem(QWidget):
         self.character.set_all_stats()
 
     def build_dice_section(self, string, layout):
-
         matches = re.findall(r"\b\d*[dD]\d+\+?\d*\b", string)
         if not matches:
             pass  # Output: ['1D8', '4d20', '2d10+2']
@@ -502,7 +501,7 @@ class AbilityItem(QWidget):
     def select_ability(self):
         new_ability_dict = self.ability_dict.copy()
         new_ability_dict["Rank"] = "Novice"
-        
+
         self.character.CHARACTER_DOC["abilities"].append(new_ability_dict)
 
         priority = {
@@ -524,7 +523,7 @@ class AbilityItem(QWidget):
         self.character_name = self.character.character_name
 
         self.character.active_modifier_name = self.ability_dict["Type"]
-        self.roll_type = f"{self.sender().text()} {self.ability_dict['Name'].title()}"
+        self.roll_type = self.ability_dict["Name"].title()
 
         if self.roll_type in ["CASTING", "DEFENSE"]:
             self.check = int(self.sender().text())

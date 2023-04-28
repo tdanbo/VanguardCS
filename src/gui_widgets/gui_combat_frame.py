@@ -12,10 +12,11 @@ import template.functions as func
 
 from qt_thread_updater import get_updater
 
+
 class CombatEntry(QWidget):
     def __init__(self, count):
         super().__init__()
-        
+
         self.master_layout = QHBoxLayout()
         self.widget_group = []
         self.section_group = []
@@ -118,18 +119,57 @@ class CombatEntry(QWidget):
         self.result_breakdown = entry["Result Breakdown"]
         self.time = entry["Time"]
 
+        if "Skill Modifier" in entry:
+            if entry["Skill Modifier"] != "0":
+                self.skill_modifier = f"{entry['Skill Modifier']} "
+            else:
+                self.skill_modifier = ""
+        else:
+            self.skill_modifier = ""
+
         color_type = cons.ACTIVE_COLOR
         if self.active.upper() not in color_type:
             type_bg_color = color_type["GENERAL_GOOD"]
         else:
             type_bg_color = color_type[self.active.upper()]
 
-        get_updater().call_latest(self.item.get_widget().setText, self.active.title())
+        get_updater().call_latest(
+            self.item.get_widget().setText, self.skill_modifier + self.type.title()
+        )
         if self.check == 0:
-            get_updater().call_latest(self.result_message_label.get_widget().setText, self.type)
+            result = f"{self.dice} {self.active.title()}"
+            get_updater().call_latest(
+                self.result_message_label.get_widget().setText, result
+            )
+            func.set_icon(
+                self.result_message_label.get_widget(),
+                "",
+                "",
+                0,
+            )
         else:
-            result = f"{self.check} {self.type.title()}"
-            get_updater().call_latest(self.result_message_label.get_widget().setText, result)
+            if self.result_message == "Success":
+                result = f" {self.active.title()}"
+                get_updater().call_latest(
+                    self.result_message_label.get_widget().setText, result
+                )
+                func.set_icon(
+                    self.result_message_label.get_widget(),
+                    "success.png",
+                    "#4e874d",
+                    10,
+                )
+            elif self.result_message:
+                result = f" {self.active.title()}"
+                get_updater().call_latest(
+                    self.result_message_label.get_widget().setText, result
+                )
+                func.set_icon(
+                    self.result_message_label.get_widget(),
+                    "fail.png",
+                    "#874d4d",
+                    10,
+                )
 
         #  ({self.result_message}) Removed success/fail message
 
@@ -138,15 +178,11 @@ class CombatEntry(QWidget):
         get_updater().call_latest(result_widget.setText, str(self.result))
         result_widget.setToolTip(f"{self.result_breakdown}")
 
-        if os.path.isfile(os.path.join(cons.ICONS,f"{self.character}.png")):
-            func.set_icon(
-                self.portrait.get_widget(), f"{self.character}.png", ""
-            )
+        if os.path.isfile(os.path.join(cons.ICONS, f"{self.character}.png")):
+            func.set_icon(self.portrait.get_widget(), f"{self.character}.png", "")
         else:
             random_portrait = random.choice(["unknown"])
-            func.set_icon(
-                self.portrait.get_widget(), f"{random_portrait}.png", ""
-            )
+            func.set_icon(self.portrait.get_widget(), f"{random_portrait}.png", "")
 
         self.portrait.get_widget().setToolTip(f"{self.character}")
 

@@ -253,7 +253,7 @@ class InventoryGUI(QWidget):
 
         # Below is all the widgets used in the character sheet
         for number, stat in enumerate(
-            ["CASTING", "SNEAKING", "SKILL", "DEFENSE", "ATTACK"]
+            ["CASTING", "SNEAKING", "SKILL TEST", "DEFENSE", "ATTACK"]
         ):
             self.extra_modifier_button = Widget(
                 widget_type=QPushButton(),
@@ -364,7 +364,6 @@ class InventoryGUI(QWidget):
         #     self.character_name.get_widget().setCurrentText("")
 
     def delete_character(self):
-
         current_character = self.character_name.get_widget().currentText()
         print(f"delete {current_character} from database")
 

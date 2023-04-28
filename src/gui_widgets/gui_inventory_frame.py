@@ -345,7 +345,11 @@ class InventoryItem(QWidget):
             self.equipment = False
 
         add_sub_gui = AddSub(
-            self.character, self.sender(), doc_item=self.count, item=True, equipment=self.equipment
+            self.character,
+            self.sender(),
+            doc_item=self.count,
+            item=True,
+            equipment=self.equipment,
         )
         add_sub_gui.show()
 
@@ -356,7 +360,7 @@ class InventoryItem(QWidget):
         self.dice = self.sender().text()
 
         self.character.active_modifier_name = self.sender().property("roll")
-        self.roll_type = f"{self.dice} {self.name}"
+        self.roll_type = self.name
 
         if self.item_type == "Ranged Weapon":
             needs_ammo = True

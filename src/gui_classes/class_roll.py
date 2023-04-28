@@ -20,10 +20,10 @@ class DiceRoll:
         character=None,
         ammo=False,
     ):
-
         self.character = character
         self.modifier_widget = self.character.inventory_gui.modifier_mod.get_widget()
         self.roll_type = roll_type
+        print(f"Roll type: {roll_type}")
         self.active_type = (
             self.character.active_modifier_name
             if not self.character.active_modifier_name == ""
@@ -46,6 +46,7 @@ class DiceRoll:
             "Result Breakdown": "",
             "Result Message": "",
             "Time": "",
+            "Skill Modifier": self.modifier_widget.text(),
         }
 
         self.modifier_widget.setText("0")
@@ -114,7 +115,7 @@ class DiceRoll:
         self.character.active_modifier = 0
         self.character.active_modifier_name = ""
         ModifyRoll(self.character).clear_style()
-        self.character.set_stats() 
+        self.character.set_stats()
         return self.result
 
     def subtract_ammo(self):

@@ -8,23 +8,25 @@ import constants as cons
 class ModifyRoll:
     def __init__(self, character):
         self.character = character
-                
-        self.bottom_button=(
-                f"QPushButton {{background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_DARK}; font-size: {cons.FONT_SMALL}; font-weight: bold; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;}}"
-                f"QPushButton:hover {{background-color: {cons.PRIMARY_HOVER};}}"
-                f"QPushButton:pressed {{background-color: {cons.PRIMARY_LIGHTER};}}"
-            )
-        
-        self.bottom_tool_button=(
-                f"QToolButton {{background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_DARK}; font-size: {cons.FONT_SMALL}; font-weight: bold; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;}}"
-                f"QToolButton:hover {{background-color: {cons.PRIMARY_HOVER};}}"
-                f"QToolButton:pressed {{background-color: {cons.PRIMARY_LIGHTER};}}"
-            )
+
+        self.bottom_button = (
+            f"QPushButton {{background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_DARK}; font-size: {cons.FONT_SMALL}; font-weight: bold; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;}}"
+            f"QPushButton:hover {{background-color: {cons.PRIMARY_HOVER};}}"
+            f"QPushButton:pressed {{background-color: {cons.PRIMARY_LIGHTER};}}"
+        )
+
+        self.bottom_tool_button = (
+            f"QToolButton {{background-color: {cons.PRIMARY_LIGHTER}; color: {cons.FONT_DARK}; font-size: {cons.FONT_SMALL}; font-weight: bold; border: 1px solid {cons.BORDER}; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;}}"
+            f"QToolButton:hover {{background-color: {cons.PRIMARY_HOVER};}}"
+            f"QToolButton:pressed {{background-color: {cons.PRIMARY_LIGHTER};}}"
+        )
 
     def change_active(self, widget):
         self.widget = widget
 
-        self.modifier_type = self.widget.objectName().split(" ")[0]
+        last_space_index = self.widget.objectName().rfind(" ")
+        self.modifier_type = self.widget.objectName()[:last_space_index]
+
         self.modifier_widget = self.character.inventory_gui.findChild(
             QWidget, f"{self.modifier_type} mod"
         )
@@ -81,7 +83,7 @@ class ModifyRoll:
             "ATTACK",
             "DEFENSE",
             "CASTING",
-            "SKILL",
+            "SKILL TEST",
             "SNEAKING",
         ] + cons.STATS:
             if button in cons.STATS:

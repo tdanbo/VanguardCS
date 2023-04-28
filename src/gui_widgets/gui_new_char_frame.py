@@ -193,7 +193,7 @@ class NewCharacter(QWidget):
             new_character["CASTING mod"] = 0
             new_character["SNEAKING mod"] = 0
             new_character["ATTACK mod"] = 0
-            new_character["SKILL mod"] = 0
+            new_character["SKILL TEST mod"] = 0
 
             new_character["inventory"] = []
             new_character["abilities"] = []

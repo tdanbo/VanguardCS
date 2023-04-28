@@ -249,7 +249,7 @@ class Character(QWidget):
                 str(self.CHARACTER_DOC["mods"][f"{stat} mod"])
             )
 
-        for stat in ["DEFENSE", "CASTING", "SKILL", "SNEAKING", "ATTACK"]:
+        for stat in ["DEFENSE", "CASTING", "SKILL TEST", "SNEAKING", "ATTACK"]:
             modifier = int(self.CHARACTER_DOC[f"{stat} mod"])
             if modifier > 0:
                 modifier = f"+{modifier}"
@@ -338,7 +338,6 @@ class Character(QWidget):
                 current_permanent += 1
 
             if current_permanent == self.corruption_threshold:
-
                 corruption_level = (
                     int(self.sheet_gui.corruption_level.get_widget().objectName()) + 1
                 )
@@ -489,7 +488,7 @@ class Character(QWidget):
             self.sheet_gui.findChild(QWidget, f"{stat}").setText("")
             self.sheet_gui.findChild(QWidget, f"{stat} mod").setText("")
 
-        for stat in ["DEFENSE", "CASTING", "SKILL", "SNEAKING", "ATTACK"]:
+        for stat in ["DEFENSE", "CASTING", "SKILL TEST", "SNEAKING", "ATTACK"]:
             self.inventory_gui.findChild(QWidget, f"{stat} mod").setText("")
 
         self.inventory_gui.modifier_mod.get_widget().setText("")
