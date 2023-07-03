@@ -16,6 +16,46 @@ class AbilityAdjust:
 
     def shield_fighter(self):
         if self.check_abilities("Shield Fighter"):
+            weapon_list = [
+                "Sword",
+                "Axe",
+                "Mace",
+                "Spear",
+                "Greatsword",
+                "Greataxe",
+                "Maul",
+                "Dagger",
+                "Dirk",
+                "Knife",
+                "Bastard Sword 1",
+                "Fencing Sword",
+                "Crow's Beak",
+                "Lance 1",
+                "Flail",
+                "Long-Hammer 1",
+                "Long-Whip",
+                "Estoc",
+                "Stiletto",
+                "Halberd",
+                "Pike",
+                "Sturdy Staff",
+                "Wooden Staff",
+                "Quarterstaff",
+                "Chain Staff",
+                "Lance 2",
+                "Knuckles",
+                "Battle Claw",
+                "Bastard Sword 2",
+                "Double-Axe",
+                "Battle Flail"
+                "Executioner's Axe",
+                "Warhammer",
+                "Long-Hammer 2",
+                "Executioner's Sword",
+                "Heavy Flail",
+                "Grappling Axe 2"
+
+            ]
             if self.main_hand != {}:
                 if self.main_hand["Name"] in ["Shield", "Buckler", "Steel Shield"]:
                     self.character.DEFENSE += 1
@@ -23,6 +63,20 @@ class AbilityAdjust:
             if self.off_hand != {}:
                 if self.off_hand["Name"] in ["Shield", "Buckler", "Steel Shield"]:
                     self.character.DEFENSE += 1
+
+            if self.main_hand != {}:
+                if self.main_hand["Name"] in weapon_list:
+                    if self.off_hand["Name"] in ["Shield", "Buckler", "Steel Shield"]:
+                        widget = self.character.mainhand_slot.get_roll_widget()
+                        roll = self.upgrade_roll(self.main_hand["Roll"][1])
+                        widget.setText(roll)
+
+            if self.off_hand != {}:
+                if self.off_hand["Name"] in weapon_list:
+                    if self.main_hand["Name"] in ["Shield", "Buckler", "Steel Shield"]:
+                        widget = self.character.offhand_slot.get_roll_widget()
+                        roll = self.upgrade_roll(self.off_hand["Roll"][1])
+                        widget.setText(roll)
 
     def man_at_arms(self):
         if self.check_abilities("Man-at-Arms"):

@@ -157,7 +157,7 @@ class CombatEntry(QWidget):
                     self.result_message_label.get_widget(),
                     "success.png",
                     "#4e874d",
-                    10,
+                    15,
                 )
             elif self.result_message:
                 result = f" {self.active.title()}"
@@ -168,7 +168,7 @@ class CombatEntry(QWidget):
                     self.result_message_label.get_widget(),
                     "fail.png",
                     "#874d4d",
-                    10,
+                    15,
                 )
 
         #  ({self.result_message}) Removed success/fail message
